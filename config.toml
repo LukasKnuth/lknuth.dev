@@ -1,0 +1,45 @@
+baseURL = 'https://lknuth.dev/'
+languageCode = 'en-us'
+title = 'Lukas Knuth // Devloper'
+copyright = "Lukas Knuth"
+
+theme = 'cactus'
+
+[[menu.main]]
+name = "Home"
+url = "/"
+weight = 1
+[[menu.main]]
+name = "Writings"
+url = "/writings"
+weight = 2
+
+[params]
+css = ["css/custom.css"]
+mainSection = "writings"
+postsOnHomePage = 5
+tagsOverview = false
+showProjectsList = true
+
+[[params.social]]
+name = "github"
+link = "https://github.com/LukasKnuth"
+
+[[params.social]]
+name = "stack-overflow"
+link = "https://stackoverflow.com/users/717341/lukas-knuth"
+
+[[params.social]]
+name = "linkedin"
+link = "https://www.linkedin.com/in/lukas-knuth-1b0b18128/"
+
+[[params.social]]
+name = "email"
+link = "new@mail.com"
+
+[markup]
+  [markup.highlight]
+    codeFences = true
+	guessSyntax = false
+	tabWidth = 4
+	style = "monokai"
