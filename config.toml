@@ -15,7 +15,6 @@ url = "/writings"
 weight = 2
 
 [params]
-css = ["css/custom.css"]
 mainSection = "writings"
 postsOnHomePage = 5
 tagsOverview = false
