@@ -40,5 +40,5 @@ link = "new@mail.com"
   [markup.highlight]
     codeFences = true
 	guessSyntax = false
-	tabWidth = 4
-	style = "monokai"
+	tabWidth = 2
+	style = "gruvbox"
