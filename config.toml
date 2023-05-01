@@ -13,6 +13,10 @@ weight = 1
 name = "Writings"
 url = "/writings"
 weight = 2
+[[menu.main]]
+name = "Imprint"
+url = "/imprint"
+weight = 11
 
 [params]
 mainSection = "writings"
@@ -37,6 +41,9 @@ name = "email"
 link = "new@mail.com"
 
 [markup]
+	[markup.goldmark.renderer]
+	 # allow HTLM tags in markdown
+		unsafe = true
   [markup.highlight]
     codeFences = true
 	guessSyntax = false
