@@ -1,5 +1,5 @@
 @import "variables";
-@import "colors/{{ site.Params.colortheme | default "white" }}";
+@import "colors/white";
 @import "util";
 @import "mixins";
 @import "extend";
@@ -54,11 +54,9 @@ body {
     color: $color-text;
     text-decoration: none;
 
-    @include underline(5px, $color-text);
-
-    &:hover {
-      background-image: linear-gradient(transparent, transparent 4px, $color-link 4px, $color-link);
-    }
+  }
+  article a, section#writing ul a, section#projects ul a {
+    @include neon-underline(2px, $color-link, $color-link-end);
   }
   a.icon {
     background: none;
