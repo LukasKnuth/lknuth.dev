@@ -1,6 +1,6 @@
 baseURL = 'https://lknuth.dev/'
 languageCode = 'en-us'
-title = 'Lukas Knuth // Devloper'
+title = 'Lukas Knuth // Developer'
 copyright = "Lukas Knuth"
 
 theme = 'cactus'
@@ -13,6 +13,10 @@ weight = 1
 name = "Writings"
 url = "/writings"
 weight = 2
+[[menu.main]]
+name = "About"
+url = "/about"
+weight = 10
 [[menu.main]]
 name = "Imprint"
 url = "/imprint"
@@ -35,10 +39,6 @@ link = "https://stackoverflow.com/users/717341/lukas-knuth"
 [[params.social]]
 name = "linkedin"
 link = "https://www.linkedin.com/in/lukas-knuth-1b0b18128/"
-
-[[params.social]]
-name = "email"
-link = "new@mail.com"
 
 [markup]
 	[markup.goldmark.renderer]
