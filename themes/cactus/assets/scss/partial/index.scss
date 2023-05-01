@@ -3,6 +3,11 @@ section#writing, section#projects {
     color: $color-accent-2
   }
 }
+section#about {
+  #find-me a {
+    text-decoration: none;
+  }
+}
 
 .post-list {
   padding: 0;
