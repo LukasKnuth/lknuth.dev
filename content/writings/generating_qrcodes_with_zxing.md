@@ -2,12 +2,11 @@
 title: "Generating Qrcodes With Zxing"
 date: 2013-08-25T16:00:11+01:00
 description: About how to use the ZXing library to generate QR-Codes on Android
-draft: true
 ---
 
-When it comes to reading QR-codes, most Android applications use the [ZXing library](http://code.google.com/p/zxing). It's capabilities and ease of use when *reading* QR-Codes is already known, but ZXing can also *generate* QR-Codes.
+When it comes to reading QR-codes, most Android applications use the [ZXing library](https://github.com/zxing/zxing). It's capabilities and ease of use when *reading* QR-Codes is already known, but ZXing can also *generate* QR-Codes.
 
-Sadly, a great lack of good or complete documentation makes it pretty hard to dive into this topic, so this article aims to provide a simple starting point.
+Sadly, a lack of documentation makes it pretty hard to dive into this topic, so this article aims to provide a simple starting point.
 
 ## Integration choices
 
@@ -15,32 +14,34 @@ There are two ways to integrate ZXing in your application: by using Intents or a
 
 Using the Intent integration makes development easier, since it's less work. The downside to that is, that **the ["Barcode Scanner" application](https://play.google.com/store/apps/details?id=com.google.zxing.client.android) must be installed** on the device. The integration-module will automatically prompt the user to install the application, if it's not already installed, but still this involves manual interaction and might not be what you want.
 
-The library integration is a little more complicated, but **does not require any third-party applications** to be installed on the device. It's also not really documented, so you'll have to do some digging around and source-reading, once you want to do something customized.
+The library integration is a little more complicated, but **does not require any third-party applications** to be installed on the device. It's also not really documented, so you'll have to do some digging around and source-reading if you want to do something custom.
+
+We'll be focusing on the library integration in this article.
 
 ### Intent integration
 
-When you decide to use Intents, all you have to do is add the `android-integration` module ([Maven repository](http://repo1.maven.org/maven2/com/google/zxing/android-integration/)) to your Android project and use the `IntentIntegrator`-class:
+When you decide to use Intents, all you have to do is add the `android-integration` module ([Maven repository](https://mvnrepository.com/artifact/com.google.zxing/android-integration)) to your Android project and use the `IntentIntegrator`-class:
 
 ```java
 IntentIntegrator integrator = new IntentIntegrator(AnActivity.this);
 integrator.shareText("http://codeisland.org");
 ```
 
-And that's really all there is to it. The [`shareText(CharSequence)`-method](http://code.google.com/p/zxing/source/browse/trunk/android-integration/src/com/google/zxing/integration/android/IntentIntegrator.java?r=2365#361) will **start an Activity of the "Barcode Scanner" application** to show the generated barcode. If the application could not be found, it will prompt the user to install it.
+And that's really all there is to it. The [`shareText(CharSequence)`-method](https://github.com/zxing/zxing/blob/c062955c841fd074bfaa42bafeb65b514d4c72fc/android-integration/src/main/java/com/google/zxing/integration/android/IntentIntegrator.java#LL462C8-L462C8) will **start an Activity of the "Barcode Scanner" application** to show the generated barcode. If the application could not be found, it will prompt the user to install it.
 
 This is a very fast and simple way to integrate this in your application. But if you want to show the generated QR-Code in your own `ImageView`, you'll have to go with the...
 
 ### Library integration
 
-If something more customizable is needed, choose the library integration. Other than including only the `android-integration` module, this time we'll also need the `core` module ([Maven repository](http://repo1.maven.org/maven2/com/google/zxing/core/)). Both these go into androids `libs/`-directory (or you simply use Maven).
+If something more customizable is needed, choose the library integration. Next to the `android-integration` module from before, this time we'll also need the `core` module ([Maven repository](https://mvnrepository.com/artifact/com.google.zxing/android-core)). Both these go into androids `libs/`-directory (or you simply use Maven).
 
-Encoding a String into a QR-Code is *almost* straightforward with the [`QRCodeWriter.encode(String, BarcodeFormat, int, int)`-method](http://code.google.com/p/zxing/source/browse/trunk/core/src/com/google/zxing/Writer.java#38):
+Encoding a String into a QR-Code is *almost* straightforward with the [`QRCodeWriter.encode(String, BarcodeFormat, int, int)`-method](https://github.com/zxing/zxing/blob/c062955c841fd074bfaa42bafeb65b514d4c72fc/core/src/main/java/com/google/zxing/Writer.java#L40):
 
 ```java
 QRCodeWriter writer = new QRCodeWriter();
 try {
     BitMatrix matrix = writer.encode(
-        "http://codeisland.org", BarcodeFormat.QR_CODE, 400, 400
+        "http://lknuth.dev", BarcodeFormat.QR_CODE, 400, 400
     );
     // Now what??
 } catch (WriterException e) {
@@ -50,11 +51,9 @@ try {
 
 The data (in this example, the URL) is now encoded into a `BitMatrix`. But how do we get the matrix to show on-screen?
 
-## Working with BitMatrix
+## How **not** to do it
 
-### How **not** to do it
-
-It's [sometimes](https://groups.google.com/d/msg/zxing/-LjwQAykQ4M/KsONovYDBIUJ) [suggested](http://stackoverflow.com/q/10090797/717341) to simply use the `javase` module and it's [`MatrixToImageWriter`-class](code.google.com/p/zxing/source/browse/trunk/javase/src/com/google/zxing/client/j2se/MatrixToImageWriter.java). However, **this will not work on Android**, since it does not have the `BufferedImage`-class in it's Java implementation!
+It's [sometimes](https://groups.google.com/d/msg/zxing/-LjwQAykQ4M/KsONovYDBIUJ) [suggested](http://stackoverflow.com/q/10090797/717341) to simply use the `javase` module and it's [`MatrixToImageWriter`-class](https://github.com/zxing/zxing/blob/master/javase/src/main/java/com/google/zxing/client/j2se/MatrixToImageWriter.java). However, **this will not work on Android**, since it does not have the `BufferedImage`-class in it's Java implementation!
 
 Executing the code will throw a `ClassNotFoundException` at runtime:
 
@@ -62,9 +61,9 @@ Executing the code will throw a `ClassNotFoundException` at runtime:
 
 Using the `MatrixToImageWriter` to write the matrix to a file and decode it via `BitmapFactory` does **also not work**, since this method uses a `BufferedImage` and the `ImageIO`-class internally. Both of which are **not available in Android**.
 
-### Generating an Android-Bitmap
+## Generating an Android-Bitmap
 
-The alternative to a `BufferedImage` on Android is to use a `Bitmap`, which is Androids "replacement" class. It offers almost the same methods as the `BufferedImage`, so migration of the `toBufferedImage()`-methods is pretty easy. The "Barcode Scanner" application uses a [similar approach](http://code.google.com/p/zxing/source/browse/trunk/android/src/com/google/zxing/client/android/encode/QRCodeEncoder.java#318):
+The alternative to a `BufferedImage` on Android is to use a `Bitmap`, which is Androids "replacement" class. It offers almost the same methods as the `BufferedImage`, so migration of the `toBufferedImage()`-methods is pretty easy. The "Barcode Scanner" application uses a [similar approach](https://github.com/zxing/zxing/blob/c062955c841fd074bfaa42bafeb65b514d4c72fc/android/src/com/google/zxing/client/android/encode/QRCodeEncoder.java#L329):
 
 ```java
 /**
@@ -128,6 +127,6 @@ Note that in a real-live implementation, you'd also need to check the SD-Card's 
 
 ## Conclusion
 
-* For fast integration, [use the `android-integration` module](#intent-integration) and it's `shareText(CharSequence)`-method.
-* For maximum customization, [create a `BitMatrix`](#library-integration) and [convert it into a `Bitmap`](#generating-an-android-bitmap)
+* For fast integration, use the `android-integration` module and it's `shareText(CharSequence)`-method.
+* For maximum customization, create a `BitMatrix` and convert it into a `Bitmap`
 * The `javase` module will not work, because **Android does not offer** the `BufferedImage`-class, nor does it offer `ImageIO`!

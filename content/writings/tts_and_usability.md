@@ -1,13 +1,12 @@
 ---
-title: "Tts and Usability"
+title: "TTS and Usability"
 date: 2014-06-13T16:02:43+01:00
 description: An introduction to TTS on Android
-draft: true
 ---
 
-Belief it or not but there are actual use-cases for a Text to Speech engine in an application, other than just trying it out and never use it again or for annoying people with it.
+There are limited yet very legit use-cases for Text to Speech engines in your application.
 
-An example for such a case is an application that has focus and is currently running, but doesn't require physical contact with the device. These applications still need to update the user, but shouldn't require physical contact to do so. An example of such an application is a Navigation-app or my own [BikeTrack](https://github.com/LukasKnuth/bike-track).
+An example for such a case is an application that has focus and is doing its thing, but doesn't require physical interaction with the device. These applications might still want to update the user regularly, without touching or looking at the device. An example of such an application is a Navigation-app or my own [BikeTrack](https://github.com/LukasKnuth/bike-track).
 
 ## Making Android talk
 
@@ -26,7 +25,7 @@ TextToSpeech tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
 });
 ```
 
-This example is straightforward enough, except for the `OnInitListener`-part: Starting the TTS service and connecting to it might take some time. Therefore, we need some sort of callback to tell us when initialisation is done.
+This example is straightforward enough, except for the `OnInitListener`-part: Starting the TTS service and connecting to it might take some time. Therefore, we need some sort of callback to tell us when initialization is done.
 
 What that means for our code is, that the following won't work:
 
@@ -37,7 +36,7 @@ int result = tts.speak("Testing", ...);
 
 If `speak()` is called directly after the constructor returns, the service might not be started, so we're not able to speak yet.
 
-### The silence before the initialisation
+### Silence before initialization
 
 If we consult the Android Documentation on the [`speak()`-method](http://developer.android.com/reference/android/speech/tts/TextToSpeech.html#speak%28java.lang.String,%20int,%20java.util.HashMap%3Cjava.lang.String,%20java.lang.String%3E%29), it tells us that:
 
@@ -50,11 +49,11 @@ So we told the TTS service to *queue* this speak operation, but if the service i
 
 So, adding speak-operations to the TTS before it's done won't actually just wait until it's initialized and then process them, **they'll be discarded** instead.
 
-### When initialisation fails
+### Initialization might fail
 
-The biggest problem with Androids Documentation on Text to Speech is, that it's not really clear under which circumstances initialisation will fail, or what will happen if we try to use it, even if initialisation failed.
+The biggest problem with Androids Documentation on Text to Speech is, that it's not really clear under which circumstances initialization will fail, or what will happen if we try to use it, even if initialization failed.
 
-By looking at the code, these are the information I could gather on this topic:
+By looking at the code, I could gather the following:
 
 * [Older versions](http://grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/2.3.2_r1/android/speech/tts/TextToSpeech.java#TextToSpeech.initTts%28%29) (API Levels 4 (Android 1.6) to 9 (Android 2.3.2)) don't ever return `FAILED`. They simply don't handle the failure.
 * On newer versions (since API Level 14 (Android 4.0.1)) it's a little more complicated:
@@ -80,7 +79,7 @@ Instead, let us talk about *when* to speak and when to just shut up.
 
 * Allow users to deactivate TTS completely.
 * If you find yourself adding a lot of spoken updates to your application, try grouping all of them into levels of verbosity and let the user choose a level.
-* Be adaptive to the current situation...
+* Be adaptive with the current playback
 * Keep spoken messages short
 
 As a general advice, take into consideration that you can not just quickly skim a spoken update or just stop reading once you have the relevant information, like you can with text. Also, you can't highlight things when speaking (at least not as clearly as with text), so **keep the messages short and to the point**.
@@ -129,7 +128,7 @@ Now, when we want to talk to the user, no other (if any) currently playing appli
 * Use [`AUDIOFOCUS_GAIN_TRANSIENT`](http://developer.android.com/reference/android/media/AudioManager.html#AUDIOFOCUS_GAIN_TRANSIENT) to pause other applications for a short period of time, or
 * use [`AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK`](http://developer.android.com/reference/android/media/AudioManager.html#AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK) if it's something short and other applications may lower their volume for that period (this might indicate, that this message is not *critically* important).
 
-**NOTE**: By requesting the audio focus we *ask* other applications to pause/lower their volume, **they have no obligations to do so**. For example, requesting transient focus with ducking might work as expected for one media player ("Google Play Music" for example) but differently for another (the HTC standard music player just pauses for the time).
+**NOTE**: By requesting the audio focus we *ask* other applications to pause/lower their volume, **they have no obligations to do so**. For example, requesting transient focus with ducking might work as expected for one media player (e.g. "Google Play Music") but differently for another (the HTC standard music player just pauses for the time).
 
 We can set this behavior for our own application by reacting to audio-focus changes in the `OnAudioFocusChangeListener` (as shown in the presentation).
 

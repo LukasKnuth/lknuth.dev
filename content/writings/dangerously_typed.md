@@ -2,7 +2,6 @@
 title: "Dangerously Typed"
 date: 2017-01-07T16:05:00+01:00
 description: Why you should be careful when extending build-in types in TypeScript
-draft: true
 ---
 
 At work, I'm currently building an new Node.js Application. I opted to use Node, because the application is highly parallel and while I could have build it in Java, Node already does all the hard things that come with building multi-threaded Applications.
@@ -103,8 +102,6 @@ The third option (and the one I went with) is to change the target of the TypeSc
     yay!
 
 Since I run the code on Node exclusively, I can use the transpiled ES6 code just fine (as long as I don't use any [unsupported features](http://node.green/)). If you want to use this in a browser, you can run it through [Babel](https://babeljs.io/) to get compatible JavaScript. However, this adds another step to your build-process.
-
-The choice is yours. If you know any other workarounds for this, feel free to share them in the comments below!
 
 ## Conclusion
 
