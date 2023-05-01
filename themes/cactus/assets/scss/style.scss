@@ -52,11 +52,7 @@ body {
   }
   a {
     color: $color-text;
-    text-decoration: none;
-
-  }
-  article a, section#writing ul a, section#projects ul a {
-    @include neon-underline(2px, $color-link, $color-link-end);
+    text-decoration: underline;
   }
   a.icon {
     background: none;

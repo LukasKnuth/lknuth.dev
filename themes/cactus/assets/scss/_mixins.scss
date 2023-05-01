@@ -19,6 +19,7 @@
   -khtml-user-select: none;
 }
 @mixin neon-underline($size, $color-from, $color-to) {
+  text-decoration: none;
   border-image: linear-gradient(90deg, $color-from 0%, $color-to 100%) 1;
   border-bottom: $size solid $color-from;
 

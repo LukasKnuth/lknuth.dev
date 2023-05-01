@@ -36,6 +36,9 @@ article {
         font-size: 1.2rem;
       }
     }
+    a {
+      @include neon-underline(2px, $color-link, $color-link-end);
+    }
   }
   .content img,
   .content video {
