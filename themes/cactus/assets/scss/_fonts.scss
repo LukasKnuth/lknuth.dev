@@ -2,34 +2,34 @@
   font-style: normal;
   font-family: "JetBrains Mono";
   font-display: swap;
-  src: local("JetBrains Mono"), local("JetBrains-Mono"), url("../lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2") format("woff2"), url("../lib/JetBrainsMono/web/woff/JetBrainsMono-Regular.woff") format("woff"), url("../lib/JetBrainsMono/web/eot/JetBrainsMono-Regular.eot") format("embedded-opentype"), url("../lib/JetBrainsMono/ttf/JetBrainsMono-Regular.ttf") format("truetype");
+  src: url("../lib/JetBrainsMono/JetBrainsMono-Regular.woff2") format("woff2");
 };
 
 @font-face {
-  font-family: "Merriweather";
+  font-family: "iA Writer Quattro";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: local("Merriweather"), url("../lib/Merriweather/Merriweather-Regular.ttf") format("truetype");
+  src: url("../lib/iAWriterQuattro/iAWriterQuattroS-Regular.woff2") format("woff2");
 }
 @font-face {
-  font-family: "Merriweather";
+  font-family: "iA Writer Quattro";
   font-style: italic;
   font-weight: 400;
   font-display: swap;
-  src: local("Merriweather"), url("../lib/Merriweather/Merriweather-Italic.ttf"), format("truetype");
+  src: url("../lib/iAWriterQuattro/iAWriterQuattroS-Italic.woff2") format("woff2");
 }
 @font-face {
-  font-family: "Merriweather";
+  font-family: "iA Writer Quattro";
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("Merriweather"), url("../lib/Merriweather/Merriweather-Bold.ttf"), format("truetype");
+  src: url("../lib/iAWriterQuattro/iAWriterQuattroS-Bold.woff2") format("woff2");
 }
 @font-face {
-  font-family: "Merriweather";
+  font-family: "iA Writer Quattro";
   font-style: italic;
   font-weight: 700;
   font-display: swap;
-  src: url("Merriweather"), url("../lib/Merriweather/Merriweather-BoldItalic.ttf"), format("truetype");
+  src: url("../lib/iAWriterQuattro/iAWriterQuattroS-BoldItalic.woff2") format("woff2");
 }
