@@ -1,0 +1,12 @@
+<div class="education">
+	<span class="dot">&nbsp</span>
+	<div class="headline">
+		<span class="times">{{ .from }} &mdash; {{ .until }}</span>
+		<span class="degree">{{ .degree }}</span>
+	</div>
+	<div class="subline">
+		from <span class="school">{{ .school }}</span> 
+		in <span class="city">{{ .city }}</span>
+	</div>
+	<p class="notes">{{ .notes | markdownify }}</p>
+</div>

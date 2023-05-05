@@ -6,21 +6,21 @@ copyright = "Lukas Knuth"
 theme = 'cactus'
 
 [[menu.main]]
-name = "Home"
-url = "/"
-weight = 1
-[[menu.main]]
 name = "Writings"
 url = "/writings"
-weight = 2
+weight = 1
 [[menu.main]]
 name = "About"
 url = "/about"
 weight = 10
 [[menu.main]]
+name = "CV"
+url = "/cv"
+weight = 11
+[[menu.main]]
 name = "Imprint"
 url = "/imprint"
-weight = 11
+weight = 50
 
 [params]
 mainSection = "writings"
