@@ -1,6 +1,7 @@
 ---
 date: 2022-10-19T01:21:00+02:00
 title: Impressum
+index: false
 ---
 
 [Impressum auf Englisch / Imprint in English](/imprint)
