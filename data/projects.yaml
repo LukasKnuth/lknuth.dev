@@ -1,7 +1,13 @@
 list:
 - name: homeserver
   url: https://github.com/LukasKnuth/homeserver
-  desc: The full configuration of my RPi server at home, including K8s and Nix OS
+  desc: The full configuration of my RPi server at home, including K8s and Nix OS.
 - name: HackerSchool
   url: https://github.com/LukasKnuth/HackerSchool
   desc: An interactive learning tool for my HackerSchool "Think like a Programmer" course.
+- name: BackSlide
+  url: https://gitlab.com/p91paul/BackSlide
+  desc: A Gnome Shell Extension to automatically switch wallpapers, initially written by me during my studies. Now maintained by Paolo 💪
+- name: pacman
+  url: https://github.com/LukasKnuth/pacman
+  desc: A faithful adaptation of the arcade classic on my own engine, written when I just learned programming.
