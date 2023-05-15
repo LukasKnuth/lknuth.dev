@@ -1,7 +1,10 @@
 ---
 title: Delightfully Boring
-date: 2023-05-07T20:20:00+02:00
-draft: true
+date: 2023-05-15T13:30:00+02:00
+---
+
+This article was originally published on [tech.7mind.de](https://tech.7mind.de/posts/delightfully_boring/)
+
 ---
 
 When I joined 7Mind a year ago, I was hired partially to help migrate the existing system away from micro-services towards a new monolithic Elixir application.
