@@ -1,7 +1,6 @@
 ---
-title: "Trust the process"
-date: 2023-05-27T17:10:00+02:00
-draft: true
+title: "Work in an efficient team"
+date: 2023-06-02T15:10:00+02:00
 ---
 
 Some years ago I worked in a team of software developers which I still consider the most productive team I have ever been a part of. We built a large system for our internal users with a dozen product team members and had a turnaround time from _idea_ to _implementation_ of about three weeks. This is how we did it.
@@ -12,7 +11,7 @@ The work that needed doing was split into two buckets: the eternal pull-queue of
 
 Since the team had a very high degree of maturity and everyone's experience was basically on-par, we rotated everything. A typical month then was working on the pull-queue for the first week, being part of a project for the next two weeks and then getting to wind down again with a week of pull-queue. Rinse and repeat.
 
-## Projects
+# Shape Up
 
 The basis for our system was [Basecamp's Shape Up](https://basecamp.com/shapeup). We adapted it for our specific use-case, taking what made sense and slightly altering things to work well with already established processes or business realities we could not affect.
 
@@ -52,6 +51,8 @@ The objective was to get from _imagined_ work to _discovered_ work as quickly as
 
 ## Vertical Slices
 
+{{< svg src="/efficient_team/your_slice.svg" class="res-right" width="270px" >}}
+
 These iterations where vertical slices, starting of with many mocked layers which where gradually replaced by the actual implementations. The goal was to build something stakeholders could get their hands on early to determine if the solution would deliver the value we envisioned. If this turned out not to be the case, we could pivot early when making big changes was still relatively cheap.
 
 The goal of these slices was always to _discover_ as much work as possible. To maximize this, we went for anything **novel** (what we hadn't built before) and **core** (what was central to the solution) first, choosing small pieces of _imagined work_. If no small pieces existed that matched the aforementioned criteria, we made the larger ones smaller by mocking extensively.
@@ -75,6 +76,8 @@ As tasks where placed into their respective scopes, we would categorize them int
 
 We took this serious, only promoting something to "downhill" when we could validate (e.g. through a prototype) that everything was truly understood and going to work as we expected.
 
+{{< svg src="/efficient_team/uphill_downhill.svg" >}}
+
 The tickets in a scope could then be summed up to show the overall phase of the scope. We'd aim to first get _all_ tickets out of the "uphill" phase before then implementing them all in a concentrated pair programming session. This drastically reduced the chances of complexity catching us off guard during implementation.
 
 We'd try to finish one scope before tackling the next, except if progress was blocked or no primary scope had been chosen yet. Depending on the available project resources we would parallelize by working on multiple scopes simultaneously. 
@@ -91,7 +94,7 @@ During the reporting, managing members of the project team could take the role o
 
 ## Good enough
 
-> Perfect is the enemy of good
+{{< svg src="/efficient_team/cutting_scope.svg" caption="Perfect is the enemy of good" class="res-left" width="270px" >}}
 
 With all the scope cutting, some colleagues felt they where failing to deliver. Cutting scope had previously been a last resort and doing it frequently felt like failing to deliver many times over. When a final result was achieved but didn't match what was envisioned in the shape or at the start of the project, these colleagues felt like the whole project was a failure.
 
@@ -99,10 +102,25 @@ Worse yet, when these colleagues felt like _their_ project needed to cut scope, 
 
 To counteract this thinking, we put emphasis on comparing project outcomes to the _baseline_ experience for users before the project. We also made it clear that we would not compromise on software quality, knowing that - as a product company - we'd have to support bad software for longer than we'd like. It took a while until this paradigm shift took hold, but eventually it did.
 
-# Problems
+# Difficulties
 
-* Shapes handed down from above
-* Short supply of certain resources (designers)
-* Not written out before i did it
-* Stakeholders where not on-board enough (given too little time) 
-* Sometimes we didn't built what stakeholders initially wanted which management didn't love
+We where a small product team, meaning specialist roles such as Designers where in short supply.
+This was tackled by having them work out wire-frames and interaction diagrams beforehand (as part of the shaping process).
+The drawback of this was that when we decided to pivot the project, this work was outdated to some degree and updating it took longer than ideal.
+
+More generally, to process had a special group of the team go off in secret to work on a shape that was then handed down to be worked on.
+This meant it was hard for people outside of this group to get a sense of the overall direction we where heading in.
+Or influence that direction.
+The leads went to great pains to involve everyone in larger decisions, but the feeling of your own direct impact was muted quite a bit.
+
+Organizational realities outside of our control meant that stakeholders where often added to projects _on top_ of their regular work. 
+This meant they had less time available for the projects than we would have liked.
+The consequence was that some amount of work was done based on speculation before it could be validated, at times resulting in wasted effort.
+
+We used to say the product team in this company existed "on an island".
+Where our processes had feedback loops and gave room for creativity, the rest of the company ran on static hierarchical processes.
+That made it jarring for stakeholders from such teams to be open to explore the problem space or embrace uncertainty.
+We attempted an onboarding process to prepare them, but this was only partially successful.
+This was a challenge on the level of the whole organization.
+
+Not everything was fantastic all the time, as is often the case in the real world. But I still remember the time I had with this team fondly.

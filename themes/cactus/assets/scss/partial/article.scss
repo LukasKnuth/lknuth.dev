@@ -136,6 +136,18 @@ article {
       text-align: center;
       font-size: .9em;
     }
+    .res-left {
+      float: left;
+      @media screen and (max-width: 500px) {
+        float: none;
+      }
+    }
+    .res-right {
+      float: right;
+      @media screen and (max-width: 500px) {
+        float: none;
+      }
+    }
   }
 }
 .posttitle {
