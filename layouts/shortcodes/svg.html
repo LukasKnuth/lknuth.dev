@@ -1,0 +1,9 @@
+<!-- WHY? fonts in SVG aren't loaded in 'img' tags... -->
+<figure {{ with .Get "class" }}class="{{ . }}"{{ end }}>
+	<div class="svg" style="{{with .Get "width"}}width:{{.}};{{end}} {{with .Get "height"}}height:{{.}};{{end}}">
+		{{ readFile (print "assets/svg/" (.Get "src")) | safeHTML }}
+	</div>
+	{{ with .Get "caption" }}
+		<figcaption>{{ . | markdownify }}</figcaption>
+	{{ end }}
+</figure>

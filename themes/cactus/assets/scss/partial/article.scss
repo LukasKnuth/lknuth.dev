@@ -39,7 +39,7 @@ article {
     a {
       @include neon-underline(2px, $color-link, $color-link-end);
     }
-    img, video {
+    img, video, .svg {
       display: block;
       margin: auto;
       max-width: 100%;
