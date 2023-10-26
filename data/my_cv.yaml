@@ -1,15 +1,29 @@
 list:
 - company: 7Mind
+  from: June 2023
+  city: Berlin (Remote)
+  position: Principal Engineer - Backend
+  tech_stack: [elixir, nodejs, kubernetes, terraform, gke, ddd]
+  work: |
+    I'm learning to balance my new responsibilities and the backend work in my teams domains.
+    I have moved away from delivering features as my main focus.
+    Instead, I'm taking a direct role in company wide architecture work and planning.
+
+    In addition, I now own my teams processes with the goal of making us a true cross-functional team.
+    To do this, I'm adopting "Shape Up" by Basecamp, which I already enjoyed at a previous job.
+
+- company: 7Mind
   from: April 2022
+  until: June 2023
   city: Berlin (Remote)
   position: Senior Full-Stack Developer
-  tech_stack: [elixir, kubernetes, terraform, gke, ddd]
+  tech_stack: [elixir, nodejs, kubernetes, terraform, gke, ddd]
   work: |
-    My work is twofold. Primarily, I'm owning the backend side of my cross-functional teams domains.
-    This means planning, implementing and observing modules to build new value propositions for our customers.
+    My work was twofold. Primarily, I owned the backend side of my cross-functional teams domains.
+    This meant planning, implementing and observing modules to build new value propositions for our customers.
 
-    Secondary is the work to simplify the existing system, made up of a ruby monolith and micro-services with lots of tech debt.
-    We're archiving this by integrating commodity software, rewriting legacy systems to better fit their domain and thoroughly documenting the rest.
+    Secondary was the work to simplify the existing system, made up of a Ruby monolith and micro-services with lots of tech debt.
+    We where archiving this by integrating commodity software, rewriting legacy systems to better fit their domain and thoroughly documenting the rest.
     All under the banner of "Delightfully Boring".
 
 - company: BetterDoc
