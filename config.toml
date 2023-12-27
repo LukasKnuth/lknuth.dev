@@ -4,6 +4,7 @@ title = 'Lukas Knuth // Developer'
 copyright = "Lukas Knuth"
 
 theme = 'cactus'
+enableInlineShortcodes = true
 
 [[menu.main]]
 name = "Writings"
