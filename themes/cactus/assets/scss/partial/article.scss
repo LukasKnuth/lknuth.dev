@@ -41,6 +41,10 @@ article {
     a {
       @include neon-underline(2px, $color-link, $color-link-end);
     }
+    ul, ol {
+      padding: 0;
+      margin-left: 15px;
+    }
     img, video, .svg {
       display: block;
       margin: auto;
@@ -80,6 +84,9 @@ article {
 
       p {
         margin: 0;
+      }
+      ul, ol {
+        margin-left: 5px;
       }
       &:before {
         color: $color-quote;
