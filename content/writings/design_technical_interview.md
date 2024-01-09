@@ -1,9 +1,8 @@
 ---
 title: "Design a Technical Interview"
-date: 2023-10-28T14:00:00+02:00
+date: 2023-12-28T14:00:00+02:00
+draft: true
 ---
-
-TODO Look at the times here and decide on one! Also read up on times...
 
 Last year, the company I work for was looking to hire a Backend Engineer.
 We wanted somebody who was a senior or on their way to becoming one.
