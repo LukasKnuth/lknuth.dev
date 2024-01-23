@@ -24,14 +24,14 @@ Such a list might look like this:
 <li>{{< ref-boring.inline >}}We try to make our systems <a href='/writings/delightfully_boring'>Delightfully Boring</a> - candidates should be pragmatic{{< /ref-boring.inline >}}</li>
 <li>{{< ref-process.inline >}}Our processes aren't settled yet and are subject to change - candidates must be able to adapt and share their own insights{{< /ref-process.inline >}}</li>
 <li>{{< ref-learn.inline >}}Candidates must be willing to learn on the job - we don't require in-depth prior knowledge of our tech stack{{< /ref-learn.inline >}}</li>
-<li>{{< ref-pair.inline >}}We pair on complex things and ask colleagues to challenge our ideas{{< /ref-pair.inline >}}</li>
+<li>{{< ref-pair.inline >}}We pair on the bigger problems - both to tackle complexity and to challenge each others solutions{{< /ref-pair.inline >}}</li>
 <li>{{< ref-high-vantage.inline >}}The backend team makes big decisions autonomously - we need people that can discuss ideas from a high vantage-point and not get bogged down in details{{< /ref-high-vantage.inline >}}</li>
 <li>{{< ref-ideas.inline >}}We value engineers who bring their own thoughts and ideas - not code monkeys that simply do what they're told{{< /ref-ideas.inline >}}</li>
 </ul>
 
 Each point should be general enough to avoid specifics, yet clear enough to feel tangible.
-This will vary depending on the company and work you do.
-If you are working for an Agile consultancy for example, the specific agile methodology is probably more important to you.
+The exact degree of "specific" will depend on your companies situation.
+For example, if you are a Flutter consultancy, experience specifically with Flutter is likely important to you.
 
 Don't be fooled, it took quite a while to distill everything down to just the list above.
 This is also not a job for one person alone.
@@ -81,7 +81,7 @@ We therefore expect the candidate to spend little time on it.
 
 > * {{< ref-pair.inline />}}
 
-Since we often pair on more complex tasks at work, the interview is no different.
+Because we pair regularly, the interview is no different.
 The candidate is the Driver, making the decisions and steering the the interviews direction.
 The interviewer takes the role of the navigator, answering questions and giving insight to guide the candidate.
 
@@ -91,10 +91,9 @@ The interviewer takes the role of the navigator, answering questions and giving 
 
 Extending existing systems is a very relevant task.
 We have a number of complicated legacy systems.
-While we usually don't expect to touch them at all, we can't break them either.
+While we usually don't expect to touch these systems at all, we can't break them either.
 
 Candidates must have the ability to grasp existing systems, find the right place to extend them and plan everything out.
-Designs are then vetted by other team members before they're applied.
 Once again we're interested in seeing if a candidate can identify and stick to the relevant parts of the problem.
 Diagrams created in this step are not expected to be beautiful, only cohesive.
 
@@ -112,18 +111,18 @@ Designing the system is only half the story though.
 For the **Software Development** portion of the interview, we ask candidates to build a _small piece_ of the solution they just modeled.
 
 Again, we don't enforce any specific tooling.
-While we hire engineers to work in a specific programming language, we don't require prior knowledge of it.
+While we hire engineers to work in Elixir, we don't require prior knowledge of it.
 We expect capable developers are able to adopt to a new language quickly, so proficiency with language/tooling isn't a focus for the interview.
 
 Candidates are free to use whatever language/framework/environment they're proficient with.
 Pseudo code is also accepted.
-It's not relevant to us if the candidate knows all standard library functions by heart.
+It's not relevant to us if the candidate knows their languages standard library by heart.
 Code doesn't need to compile either, as long as the intend is clearly communicated.
 
-Our approach to processes is similar.
-We expect them to be slightly different to what the candidate is used to from their previous workplace.
-Even if they share the same name or ideology.
-We expect they will learn these during their onboarding period.
+Our approach to team processes is similar.
+We don't treat popular processes like Agile or Shape-Up like dogma.
+Instead, we pick and choose what works for us, revisiting and refining as needed.
+This means that whatever touch points the candidate previously had with these processes, the details will differ.
 
 > * {{< ref-ideas.inline />}}
 > * {{< ref-boring.inline />}}
@@ -148,11 +147,13 @@ We give the candidate time to read it, highlight what _they_ think is important 
 The **third** step is to design the system as stated in the problem.
 We use an infinite modeling canvas for all this, currently Miro.
 During this phase we try to offer soft guidance where necessary and keep an eye on the time, aiming for about 20min.
+When the candidate is happy with their design, we shortly discuss pros/cons as well as issues and solutions we see.
 
 The final, **fourth** step is to take a piece of the problem statement and write code to solve it.
 We let the candidate use their familiar tooling and simply share their screen.
 During this phase we help with questions and challenge if the code fits the previously designed system.
 Once again, we keep the time and aim for 20min.
+As with the design, we shortly discuss pros/cons as well as issues/solutions of the code.
 
 ## Learnings
 
@@ -162,9 +163,10 @@ Many companies require developers to create small sample projects in their free 
 This tends to penalize people with families or just less free time, so we decided to avoid it.
 We've gotten largely positive feedback from candidates for this decision.
 
-Many candidates spend too much time making their systems diagrams pretty.
-Instead discouraging this verbally, we could also use less precise tooling, like MS Paint.
-If the tool doesn't allow perfectly adjusting boxes, it's immediately clear that this isn't expected either.
+Many candidates spend too much time making their diagrams look pretty.
+This is an interesting observation.
+On the one hand, we could discourage this behavior for example by choosing tooling that doesn't allow for precise alignment of diagrams.
+On the other hand, we also fell this is a good tell if the candidate is able to focus on what's relevant.
 
 Interviews like these create high pressure situations, almost like school tests.
 Additionally, time is very constrained.
