@@ -4,24 +4,24 @@ date: 2024-03-04T15:45:25+01:00
 draft: true
 ---
 
-As I'm writing this post from our temporary holliday home in Spain, I'm writing it on my old student laptop.
+For out upcoming vacation I was looking for something to write a few articles on.
+I didn't want to bring my fancy MacBook from work on a personal trip though.
+So I found my old Laptop from when I was a University student and thought "I can make that work".
 
 ## The Hardware
 
-I first bought this Lenovo IdeaPad U330p about 10 years ago when I was a university student.
-It has an Intel i5-4210U with a whooping 1.7GHz with two cores (each with two threads).
+I first bought this Lenovo IdeaPad U330p about 10 years ago on a student budget.
+It has an Intel i5-4210U with a whooping 1.7GHz (boost up to 2.7GHz) with two cores (each with two threads).
+The chip has a Intel HD Graphics 4400 on board as well.
 It sports 4GB of RAM and a 256GB SSD.
 The built-in Intel Wireless 7260 chip does 2.4 and 5 GHz WiFi up to the 802.11ac standard.
 
-Back in the day, this was a cheap laptop that a student could afford.
+Back in the day, this was a good, middle-of-the-road laptop that a student could afford.
+I payed 600€ for it.
 Today, it's a relic that was sitting in a corner of my apartment for the last seven years.
 Until a few days ago when I dusted it off and installed a fresh system.
 
 ## Problems
-
-For out upcoming holiday I was looking for something to write a few articles on.
-I didn't want to bring my fancy MacBook from work on a personal trip though.
-So I found this old thing and thought "I can make that work".
 
 First off, the battery is entirely dead and the device won't run without a constant power connection.
 Unplug it for even a moment and everything goes dark.
