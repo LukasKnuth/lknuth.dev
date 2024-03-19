@@ -11,7 +11,9 @@ Since I started my professional career, I have been a Mobile Developer on Androi
 
 I most enjoy the technical aspects of the job, the actual coding as well as communicating complex technical concepts efficiently to non-technical colleagues.
 
-The writings in this Blog represent my own opinions. The topics range broadly, and so does the quality. I only write here when inspiration strikes.
+The writings in this Blog represent my own opinions.
+The topics range broadly, and so does the quality.
+I only write here when inspiration strikes.
 
 ## Contact
 
