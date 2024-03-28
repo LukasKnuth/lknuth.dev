@@ -157,19 +157,160 @@ fs.writeFileSync("out.xhtml", simple.content, "utf8")
 ```
 
 Since readability is a JavaScript library, I switched over from Python.
-Even though I preferr BeautifulSoup to JSDom, I didn't have to use it much anymore now.
 The above code parses the entire HTML file, finds the relevant article text and simplifies it greatly.
 
-It also parses a bunch of metadata from the article, such as title, author publishing time, etc.
-This got me thinking: I should do _something_ with this information.
+Crucially, the result still had many `<div>` and `<span>` tags used for styling.
+In my persude of clean, simple XHTML, I would still have to find and unwrap these tags.
+And while this was easy enough with BeautifulSoup, JSDom didn't surface a nice and simple API.
+I thought about using jQuery on top of JSDom to make the API nicer, but decided this was madness.
+
+readability also parses a bunch of metadata from the article, such as title, author publishing time, etc.
+I could simply render this information into a `<header>` for the article.
+But it would also be useful to build a table of contents later on.
 
 ### Perspective shift
 
 What I needed was a simpler intermediate format.
 One that wouldn't allow for complicated markup and focused on purely textual content.
-One that would allow me to store the metadata that readability extracted along with the article, to be used in the next step.
+One that would allow me to store the extracted metadata along with the article, in a structured form.
 One that could easily be converted to XHTML again.
 
-Wait, I know such a format.
-I use it to write this Blog.
-I'm looking for Markdown!
+```markdown
+---
+title: Test
+author: Me
+---
+
+# Obviously
+
+Markdown could be my intermediate format! With YAML front-matter to store metadata.
+```
+
+The aptly named [turndown](https://github.com/mixmark-io/turndown) library does exactly that: Turn HTML to Markdown.
+It does not support the YAML front-matter out-of-the-box, but that's easy enough to add.
+
+```javascript
+const TurndownService = require("turndown")
+
+function generateMarkdown(readable) {
+  const td = new TurndownService()
+  td.keep(["table"])
+  return td.turndown(readable.content)
+}
+
+function generateFrontMatter(readable) {
+	// NOTE: Can't correctly indent this because then front-matter in the file is indented and breaks YAML
+	return `---
+title: ${readable.title}
+author: ${readable.byline}
+---
+
+`
+}
+
+// In addition to the above script
+const output = generateFrontMatter(simple) + generateMarkdown(simple)
+fs.writeFileSync("out.md", output, "utf8")
+```
+
+This gave good results and I was satisified.
+You can find the [full script](https://github.com/LukasKnuth/epub_tools/blob/main/cleanup.js) in the tools repo that acompanies this post.
+
+## Compile to EPUB
+
+TODO perhaps rather "bundle" ?
+
+With the actual content now cleaned up, it is time to compile everything together.
+
+Rather than read through the EPUB standard, I looked for a minimal working example instead.
+I found [Minimal Ebook](https://github.com/thansen0/sample-epub-minimal) with exactly that.
+Lets get the simple stuff out of the way first:
+
+* A `.epub` file is a renamed ZIP file
+* In the root of that ZIP file, the `mimetype` file is located with `application/epub+zip` as it's content
+* Also in the root, the standard expects a `META-INF` folder with a [single `container.xml` file](https://github.com/thansen0/sample-epub-minimal/blob/master/minimal/META-INF/container.xml)
+* That file simply points us to the `content.opf` file, which can exist in an arbitrary directory
+* The `content.opf` file is a manifest of all files the ebook references
+
+With this information known, lets build a simple compiler.
+It takes markdown files from a directory, renders them to XHTML and adds them to the manifest.
+
+```javascript
+const { marked } = require("marked")
+const { markedXhtml } = require("marked-xhtml")
+const frontMatter = require("yaml-front-matter")
+const Handlebars = require("handlebars")
+
+marked.use(markedXhtml())
+
+const articleTemplate = Handlebars.compile(fs.readFileSync("templates/article.xhtml").toString())
+const manifestTemplate = Handlebars.compile(fs.readFileSync("templates/content.opf").toString())
+
+function parseArticle(file) {
+  const content = fs.readFileSync(file, "utf-8")
+  const matter = frontMatter.safeLoadFront(content)
+  matter.id = path.parse(file).name // file-name without the extension
+  return matter
+}
+
+function writeArticle(article) {
+  const content = marked.parse(article.__content)
+  const rendered = articleTemplate({...article, content})
+  // TODO write the file to our ZIP file
+  return {article.id+".xhtml", id: article.id, mimetype: "application/xhtml+xml"}
+}
+
+const files = listDirectory(process.argv[2]).map(parseArticle).map(writeArticle)
+const manifest = manifestTemplate({files})
+// TODO write manifest to ZIP file
+```
+
+I removed writing the actual files to the filesystem/ZIP file from the snippet for bravity.
+The [article template](https://github.com/LukasKnuth/epub_tools/blob/main/templates/article.xhtml) is less interesting, lets look at the manifest instead:
+
+```xml
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0">
+  <!-- Metadata element removed -->
+	<manifest>
+	  {{#each files}}
+	  <item id="{{id}}" href="{{file}}" media-type="{{mimetype}}" />
+	  {{/each}}
+	</manifest>
+	<spine>
+	  {{#each files}}
+	  <itemref idref="{{id}}" />
+	  {{/each}}
+	</spine>
+</package>
+```
+
+**NOTE**: This snippet is shortened - and therfore **not fully valid**.
+
+The main elements are:
+- `<metadata>` (we'll look at that later)
+- `<manifest>` lists _all_ files in the EPUB
+- `<spine>` sets the order in which Text files are stiteched together to a book
+
+If we Zip all of this up together, our structure should looks like this:
+
+```
+out.epub
+├── META-INF
+│  └── container.xml
+├── mimetype
+└── OEBPS
+   ├── c1-internet-speed-limit.xhtml
+   ├── c2-18th-century-email.xhtml
+   └── content.opf
+```
+
+This is a valid EPUB!
+
+### Styles
+
+While valid, we still need to add a few things to our archive.
+One of which is styles, in the form of CSS.
+
+I didn't bother too much with this,
+
+### Images
