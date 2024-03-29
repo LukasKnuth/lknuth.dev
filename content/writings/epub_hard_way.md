@@ -257,7 +257,7 @@ function writeArticle(article) {
   const content = marked.parse(article.__content)
   const rendered = articleTemplate({...article, content})
   // TODO write the file to our ZIP file
-  return {article.id+".xhtml", id: article.id, mimetype: "application/xhtml+xml"}
+  return {file: article.id+".xhtml", id: article.id, mimetype: "application/xhtml+xml"}
 }
 
 const files = listDirectory(process.argv[2]).map(parseArticle).map(writeArticle)
@@ -305,12 +305,198 @@ out.epub
 ```
 
 This is a valid EPUB!
+It's a bit boring though.
 
 ### Styles
 
-While valid, we still need to add a few things to our archive.
-One of which is styles, in the form of CSS.
+Since EPUB builds on web technologies, it makes sense that styling is done in CSS.
+It also makes sense that the support veries a lot from vendor to vendor.
+Some styles are accepted by _some_ readers but ignored by others.
 
-I didn't bother too much with this,
+To make it easy on mylsef, I reused this [CSS Boilerplate](http://bbebooksthailand.com/bb-CSS-boilerplate.html) and simplified it.
+I did add some extra rules for chapter headings, though.
+The full style is [in the repo](https://github.com/LukasKnuth/epub_tools/blob/main/templates/style.css) if you're interrested.
+
+As this is yet another file, it also requires an entry in the `<manifest>` of our `content.opf` file.
+The entry has the same format, except the mimetype is `text/css`.
+We can then link it in the XHTML files using the normal `<link href="css/style.css" rel="stylesheet" type="text/css"/>`
+Note that the `href` is relative to the `content.opf` file, so no traversal via `../` is required.
 
 ### Images
+
+This is the more interesting problem: Images from the articles where downloade together with the text, so the final EPUB should also have these images.
+In practice this means we have to:
+
+1. Find all the images referenced in an article
+2. Find the local image (if it exists)
+3. Add that index to the ZIP file and `<manifest>`
+4. Rewrite the reference in the article to match the path inside the EPUB
+
+Luckly, the "marked" Markdown library I'm using allows invoking the lexer driectly, which gives us the [AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree) for the parsed markdown file.
+To explain what that means and why it helps, lets look at an example:
+
+```javascript
+> marked.lexer("![the alt text](path/to/img.png)")
+[
+  {
+    type: 'paragraph',
+    raw: '![the alt text](path/to/img.png)',
+    text: '![the alt text](path/to/img.png)',
+    tokens: [
+      {
+        type: 'image',
+        raw: '![the alt text](path/to/img.png)',
+        href: 'path/to/img.png',
+        title: null,
+        text: 'the alt text'
+      }
+    ]
+  },
+  links: {}
+]
+```
+
+For the given Markdown text, the lexer parsed the syntax into a (very small) tree.
+The first node in the tree is the `paragraph`, which wraps all markdown blocks by default.
+Next, we have our `image` with the `href` pointing to the path of the file.
+This is what we're interrested in.
+
+```javascript
+function writeImages(tokens, article_id, zip, results) {
+  for (const token of tokens) {
+    if (token.type === "image") {
+      if (fs.existsSync(token.href)) {
+        const zip_path = `img/${article_id}/${path.basename(token.href)}`
+        // add to Zip
+        zip.file(zip_path, fs.createReadStream(token.href))
+        // Rewrite href
+        token.href = zip_path
+        // add to manifest
+        results.push({file: zip_path, id: zip_path, mimetype: mime.lookup(token.href)})
+      } else {
+        console.warn(`Image ${full_path} not found. Ignoring...`)
+      }
+    } else {
+      writeImages(token.tokens, article_id, zip, results)
+    }
+  }
+  return results
+}
+```
+
+This simple recursive function traverses the AST, looking for any `image`.
+Once it completes all referenced image files are in the ZIP and the `href` are updated to reflect the new path.
+Doing this while compiling the ebook has the benefit that the layout of input files does not matter, as long as the references to the image files are valid.
+
+The array we return has the same objects as the `writeArticle` we wrote earlier.
+We can update the function to return an array instead of a single object and add both article and its images to the manifest:
+
+```javascript
+function writeArticle(article) {
+  // ... code as before
+  const tokens = marked.lexer(article.__content)
+  const images = writeImages(tokens, article.id, zip, [])
+  return [
+    {file: article.id+".xhtml", id: article.id, title: article.title, mimetype: "application/xhtml+xml"},
+    ...images
+  ]
+}
+
+// Replace map() with flatMap()
+const files = listDirectory(process.argv[2]).map(parseArticle).flatMap(writeArticle)
+const manifest = manifestTemplate({files})
+```
+
+With this in place, we now have all our files in the ZIP file and listed in the manifest.
+Almost done!
+
+### Table of Contents
+
+I lied to you.
+In the snippet above, I snuck in an additional change.
+I added `title` to the object describing the article.
+
+We have this information from what the "readability" library parsed out for us.
+It's time to use it now to create the Table of Contents.
+
+```javascript
+function writeManifest(zip, files) {
+  const toc = files.filter(f => !!f.title)
+  zip.file("toc.xhtml", tocTemplate({toc}))
+  zip.file("content.opf", manifestTemplate({files, toc}))
+}
+```
+
+We use the `title` property to filter out everything that should show up in our table of contents.
+We'll write the actual table using the `toc.xhtml` file, which is [pretty boring](https://github.com/LukasKnuth/epub_tools/blob/main/templates/toc.xhtml) again (it's just an `<ol>`).
+More importantly, we'll want to update `content.opf` with this new information:
+
+```xml
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0">
+  <!-- Metadata element removed -->
+  <manifest>
+    <item id="toc" href="toc.xhtml" media-type="application/xhtml+xml" properties="nav" />
+    <item id="style" href="css/style.css" media-type="text/css" />
+    {{#each files}}
+    <item id="{{id}}" href="{{file}}" media-type="{{mimetype}}" />
+    {{/each}}
+  </manifest>
+  <spine>
+    <itemref idref="toc" />
+    {{#each toc}}
+    <itemref idref="{{id}}" />
+    {{/each}}
+  </spine>
+</package>
+```
+
+We updated `<spine>` to only include the table of content files.
+If we didn't do that, we'd have the CSS file and all our images in the `<spine>` as well.
+Note that the `toc.xhtml` entires are static, because they'll always be there.
+
+Now we have an automatically generated Table of Contents from our actual article titles.
+Everything is coming together nicely.
+
+### Metadata
+
+Last stop: metadata.
+I have held onto this bit for last because it's more involved than is apparent.
+Here is our `content.opf` file again, this time only the `<metadata>` part:
+
+```xml
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uid" version="3.0">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:identifier id="uid">urn:uuid:{{uuid}}</dc:identifier>
+    <dc:title id="t1">{{title}}</dc:title>
+    <dc:creator id="author">{{author}}</dc:creator>
+    <dc:language>en</dc:language>
+  </metadata>
+  <!-- manifest/spine come here -->
+</package>
+```
+
+The [EPUB 3.3 specification](https://www.w3.org/TR/epub-33/#sec-opf-dcmes-required) defines the required meta elements as `dc:identifier`, `dc:title` and `dc:language`.
+
+While title and language are pretty clear, the identifier is supposed to identify this particular book uniquely.
+It is referenced in the `<package>` element, where `unique-identifier` points to the ID we gave to the `dc:identifier` element.
+Because our book doesn't have an official ISBN number, we use `urn:uuid` and generate a UUID for each compilition.
+Note that the spec says:
+
+> Unique Identifiers should have maximal persistence both for referencing and distribution purposes. EPUB creators should not issue new identifiers when making minor revisions such as updating metadata, fixing errata, or making similar minor changes.
+
+So if you're going to publish the EPUB, the identifier should be more stable than this.
+For our purposes, where we're just building them for ourselfs, it's fine though.
+
+To verify that all of this information is as expected, we can use a validator like [EPUBCheck](https://www.w3.org/publishing/epubcheck/).
+You can freely download it and let it run over the whole `.epub` file we have created.
+
+## Wrap up
+
+Thats it.
+Did I have to make it this complicated for myself? Probably not.
+It was a rewarding little programming excersise that I could workt through without major hurdles and just build out.
+It was fun.
+And now I have a new book to read.
+
+The snippets in this article are taken from the accompanying [repository](https://github.com/LukasKnuth/epub_tools/), which has the full scripts, template and docs.
+
