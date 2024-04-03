@@ -59,10 +59,10 @@ It might have just been my own curiosity though.
 
 I started off by looking at how another great online source for e-books does it: [StandardEbooks](https://standardebooks.org/)
 They take publicly available works, digitized for the public and carefully touch them up to professional standards.
-They have a great catalogue and a most importantly, a very detailed guide on e-book creation, typesetting and some nice tooling.
+They have a great catalog and a most importantly, a very detailed guide on e-book creation, typesetting and some nice tooling.
 
 I started by looking through their _extensive_ [manual of style](https://standardebooks.org/manual/) - and immediately decided this was too detailed.
-Their [Step by step guide](https://standardebooks.org/contribute/producing-an-ebook-step-by-step) turned out to be a more appropriate resource.
+Their [Step-by-step guide](https://standardebooks.org/contribute/producing-an-ebook-step-by-step) turned out to be a more appropriate resource.
 Throughout the guide, they use [their own tooling](https://github.com/standardebooks/tools) to perform various tasks. Which got me thinking.
 
 Going through the guide, it struck me that there was a bunch of manual work involved.
@@ -131,7 +131,7 @@ It would also make it hard to generate a table of contents from the file without
 
 ### Learn to stop worrying
 
-By chance when looking into how other tools automated this part, I came accros [mozilla/readability](https://github.com/mozilla/readability).
+By chance when looking into how other tools automated this part, I came across [mozilla/readability](https://github.com/mozilla/readability).
 This is the standalone library powering FireFox "Reader View", which simplifies page content and presents it very much like an e-book reader would.
 
 TODO Some images here???
@@ -221,7 +221,7 @@ You can find the [full script](https://github.com/LukasKnuth/epub_tools/blob/mai
 With the actual content now cleaned up, it is time to bundle everything together.
 
 Rather than read through the EPUB standard, I looked for a minimal working example instead.
-I found [Minimal Ebook](https://github.com/thansen0/sample-epub-minimal) with exactly that.
+I found [Minimal E-Book](https://github.com/thansen0/sample-epub-minimal) with exactly that.
 Let's get the simple stuff out of the way first:
 
 * A `.epub` file is a renamed ZIP file
@@ -426,7 +426,7 @@ function writeManifest(zip, files) {
 ```
 
 We use the `title` property to filter out everything that should show up in our table of contents.
-We'll write the actual table using the `toc.xhtml` file, which is [pretty boring](https://github.com/LukasKnuth/epub_tools/blob/main/templates/toc.xhtml) again (it's just an `<ol>`).
+We'll write the actual table using the `toc.xhtml` file, which is [pretty boring](https://github.com/LukasKnuth/epub_tools/blob/main/templates/toc.xhtml) again (it's just a `<ol>`).
 More importantly, we'll want to update `content.opf` with this new information:
 
 ```xml
@@ -492,7 +492,7 @@ You can freely download it and let it run over the whole `.epub` file we have cr
 
 That's it.
 Did I have to make it this complicated for myself? Probably not.
-It was a rewarding little programming exercsise that I could work through without major hurdles and just build out.
+It was a rewarding little programming exercise that I could work through without major hurdles and just build out.
 It was fun.
 And now I have a new book to read.
 
