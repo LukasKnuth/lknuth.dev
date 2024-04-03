@@ -214,13 +214,11 @@ fs.writeFileSync("out.md", output, "utf8")
 ```
 
 This gave good results and I was satisfied.
-You can find the [full script](https://github.com/LukasKnuth/epub_tools/blob/main/cleanup.js) in the tools repo that accompanies this post.
+You can find the [full script](https://github.com/LukasKnuth/epub_tools/blob/main/simplify.js) in the tools repo that accompanies this post.
 
-## Compile to EPUB
+## Bundle to EPUB
 
-TODO perhaps rather "bundle" ?
-
-With the actual content now cleaned up, it is time to compile everything together.
+With the actual content now cleaned up, it is time to bundle everything together.
 
 Rather than read through the EPUB standard, I looked for a minimal working example instead.
 I found [Minimal Ebook](https://github.com/thansen0/sample-epub-minimal) with exactly that.
@@ -232,7 +230,7 @@ Let's get the simple stuff out of the way first:
 * That file simply points us to the `content.opf` file, which can exist in an arbitrary directory
 * The `content.opf` file is a manifest of all files the e-book references
 
-With this information known, let's build a simple compiler.
+With this information known, let's build a simple bundler.
 It takes markdown files from a directory, renders them to XHTML and adds them to the manifest.
 
 ```javascript
@@ -386,7 +384,7 @@ function writeImages(tokens, article_id, zip, results) {
 
 This simple recursive function traverses the AST, looking for any `image`.
 Once it completes all referenced image files are in the ZIP and the `href` are updated to reflect the new path.
-Doing this while compiling the ebook has the benefit that the layout of input files does not matter, as long as the references to the image files are valid.
+Doing this while compiling the e-book has the benefit that the layout of input files does not matter, as long as the references to the image files are valid.
 
 The array we return has the same objects as the `writeArticle` we wrote earlier.
 We can update the function to return an array instead of a single object and add both article and its images to the manifest:
