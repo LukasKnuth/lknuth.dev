@@ -101,24 +101,16 @@ def cleanup(tag):
   for noise in tag.find_all(["div", "section", "header"]):
     noise.unwrap()
 
-  for figure in tag.find_all("figure"):
-    caption = figure.find("figcaption")
-    cap_text = caption.find("span")
-    cap_text.name = "figcaption"
-    caption.replace_with(cap_text)
-
-
 with open(sys.argv[1]) as source:
-    soup = BeautifulSoup(source, "html.parser")
-    article = soup.find("section", id="content")
-    cleanup(article)
-    with open("out.xhtml", "w") as dest:
-      dest.write(str(article))
+  soup = BeautifulSoup(source, "html.parser")
+  article = soup.find("section", id="content")
+  cleanup(article)
+  with open("out.xhtml", "w") as dest:
+    dest.write(str(article))
 ```
 
 I looked into the HTML files of the articles I had downloaded and found that the content was in a single `<section>` tag.
 Next I looked for any elements that were needed on the website only and unwrapped them, removing the element and it's properties but retaining its inner tags.
-I wanted to get both the image and the caption that the article placed in the first `<span>` element after it, so I wrapped both into `<figure>` and `<figcaption>`.
 Lastly, when converting the DOM to a string, it's valid XHTML by default, so just write that out.
 
 This approach has problems.
@@ -391,9 +383,10 @@ We can update the function to return an array instead of a single object and add
 
 ```javascript
 function writeArticle(article) {
-  // ... code as before
   const tokens = marked.lexer(article.__content)
   const images = writeImages(tokens, article.id, zip, [])
+  const content = marked.parser(tokens)
+  // ... code as before
   return [
     {file: article.id+".xhtml", id: article.id, title: article.title, mimetype: "application/xhtml+xml"},
     ...images
