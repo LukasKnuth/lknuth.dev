@@ -18,7 +18,7 @@ The irony of this is not lost on me.
 On the Low Tech Magazine website, they have a simple Archive page with all articles that they have published.
 I simply found all the ones in the book and downloaded them to my local machine.
 
-I used `wget` for this task, the command line itself I stole from [Tyler Smith](https://tinkerlog.dev/journal/downloading-a-webpage-and-all-of-its-assets-with-wget):
+I can use `wget` for this task, the arguments I stole from [Tyler Smith](https://tinkerlog.dev/journal/downloading-a-webpage-and-all-of-its-assets-with-wget):
 
 ```bash
 wget -p -k -H -nd -P chapter1 https://cool.site/some-article
@@ -36,7 +36,7 @@ This gives me a new directory with the article in `index.html`, all images, styl
 Opening the local index file via the `file://` protocol (just by double-clicking it) opens it in the browser.
 It looks and works as if it was the online version.
 
-This worked fine for this website, which is mostly static content.
+This works fine for this particular website, which is mostly static content.
 If you want to download from a website which renders using JavaScript, you'll need to use an actual Browser.
 [Chrome can get you stated](https://til.simonwillison.net/chrome/headless):
 
@@ -49,12 +49,12 @@ Downloading the assets that this page links to is left as an exercise for the re
 
 ## Creating an EPUB
 
-With the content downloaded, I just hat to put it into an EPUB.
+With the content downloaded, I just have to put it into an EPUB.
 What little knowledge I had about e-books was that they're basically a Zip file with some HTML content inside.
 Surely this can't be too hard.
 
 I looked at some ready-made tools available on the internet.
-Either their output wasn't nice enough, or they were too clunky, or they did too much.
+Either their output wasn't nice enough, they were too clunky, or they did too much.
 It might have just been my own curiosity though.
 
 I started off by looking at how another great online source for e-books does it: [StandardEbooks](https://standardebooks.org/)
@@ -75,13 +75,13 @@ While I was initially happy to do it _once_ for the one book I really wanted to 
 ## Automation
 
 So, I want to automatically bundle a bunch of static HTML into an EPUB container.
-I would need to:
+I will need to:
 
-1. EPUBs use XHTML, so I would have to convert the downloaded HTML to valid XHTML
-2. I only want the actual article portion of the page, so I'd have to extract that
-3. Cleanup the XHTML to remove unnecessary elements and properties (like styling) left over from the website
+1. EPUBs use XHTML, so I will have to convert the downloaded HTML to valid XHTML
+2. I only want the actual article portion of the page, so I have to extract that part
+3. Cleanup the XHTML and remove unnecessary elements and properties (like styling) left over from the website
 4. Bundle and link all the Images used in the articles
-5. Generate some standard EPUB files like the manifest, table of contents, etc
+5. Generate the required EPUB scaffolding like the manifest, table of contents, etc
 
 Let's get started.
 
@@ -89,9 +89,9 @@ Let's get started.
 
 You [wouldn't parse HTML with Regex](https://stackoverflow.com/a/1732454/717341), so what else is there?
 Because I had just installed the Standard e-books tools, which are written in Python, I read into [BeautifulSoup](https://beautiful-soup-4.readthedocs.io/en/latest/).
-This can parse an entire DOM from an HTML source and offers navigation and manipulation functions.
+This library can parse an entire DOM from an HTML source and offers navigation and manipulation functions.
 
-My first attempt at a script to clean up and convert my HTML to XHTML looked like this:
+My first attempt at a script to clean up and convert my HTML to XHTML looks like this:
 
 ```python
 import sys
@@ -111,25 +111,26 @@ with open(sys.argv[1]) as source:
 
 I looked into the HTML files of the articles I had downloaded and found that the content was in a single `<section>` tag.
 Next I looked for any elements that were needed on the website only and unwrapped them, removing the element and it's properties but retaining its inner tags.
-Lastly, when converting the DOM to a string, it's valid XHTML by default, so just write that out.
+Lastly, converting the DOM to a string gives valid XHTML by default, so just write that out.
 
 This approach has problems.
-For starters, the code is too specific to the HTML structure of the articles from this single website.
-It assumes too much about it's input data to be useful elsewhere.
+For starters, the code is too specific to the HTML structure of the articles from Low Tech Magazine.
+It assumes too much about it's input to be useful elsewhere.
 
-The second issue is that now, with elements like `<header>` unwrapped, the title and author were now just part of the article body.
-This would make it hard to present them clearly.
-It would also make it hard to generate a table of contents from the file without making the code _even more_ specific to the structure.
+The second issue is that now, with elements like `<header>` unwrapped, the title and author are just part of the article body.
+This makes it hard to present them clearly.
+It also makes it hard to automatically generate a table of contents from the articles without making the code _even more_ specific to the structure.
 
 ### Learn to stop worrying
 
-By chance when looking into how other tools automated this part, I came across [mozilla/readability](https://github.com/mozilla/readability).
-This is the standalone library powering FireFox "Reader View", which simplifies page content and presents it very much like an e-book reader would.
+By chance when looking into how other tools automate this part, I came across [mozilla/readability](https://github.com/mozilla/readability).
+This is the standalone library powering the FireFox "Reader View" feature.
+It simplifies page content and presents it very much like an e-book reader would.
 
 TODO Some images here???
 
 Eureka!
-We can harness this power for ourselves.
+I can harness this power for myself.
 It's pretty simple too:
 
 ```javascript
@@ -148,24 +149,24 @@ const simple = simplify(file)
 fs.writeFileSync("out.xhtml", simple.content, "utf8")
 ```
 
-Since readability is a JavaScript library, I switched over from Python.
+Since "readability" is a JavaScript library, I switched over from Python.
 The above code parses the entire HTML file, finds the relevant article text and simplifies it greatly.
 
-Crucially, the result still had many `<div>` and `<span>` tags used for styling.
-In my persuade of clean, simple XHTML, I would still have to find and unwrap these tags.
-And while this was easy enough with BeautifulSoup, JSDom didn't surface a nice and simple API.
-I thought about using jQuery on top of JSDom to make the API nicer, but decided this was madness.
-
 "readability" also parses a bunch of metadata from the article, such as title, author publishing time, etc.
-I could simply render this information into a `<header>` for the article.
-But it would also be useful to build a table of contents later on.
+I _could_ simply render this information into a `<header>` for the article.
+But this is also exactly what I need to build a table of contents later on.
+
+Crucially, the result still has many `<div>` and `<span>` tags used for styling.
+In my pursuit of clean, simple XHTML, I will still have to find and unwrap these tags.
+And while this was easy enough with BeautifulSoup, JSDom doesn't surface a nice and simple API.
+I thought about using jQuery on top of JSDom to make the API nicer, but decided this was madness.
 
 ### Perspective shift
 
-What I needed was a simpler intermediate format.
-One that wouldn't allow for complicated markup and focused on purely textual content.
-That would allow me to store the extracted metadata along with the article, in a structured form.
-That could easily be converted to XHTML again.
+What I need is a simpler intermediate format.
+One that doesn't allow for complicated markup and focuses on purely textual content.
+That allows me to store the extracted metadata along with the content, in a structured form.
+And that can easily be converted to XHTML again.
 
 ```markdown
 ---
@@ -175,7 +176,7 @@ author: Me
 
 # Obviously
 
-Markdown could be my intermediate format! With YAML front-matter to store metadata.
+Markdown is my intermediate format! With YAML front-matter to store metadata.
 ```
 
 The aptly named [turndown](https://github.com/mixmark-io/turndown) library does exactly that: Turn HTML to Markdown.
@@ -205,7 +206,10 @@ const output = generateFrontMatter(simple) + generateMarkdown(simple)
 fs.writeFileSync("out.md", output, "utf8")
 ```
 
-This gave good results and I was satisfied.
+This gives good results.
+Now I have a simpler format that still retains the actual content of the article.
+As an added bonus, it's much easier to make manual changes to a markdown file.
+
 You can find the [full script](https://github.com/LukasKnuth/epub_tools/blob/main/simplify.js) in the tools repo that accompanies this post.
 
 ## Bundle to EPUB
@@ -213,17 +217,17 @@ You can find the [full script](https://github.com/LukasKnuth/epub_tools/blob/mai
 With the actual content now cleaned up, it is time to bundle everything together.
 
 Rather than read through the EPUB standard, I looked for a minimal working example instead.
-I found [Minimal E-Book](https://github.com/thansen0/sample-epub-minimal) with exactly that.
+I found [Minimal E-Book](https://github.com/thansen0/sample-epub-minimal), which is exactly that.
 Let's get the simple stuff out of the way first:
 
 * A `.epub` file is a renamed ZIP file
 * In the root of that ZIP file, the `mimetype` file is located with `application/epub+zip` as it's content
 * Also in the root, the standard expects a `META-INF` folder with a [single `container.xml` file](https://github.com/thansen0/sample-epub-minimal/blob/master/minimal/META-INF/container.xml)
-* That file simply points us to the `content.opf` file, which can exist in an arbitrary directory
+* That file simply points to the `content.opf` file, which can exist in an arbitrary directory
 * The `content.opf` file is a manifest of all files the e-book references
 
-With this information known, let's build a simple bundler.
-It takes markdown files from a directory, renders them to XHTML and adds them to the manifest.
+With this information, let's build a simple bundler.
+It receives markdown files as arguments, renders them to XHTML and adds them to the manifest.
 
 ```javascript
 const { marked } = require("marked")
@@ -255,7 +259,7 @@ const manifest = manifestTemplate({files})
 // TODO write manifest to ZIP file
 ```
 
-I removed writing the actual files to the file system/ZIP file from the snippet for brevity.
+The snippet omits writing the actual files to the file system/ZIP file for brevity.
 The [article template](https://github.com/LukasKnuth/epub_tools/blob/main/templates/article.xhtml) is less interesting, lets look at the manifest instead:
 
 ```xml
@@ -279,9 +283,9 @@ The [article template](https://github.com/LukasKnuth/epub_tools/blob/main/templa
 The main elements are:
 - `<metadata>` (we'll look at that later)
 - `<manifest>` lists _all_ files in the EPUB
-- `<spine>` sets the order in which Text files are stitched together to a book
+- `<spine>` sets the order in which Text files are stitched together into a book
 
-If we Zip all of this up together, our structure should look like this:
+If I Zip all of this up together, the structure should look like this:
 
 ```
 out.epub
@@ -295,7 +299,7 @@ out.epub
 ```
 
 This is a valid EPUB!
-It's a bit boring though.
+A boring one though.
 
 ### Styles
 
@@ -309,13 +313,13 @@ The full style is [in the repo](https://github.com/LukasKnuth/epub_tools/blob/ma
 
 As this is yet another file, it also requires an entry in the `<manifest>` of our `content.opf` file.
 The entry has the same format, except the mimetype is `text/css`.
-We can then link it in the XHTML files using the normal `<link href="css/style.css" rel="stylesheet" type="text/css"/>`
+I can then link it in the XHTML files using the normal `<link href="css/style.css" rel="stylesheet" type="text/css"/>` tag.
 Note that the `href` is relative to the `content.opf` file, so no traversal via `../` is required.
 
 ### Images
 
-This is the more interesting problem: Images from the articles were downloaded together with the text, so the final EPUB should also have these images.
-In practice this means we have to:
+This is the more interesting problem: Images from the articles are downloaded together with the text, so the final EPUB should also have these images.
+In practice this means I have to:
 
 1. Find all the images referenced in an article
 2. Find the local image (if it exists)
@@ -346,10 +350,10 @@ To explain what that means and why it helps, lets look at an example:
 ]
 ```
 
-For the given Markdown text, the lexer parsed the syntax into a (very small) tree.
-The first node in the tree is the `paragraph`, which wraps all markdown blocks by default.
-Next, we have our `image` with the `href` pointing to the path of the file.
-This is what we're interested in.
+For the given Markdown text, the lexer parses the syntax into a (very small) tree.
+The first node in the tree is the `paragraph`, which wraps all markdown blocks.
+Next, we have the `image` with the `href` pointing to the image file.
+This is what I'm interested in.
 
 ```javascript
 function writeImages(tokens, article_id, zip, results) {
@@ -374,12 +378,12 @@ function writeImages(tokens, article_id, zip, results) {
 }
 ```
 
-This simple recursive function traverses the AST, looking for any `image`.
-Once it completes all referenced image files are in the ZIP and the `href` are updated to reflect the new path.
-Doing this while compiling the e-book has the benefit that the layout of input files does not matter, as long as the references to the image files are valid.
+This simple recursive function traverses the AST, looking for any `image` nodes.
+Once it completes, all referenced image files are in the ZIP and the `href` are updated to reflect the path inside the EPUB.
+Doing this while bundling the e-book has the benefit that it does not matter where the images are stored on disk, as long as the references to the image files are valid.
 
-The array we return has the same objects as the `writeArticle` we wrote earlier.
-We can update the function to return an array instead of a single object and add both article and its images to the manifest:
+The array I return has the same objects as the `writeArticle` from earlier.
+I can update the function to return an array instead of a single object and add both article and its images to the manifest:
 
 ```javascript
 function writeArticle(article) {
@@ -398,7 +402,7 @@ const files = process.argv.split(2).map(parseArticle).flatMap(writeArticle)
 const manifest = manifestTemplate({files})
 ```
 
-With this in place, we now have all our files in the ZIP file and listed in the manifest.
+With this in place, I now have all files in the ZIP and listed in the manifest.
 Almost done!
 
 ### Table of Contents
@@ -407,7 +411,7 @@ I lied to you.
 In the snippet above, I snuck in an additional change.
 I added `title` to the object describing the article.
 
-We have this information from what the "readability" library parsed out for us.
+I have this information from the metadata the "readability" library parsed out.
 It's time to use it now to create the Table of Contents.
 
 ```javascript
@@ -418,9 +422,9 @@ function writeManifest(zip, files) {
 }
 ```
 
-We use the `title` property to filter out everything that should show up in our table of contents.
-We'll write the actual table using the `toc.xhtml` file, which is [pretty boring](https://github.com/LukasKnuth/epub_tools/blob/main/templates/toc.xhtml) again (it's just a `<ol>`).
-More importantly, we'll want to update `content.opf` with this new information:
+I use the `title` property to filter out everything that should show up in our table of contents.
+The actual table is created using the `toc.xhtml` file, which is [pretty boring](https://github.com/LukasKnuth/epub_tools/blob/main/templates/toc.xhtml) again (it's just an `<ol>`).
+More importantly, I have to update `content.opf` with this new information:
 
 ```xml
 <package xmlns="http://www.idpf.org/2007/opf" version="3.0">
@@ -441,18 +445,18 @@ More importantly, we'll want to update `content.opf` with this new information:
 </package>
 ```
 
-We updated `<spine>` to only include the table of content files.
-If we didn't do that, we'd have the CSS file and all our images in the `<spine>` as well.
+I updated `<spine>` to only include the table of content files.
+If I didn't do that, the CSS file and all our images are in the `<spine>` as well.
 Note that the `toc.xhtml` entries are static, because they'll always be there.
 
-Now we have an automatically generated Table of Contents from our actual article titles.
+Now there is an automatically generated Table of Contents from our actual article titles.
 Everything is coming together nicely.
 
 ### Metadata
 
 Last stop: metadata.
 I have held onto this bit for last because it's more involved than is apparent.
-Here is our `content.opf` file again, this time only the `<metadata>` part:
+Here is the `content.opf` file again, this time only the `<metadata>` part:
 
 ```xml
 <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uid" version="3.0">
@@ -466,20 +470,21 @@ Here is our `content.opf` file again, this time only the `<metadata>` part:
 </package>
 ```
 
-The [EPUB 3.3 specification](https://www.w3.org/TR/epub-33/#sec-opf-dcmes-required) defines the required meta elements as `dc:identifier`, `dc:title` and `dc:language`.
+The [EPUB 3.3 specification](https://www.w3.org/TR/epub-33/#sec-opf-dcmes-required) defines the required meta elements are `dc:identifier`, `dc:title` and `dc:language`.
 
 While title and language are pretty clear, the identifier is supposed to identify this particular book uniquely.
 It is referenced in the `<package>` element, where `unique-identifier` points to the ID we gave to the `dc:identifier` element.
-Because our book doesn't have an official ISBN, we use `urn:uuid` and generate a UUID for each compilation.
+Because my bootleg book doesn't have an official ISBN, I use `urn:uuid` and generate a new UUID each time its bundled.
 Note that the spec says:
 
 > Unique Identifiers should have maximal persistence both for referencing and distribution purposes. EPUB creators should not issue new identifiers when making minor revisions such as updating metadata, fixing errata, or making similar minor changes.
 
 So if you're going to publish the EPUB, the identifier should be more stable than this.
-For our purposes, where we're just building them for ourselves, it's fine though.
+For my purposes, where I'm just building them for myself, it's fine though.
 
-To verify that all of this information is as expected, we can use a validator like [EPUBCheck](https://www.w3.org/publishing/epubcheck/).
-You can freely download it and let it run over the whole `.epub` file we have created.
+To verify the book - including the metadata - I use [EPUBCheck](https://www.w3.org/publishing/epubcheck/).
+You can freely download it and let it run over the whole `.epub` file.
+It was helpful to point me to articles that required additional manual touchup.
 
 ## Wrap up
 
