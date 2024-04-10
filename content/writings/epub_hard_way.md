@@ -21,18 +21,18 @@ I simply found all the ones in the book and downloaded them to my local machine.
 I used `wget` for this task, the command line itself I stole from [Tyler Smith](https://tinkerlog.dev/journal/downloading-a-webpage-and-all-of-its-assets-with-wget):
 
 ```bash
-wget --page-requisites --convert-links --span-hosts --no-directories https://www.example.com
+wget -p -k -H -nd -P chapter1 https://cool.site/some-article
 ```
 
 This does a number of things:
 
-* It downloads the page you point it to into the current directory
-* Alongside the page, it downloads all styles/images/scripts (`--page-requirements`)
-* All assets are downloaded into a single, flat directory (`--no-directories`)
-* Even if the assets are from different hosts (`--span-hosts`)
-* Then all links to assets are rewritten to the local path (`--convert-links`)
+* It downloads the page into the given directory (`-P | --directory-prefix`)
+* Alongside the page, it downloads all styles/images/scripts (`-p | --page-requisites`)
+* All assets are downloaded into a single, flat directory (`-nd | --no-directories`)
+* Even if the assets are from different hosts (`-H | --span-hosts`)
+* Then all links to assets are rewritten to the local path (`-k | --convert-links`)
 
-This gives me a single directory with the main page as `index.html`, all images, styles and scripts.
+This gives me a new directory with the article in `index.html`, all images, styles and scripts.
 Opening the local index file via the `file://` protocol (just by double-clicking it) opens it in the browser.
 It looks and works as if it was the online version.
 
@@ -250,7 +250,7 @@ function writeArticle(article) {
   return {file: article.id+".xhtml", id: article.id, mimetype: "application/xhtml+xml"}
 }
 
-const files = listDirectory(process.argv[2]).map(parseArticle).map(writeArticle)
+const files = process.argv.split(2).map(parseArticle).map(writeArticle)
 const manifest = manifestTemplate({files})
 // TODO write manifest to ZIP file
 ```
@@ -394,7 +394,7 @@ function writeArticle(article) {
 }
 
 // Replace map() with flatMap()
-const files = listDirectory(process.argv[2]).map(parseArticle).flatMap(writeArticle)
+const files = process.argv.split(2).map(parseArticle).flatMap(writeArticle)
 const manifest = manifestTemplate({files})
 ```
 
