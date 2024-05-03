@@ -1,7 +1,7 @@
 ---
-title: "EPUBs the hard way"
-date: 2024-03-27T21:30:11+01:00
-draft: true
+title: "Zero to EPUB"
+date: 2024-05-03T15:00:00+01:00
+description: I made an EPUB from scratch to learn how they work.
 ---
 
 I like Low Tech Magazine.
@@ -127,8 +127,6 @@ By chance when looking into how other tools automate this part, I came across [m
 This is the standalone library powering the FireFox "Reader View" feature.
 It simplifies page content and presents it very much like an e-book reader would.
 
-TODO Some images here???
-
 Eureka!
 I can harness this power for myself.
 It's pretty simple too:
@@ -210,7 +208,7 @@ This gives good results.
 Now I have a simpler format that still retains the actual content of the article.
 As an added bonus, it's much easier to make manual changes to a markdown file.
 
-You can find the [full script](https://github.com/LukasKnuth/epub_tools/blob/main/simplify.js) in the tools repo that accompanies this post.
+You can find the [full script](https://github.com/LukasKnuth/epub_tools/blob/main/simplify.js) in the repo that accompanies this post.
 
 ## Bundle to EPUB
 
@@ -484,7 +482,7 @@ For my purposes, where I'm just building them for myself, it's fine though.
 
 To verify the book - including the metadata - I use [EPUBCheck](https://www.w3.org/publishing/epubcheck/).
 You can freely download it and let it run over the whole `.epub` file.
-It was helpful to point me to articles that required additional manual touchup.
+It was helpful to point me to articles that required additional manual touch up.
 
 ## Wrap up
 
