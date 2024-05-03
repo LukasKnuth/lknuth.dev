@@ -1,6 +1,6 @@
 ---
 title: "Zero to EPUB"
-date: 2024-05-03T15:00:00+01:00
+date: 2024-05-03T14:00:00+01:00
 description: I made an EPUB from scratch to learn how they work.
 ---
 
