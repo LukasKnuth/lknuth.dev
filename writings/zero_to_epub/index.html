@@ -1,0 +1,274 @@
+<!doctype html><html lang=en-us><head><link rel=preload href=/lib/font-awesome/webfonts/fa-brands-400.woff2 as=font type=font/woff2 crossorigin=anonymous><link rel=preload href=/lib/font-awesome/webfonts/fa-regular-400.woff2 as=font type=font/woff2 crossorigin=anonymous><link rel=preload href=/lib/font-awesome/webfonts/fa-solid-900.woff2 as=font type=font/woff2 crossorigin=anonymous><link rel=preload href=/lib/JetBrainsMono/JetBrainsMono-Regular.woff2 as=font type=font/woff2 crossorigin=anonymous><link rel=preload href=/lib/iAWriterQuattro/iAWriterQuattroS-Bold.woff2 as=font type=font/woff2 crossorigin=anonymous><link rel=preload href=/lib/iAWriterQuattro/iAWriterQuattroS-BoldItalic.woff2 as=font type=font/woff2 crossorigin=anonymous><link rel=preload href=/lib/iAWriterQuattro/iAWriterQuattroS-Italic.woff2 as=font type=font/woff2 crossorigin=anonymous><link rel=preload href=/lib/iAWriterQuattro/iAWriterQuattroS-Regular.woff2 as=font type=font/woff2 crossorigin=anonymous><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><title>Zero to EPUB | Lukas Knuth // Developer</title><link rel=canonical href=https://lknuth.dev/writings/zero_to_epub/><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="all,follow"><meta name=googlebot content="index,follow,snippet,archive"><meta property="og:title" content="Zero to EPUB"><meta property="og:description" content="I made an EPUB from scratch to learn how they work."><meta property="og:type" content="article"><meta property="og:url" content="https://lknuth.dev/writings/zero_to_epub/"><meta property="article:section" content="writings"><meta property="article:published_time" content="2024-05-03T14:00:00+01:00"><meta property="article:modified_time" content="2024-05-03T14:00:00+01:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Zero to EPUB"><meta name=twitter:description content="I made an EPUB from scratch to learn how they work."><link rel=stylesheet href=https://lknuth.dev/css/styles.608dc8d12f10e5a0216ca8c9731285bb27e6f176a21c377bb6ff4d51c88bfe76dd57243c3175fd83b809333cf85a37e450ffe3863aafa884ed40fc3c38825f1d.css integrity="sha512-YI3I0S8Q5aAhbKjJcxKFuyfm8XaiHDd7tv9NUciL/nbdVyQ8MXX9g7gJMzz4WjfkUP/jhjqvqITtQPw8OIJfHQ=="><!--[if lt IE 9]><script src=https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js></script>
+<script src=https://oss.maxcdn.com/respond/1.4.2/respond.min.js></script><![endif]--><link rel=icon type=image/png href=https://lknuth.dev/images/favicon.ico></head><body class="max-width mx-auto px3 ltr"><div class="content index py4"><header id=header><a href=https://lknuth.dev/><div id=logo style=background-image:url(https://lknuth.dev/images/logo.png)></div><div id=title><h1>Lukas Knuth // Developer</h1></div></a><div id=nav><ul><li class=icon><a href=# aria-label=Menu><i class="fas fa-bars fa-2x" aria-hidden=true></i></a></li><li><a href=/writings>Writings</a></li><li><a href=/about>About</a></li><li><a href=/cv>CV</a></li><li><a href=/imprint>Imprint</a></li></ul></div></header><article class=post itemscope itemtype=http://schema.org/BlogPosting><header><h1 class=posttitle itemprop="name headline">Zero to EPUB</h1><div class=meta><div class=postdate><time datetime="2024-05-03 14:00:00 +0100 +0100" itemprop=datePublished>2024-05-03</time></div></div></header><div class=content itemprop=articleBody><p>I like Low Tech Magazine.
+Not only is their website solar-powered and only available when the weather is good, they provide an interesting viewpoint on technology as a whole.</p><p>Recently, they created a thematic collection of articles called <a href=https://solar.lowtechmagazine.com/2023/08/thematic-books-series/>&ldquo;How to Build a Low-tech Internet?&rdquo;</a>.
+It&rsquo;s sold as a hard-copy book, but not as an EPUB.
+Since I&rsquo;m almost exclusively reading my books digitally these days - and the articles are all available on their website, I thought I&rsquo;d just create an EPUB myself.</p><p>The irony of this is not lost on me.</p><h2 id=getting-the-goods>Getting the goods</h2><p>On the Low Tech Magazine website, they have a simple Archive page with all articles that they have published.
+I simply found all the ones in the book and downloaded them to my local machine.</p><p>I can use <code>wget</code> for this task, the arguments I stole from <a href=https://tinkerlog.dev/journal/downloading-a-webpage-and-all-of-its-assets-with-wget>Tyler Smith</a>:</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>wget -p -k -H -nd -P chapter1 https://cool.site/some-article
+</span></span></code></pre></div><p>This does a number of things:</p><ul><li>It downloads the page into the given directory (<code>-P | --directory-prefix</code>)</li><li>Alongside the page, it downloads all styles/images/scripts (<code>-p | --page-requisites</code>)</li><li>All assets are downloaded into a single, flat directory (<code>-nd | --no-directories</code>)</li><li>Even if the assets are from different hosts (<code>-H | --span-hosts</code>)</li><li>Then all links to assets are rewritten to the local path (<code>-k | --convert-links</code>)</li></ul><p>This gives me a new directory with the article in <code>index.html</code>, all images, styles and scripts.
+Opening the local index file via the <code>file://</code> protocol (just by double-clicking it) opens it in the browser.
+It looks and works as if it was the online version.</p><p>This works fine for this particular website, which is mostly static content.
+If you want to download from a website which renders using JavaScript, you&rsquo;ll need to use an actual Browser.
+<a href=https://til.simonwillison.net/chrome/headless>Chrome can get you stated</a>:</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>/path/to/chrome  --headless --dump-dom https://www.example.com
+</span></span></code></pre></div><p>This will print the rendered websites HTML to stdout.
+Downloading the assets that this page links to is left as an exercise for the reader.</p><h2 id=creating-an-epub>Creating an EPUB</h2><p>With the content downloaded, I just have to put it into an EPUB.
+What little knowledge I had about e-books was that they&rsquo;re basically a Zip file with some HTML content inside.
+Surely this can&rsquo;t be too hard.</p><p>I looked at some ready-made tools available on the internet.
+Either their output wasn&rsquo;t nice enough, they were too clunky, or they did too much.
+It might have just been my own curiosity though.</p><p>I started off by looking at how another great online source for e-books does it: <a href=https://standardebooks.org/>StandardEbooks</a>
+They take publicly available works, digitized for the public and carefully touch them up to professional standards.
+They have a great catalog and a most importantly, a very detailed guide on e-book creation, typesetting and some nice tooling.</p><p>I started by looking through their <em>extensive</em> <a href=https://standardebooks.org/manual/>manual of style</a> - and immediately decided this was too detailed.
+Their <a href=https://standardebooks.org/contribute/producing-an-ebook-step-by-step>Step-by-step guide</a> turned out to be a more appropriate resource.
+Throughout the guide, they use <a href=https://github.com/standardebooks/tools>their own tooling</a> to perform various tasks. Which got me thinking.</p><p>Going through the guide, it struck me that there was a bunch of manual work involved.
+While I was initially happy to do it <em>once</em> for the one book I really wanted to make, I felt an itch.</p><p><img src=https://imgs.xkcd.com/comics/automation.png alt="XKCD 1319"></p><blockquote><p>I&rsquo;d rather spend four hours automating a task that takes one hour to do manually.</p></blockquote><h2 id=automation>Automation</h2><p>So, I want to automatically bundle a bunch of static HTML into an EPUB container.
+I will need to:</p><ol><li>EPUBs use XHTML, so I will have to convert the downloaded HTML to valid XHTML</li><li>I only want the actual article portion of the page, so I have to extract that part</li><li>Cleanup the XHTML and remove unnecessary elements and properties (like styling) left over from the website</li><li>Bundle and link all the Images used in the articles</li><li>Generate the required EPUB scaffolding like the manifest, table of contents, etc</li></ol><p>Let&rsquo;s get started.</p><h3 id=wrangling-html>Wrangling HTML</h3><p>You <a href=https://stackoverflow.com/a/1732454/717341>wouldn&rsquo;t parse HTML with Regex</a>, so what else is there?
+Because I had just installed the Standard e-books tools, which are written in Python, I read into <a href=https://beautiful-soup-4.readthedocs.io/en/latest/>BeautifulSoup</a>.
+This library can parse an entire DOM from an HTML source and offers navigation and manipulation functions.</p><p>My first attempt at a script to clean up and convert my HTML to XHTML looks like this:</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#fe8019>import</span> sys
+</span></span><span style=display:flex><span><span style=color:#fe8019>from</span> bs4 <span style=color:#fe8019>import</span> BeautifulSoup
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>def</span> <span style=color:#fabd2f>cleanup</span>(tag):
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>for</span> noise <span style=color:#fe8019>in</span> tag<span style=color:#fe8019>.</span>find_all([<span style=color:#b8bb26>&#34;div&#34;</span>, <span style=color:#b8bb26>&#34;section&#34;</span>, <span style=color:#b8bb26>&#34;header&#34;</span>]):
+</span></span><span style=display:flex><span>    noise<span style=color:#fe8019>.</span>unwrap()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>with</span> <span style=color:#fabd2f>open</span>(sys<span style=color:#fe8019>.</span>argv[<span style=color:#d3869b>1</span>]) <span style=color:#fe8019>as</span> source:
+</span></span><span style=display:flex><span>  soup <span style=color:#fe8019>=</span> BeautifulSoup(source, <span style=color:#b8bb26>&#34;html.parser&#34;</span>)
+</span></span><span style=display:flex><span>  article <span style=color:#fe8019>=</span> soup<span style=color:#fe8019>.</span>find(<span style=color:#b8bb26>&#34;section&#34;</span>, <span style=color:#fabd2f>id</span><span style=color:#fe8019>=</span><span style=color:#b8bb26>&#34;content&#34;</span>)
+</span></span><span style=display:flex><span>  cleanup(article)
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>with</span> <span style=color:#fabd2f>open</span>(<span style=color:#b8bb26>&#34;out.xhtml&#34;</span>, <span style=color:#b8bb26>&#34;w&#34;</span>) <span style=color:#fe8019>as</span> dest:
+</span></span><span style=display:flex><span>    dest<span style=color:#fe8019>.</span>write(<span style=color:#fabd2f>str</span>(article))
+</span></span></code></pre></div><p>I looked into the HTML files of the articles I had downloaded and found that the content was in a single <code>&lt;section></code> tag.
+Next I looked for any elements that were needed on the website only and unwrapped them, removing the element and it&rsquo;s properties but retaining its inner tags.
+Lastly, converting the DOM to a string gives valid XHTML by default, so just write that out.</p><p>This approach has problems.
+For starters, the code is too specific to the HTML structure of the articles from Low Tech Magazine.
+It assumes too much about it&rsquo;s input to be useful elsewhere.</p><p>The second issue is that now, with elements like <code>&lt;header></code> unwrapped, the title and author are just part of the article body.
+This makes it hard to present them clearly.
+It also makes it hard to automatically generate a table of contents from the articles without making the code <em>even more</em> specific to the structure.</p><h3 id=learn-to-stop-worrying>Learn to stop worrying</h3><p>By chance when looking into how other tools automate this part, I came across <a href=https://github.com/mozilla/readability>mozilla/readability</a>.
+This is the standalone library powering the FireFox &ldquo;Reader View&rdquo; feature.
+It simplifies page content and presents it very much like an e-book reader would.</p><p>Eureka!
+I can harness this power for myself.
+It&rsquo;s pretty simple too:</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-javascript data-lang=javascript><span style=display:flex><span><span style=color:#fe8019>const</span> { JSDOM } <span style=color:#fe8019>=</span> require(<span style=color:#b8bb26>&#34;jsdom&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#fe8019>const</span> { Readability } <span style=color:#fe8019>=</span> require(<span style=color:#b8bb26>&#34;@mozilla/readability&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#fe8019>const</span> fs <span style=color:#fe8019>=</span> require(<span style=color:#b8bb26>&#34;fs&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>function</span> simplify(html) {
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>const</span> doc <span style=color:#fe8019>=</span> <span style=color:#fe8019>new</span> JSDOM(html)
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>const</span> reader <span style=color:#fe8019>=</span> <span style=color:#fe8019>new</span> Readability(doc.<span style=color:#fabd2f>window</span>.<span style=color:#fabd2f>document</span>)
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>return</span> reader.parse()
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>const</span> file <span style=color:#fe8019>=</span> fs.readFileSync(process.argv[<span style=color:#d3869b>2</span>], <span style=color:#b8bb26>&#34;utf8&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#fe8019>const</span> simple <span style=color:#fe8019>=</span> simplify(file)
+</span></span><span style=display:flex><span>fs.writeFileSync(<span style=color:#b8bb26>&#34;out.xhtml&#34;</span>, simple.content, <span style=color:#b8bb26>&#34;utf8&#34;</span>)
+</span></span></code></pre></div><p>Since &ldquo;readability&rdquo; is a JavaScript library, I switched over from Python.
+The above code parses the entire HTML file, finds the relevant article text and simplifies it greatly.</p><p>&ldquo;readability&rdquo; also parses a bunch of metadata from the article, such as title, author publishing time, etc.
+I <em>could</em> simply render this information into a <code>&lt;header></code> for the article.
+But this is also exactly what I need to build a table of contents later on.</p><p>Crucially, the result still has many <code>&lt;div></code> and <code>&lt;span></code> tags used for styling.
+In my pursuit of clean, simple XHTML, I will still have to find and unwrap these tags.
+And while this was easy enough with BeautifulSoup, JSDom doesn&rsquo;t surface a nice and simple API.
+I thought about using jQuery on top of JSDom to make the API nicer, but decided this was madness.</p><h3 id=perspective-shift>Perspective shift</h3><p>What I need is a simpler intermediate format.
+One that doesn&rsquo;t allow for complicated markup and focuses on purely textual content.
+That allows me to store the extracted metadata along with the content, in a structured form.
+And that can easily be converted to XHTML again.</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-markdown data-lang=markdown><span style=display:flex><span>---
+</span></span><span style=display:flex><span>title: Test
+</span></span><span style=display:flex><span>author: Me
+</span></span><span style=display:flex><span>---
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#b8bb26;font-weight:700># Obviously
+</span></span></span><span style=display:flex><span><span style=color:#b8bb26;font-weight:700></span>
+</span></span><span style=display:flex><span>Markdown is my intermediate format! With YAML front-matter to store metadata.
+</span></span></code></pre></div><p>The aptly named <a href=https://github.com/mixmark-io/turndown>turndown</a> library does exactly that: Turn HTML to Markdown.
+It does not support the YAML front-matter out-of-the-box, but that&rsquo;s easy enough to add.</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-javascript data-lang=javascript><span style=display:flex><span><span style=color:#fe8019>const</span> TurndownService <span style=color:#fe8019>=</span> require(<span style=color:#b8bb26>&#34;turndown&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>function</span> generateMarkdown(readable) {
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>const</span> td <span style=color:#fe8019>=</span> <span style=color:#fe8019>new</span> TurndownService()
+</span></span><span style=display:flex><span>  td.keep([<span style=color:#b8bb26>&#34;table&#34;</span>])
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>return</span> td.turndown(readable.content)
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>function</span> generateFrontMatter(readable) {
+</span></span><span style=display:flex><span>	<span style=color:#928374;font-style:italic>// NOTE: Can&#39;t correctly indent this because then front-matter in the file is indented and breaks YAML
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>	<span style=color:#fe8019>return</span> <span style=color:#b8bb26>`---
+</span></span></span><span style=display:flex><span><span style=color:#b8bb26>title: </span><span style=color:#b8bb26>${</span>readable.title<span style=color:#b8bb26>}</span><span style=color:#b8bb26>
+</span></span></span><span style=display:flex><span><span style=color:#b8bb26>author: </span><span style=color:#b8bb26>${</span>readable.byline<span style=color:#b8bb26>}</span><span style=color:#b8bb26>
+</span></span></span><span style=display:flex><span><span style=color:#b8bb26>---
+</span></span></span><span style=display:flex><span><span style=color:#b8bb26>
+</span></span></span><span style=display:flex><span><span style=color:#b8bb26>`</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#928374;font-style:italic>// In addition to the above script
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span><span style=color:#fe8019>const</span> output <span style=color:#fe8019>=</span> generateFrontMatter(simple) <span style=color:#fe8019>+</span> generateMarkdown(simple)
+</span></span><span style=display:flex><span>fs.writeFileSync(<span style=color:#b8bb26>&#34;out.md&#34;</span>, output, <span style=color:#b8bb26>&#34;utf8&#34;</span>)
+</span></span></code></pre></div><p>This gives good results.
+Now I have a simpler format that still retains the actual content of the article.
+As an added bonus, it&rsquo;s much easier to make manual changes to a markdown file.</p><p>You can find the <a href=https://github.com/LukasKnuth/epub_tools/blob/main/simplify.js>full script</a> in the repo that accompanies this post.</p><h2 id=bundle-to-epub>Bundle to EPUB</h2><p>With the actual content now cleaned up, it is time to bundle everything together.</p><p>Rather than read through the EPUB standard, I looked for a minimal working example instead.
+I found <a href=https://github.com/thansen0/sample-epub-minimal>Minimal E-Book</a>, which is exactly that.
+Let&rsquo;s get the simple stuff out of the way first:</p><ul><li>A <code>.epub</code> file is a renamed ZIP file</li><li>In the root of that ZIP file, the <code>mimetype</code> file is located with <code>application/epub+zip</code> as it&rsquo;s content</li><li>Also in the root, the standard expects a <code>META-INF</code> folder with a <a href=https://github.com/thansen0/sample-epub-minimal/blob/master/minimal/META-INF/container.xml>single <code>container.xml</code> file</a></li><li>That file simply points to the <code>content.opf</code> file, which can exist in an arbitrary directory</li><li>The <code>content.opf</code> file is a manifest of all files the e-book references</li></ul><p>With this information, let&rsquo;s build a simple bundler.
+It receives markdown files as arguments, renders them to XHTML and adds them to the manifest.</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-javascript data-lang=javascript><span style=display:flex><span><span style=color:#fe8019>const</span> { marked } <span style=color:#fe8019>=</span> require(<span style=color:#b8bb26>&#34;marked&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#fe8019>const</span> { markedXhtml } <span style=color:#fe8019>=</span> require(<span style=color:#b8bb26>&#34;marked-xhtml&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#fe8019>const</span> frontMatter <span style=color:#fe8019>=</span> require(<span style=color:#b8bb26>&#34;yaml-front-matter&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#fe8019>const</span> Handlebars <span style=color:#fe8019>=</span> require(<span style=color:#b8bb26>&#34;handlebars&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>marked.use(markedXhtml())
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>const</span> articleTemplate <span style=color:#fe8019>=</span> Handlebars.compile(fs.readFileSync(<span style=color:#b8bb26>&#34;templates/article.xhtml&#34;</span>).toString())
+</span></span><span style=display:flex><span><span style=color:#fe8019>const</span> manifestTemplate <span style=color:#fe8019>=</span> Handlebars.compile(fs.readFileSync(<span style=color:#b8bb26>&#34;templates/content.opf&#34;</span>).toString())
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>function</span> parseArticle(file) {
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>const</span> content <span style=color:#fe8019>=</span> fs.readFileSync(file, <span style=color:#b8bb26>&#34;utf-8&#34;</span>)
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>const</span> matter <span style=color:#fe8019>=</span> frontMatter.safeLoadFront(content)
+</span></span><span style=display:flex><span>  matter.id <span style=color:#fe8019>=</span> path.parse(file).name <span style=color:#928374;font-style:italic>// file-name without the extension
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>  <span style=color:#fe8019>return</span> matter
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>function</span> writeArticle(article) {
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>const</span> content <span style=color:#fe8019>=</span> marked.parse(article.__content)
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>const</span> rendered <span style=color:#fe8019>=</span> articleTemplate({...article, content})
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>// TODO write the file to our ZIP file
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>  <span style=color:#fe8019>return</span> {file<span style=color:#fe8019>:</span> article.id<span style=color:#fe8019>+</span><span style=color:#b8bb26>&#34;.xhtml&#34;</span>, id<span style=color:#fe8019>:</span> article.id, mimetype<span style=color:#fe8019>:</span> <span style=color:#b8bb26>&#34;application/xhtml+xml&#34;</span>}
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>const</span> files <span style=color:#fe8019>=</span> process.argv.split(<span style=color:#d3869b>2</span>).map(parseArticle).map(writeArticle)
+</span></span><span style=display:flex><span><span style=color:#fe8019>const</span> manifest <span style=color:#fe8019>=</span> manifestTemplate({files})
+</span></span><span style=display:flex><span><span style=color:#928374;font-style:italic>// TODO write manifest to ZIP file
+</span></span></span></code></pre></div><p>The snippet omits writing the actual files to the file system/ZIP file for brevity.
+The <a href=https://github.com/LukasKnuth/epub_tools/blob/main/templates/article.xhtml>article template</a> is less interesting, lets look at the manifest instead:</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#fb4934>&lt;package</span> <span style=color:#b8bb26;font-weight:700>xmlns=</span><span style=color:#b8bb26>&#34;http://www.idpf.org/2007/opf&#34;</span> <span style=color:#b8bb26;font-weight:700>version=</span><span style=color:#b8bb26>&#34;3.0&#34;</span><span style=color:#fb4934>&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>&lt;!-- Metadata element removed --&gt;</span>
+</span></span><span style=display:flex><span>	<span style=color:#fb4934>&lt;manifest&gt;</span>
+</span></span><span style=display:flex><span>	  {{#each files}}
+</span></span><span style=display:flex><span>	  <span style=color:#fb4934>&lt;item</span> <span style=color:#b8bb26;font-weight:700>id=</span><span style=color:#b8bb26>&#34;{{id}}&#34;</span> <span style=color:#b8bb26;font-weight:700>href=</span><span style=color:#b8bb26>&#34;{{file}}&#34;</span> <span style=color:#b8bb26;font-weight:700>media-type=</span><span style=color:#b8bb26>&#34;{{mimetype}}&#34;</span> <span style=color:#fb4934>/&gt;</span>
+</span></span><span style=display:flex><span>	  {{/each}}
+</span></span><span style=display:flex><span>	<span style=color:#fb4934>&lt;/manifest&gt;</span>
+</span></span><span style=display:flex><span>	<span style=color:#fb4934>&lt;spine&gt;</span>
+</span></span><span style=display:flex><span>	  {{#each files}}
+</span></span><span style=display:flex><span>	  <span style=color:#fb4934>&lt;itemref</span> <span style=color:#b8bb26;font-weight:700>idref=</span><span style=color:#b8bb26>&#34;{{id}}&#34;</span> <span style=color:#fb4934>/&gt;</span>
+</span></span><span style=display:flex><span>	  {{/each}}
+</span></span><span style=display:flex><span>	<span style=color:#fb4934>&lt;/spine&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#fb4934>&lt;/package&gt;</span>
+</span></span></code></pre></div><p><strong>NOTE</strong>: This snippet is shortened - and therefore <strong>not fully valid</strong>.</p><p>The main elements are:</p><ul><li><code>&lt;metadata></code> (we&rsquo;ll look at that later)</li><li><code>&lt;manifest></code> lists <em>all</em> files in the EPUB</li><li><code>&lt;spine></code> sets the order in which Text files are stitched together into a book</li></ul><p>If I Zip all of this up together, the structure should look like this:</p><pre tabindex=0><code>out.epub
+├── META-INF
+│  └── container.xml
+├── mimetype
+└── OEBPS
+   ├── c1-internet-speed-limit.xhtml
+   ├── c2-18th-century-email.xhtml
+   └── content.opf
+</code></pre><p>This is a valid EPUB!
+A boring one though.</p><h3 id=styles>Styles</h3><p>Since EPUB builds on web technologies, it makes sense that styling is done in CSS.
+It also makes sense that the support varies a lot from vendor to vendor.
+Some styles are accepted by <em>some</em> readers but ignored by others.</p><p>To make it easy on myself, I reused this <a href=http://bbebooksthailand.com/bb-CSS-boilerplate.html>CSS Boilerplate</a> and simplified it.
+I did add some extra rules for chapter headings, though.
+The full style is <a href=https://github.com/LukasKnuth/epub_tools/blob/main/templates/style.css>in the repo</a> if you&rsquo;re interested.</p><p>As this is yet another file, it also requires an entry in the <code>&lt;manifest></code> of our <code>content.opf</code> file.
+The entry has the same format, except the mimetype is <code>text/css</code>.
+I can then link it in the XHTML files using the normal <code>&lt;link href="css/style.css" rel="stylesheet" type="text/css"/></code> tag.
+Note that the <code>href</code> is relative to the <code>content.opf</code> file, so no traversal via <code>../</code> is required.</p><h3 id=images>Images</h3><p>This is the more interesting problem: Images from the articles are downloaded together with the text, so the final EPUB should also have these images.
+In practice this means I have to:</p><ol><li>Find all the images referenced in an article</li><li>Find the local image (if it exists)</li><li>Add the image to the ZIP file and <code>&lt;manifest></code></li><li>Rewrite the reference in the article to match the path inside the EPUB</li></ol><p>Luckily, the &ldquo;marked&rdquo; Markdown library I&rsquo;m using allows invoking the lexer directly, which gives us the <a href=https://en.wikipedia.org/wiki/Abstract_syntax_tree>AST</a> for the parsed markdown file.
+To explain what that means and why it helps, lets look at an example:</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-javascript data-lang=javascript><span style=display:flex><span><span style=color:#fe8019>&gt;</span> marked.lexer(<span style=color:#b8bb26>&#34;![the alt text](path/to/img.png)&#34;</span>)
+</span></span><span style=display:flex><span>[
+</span></span><span style=display:flex><span>  {
+</span></span><span style=display:flex><span>    type<span style=color:#fe8019>:</span> <span style=color:#b8bb26>&#39;paragraph&#39;</span>,
+</span></span><span style=display:flex><span>    raw<span style=color:#fe8019>:</span> <span style=color:#b8bb26>&#39;![the alt text](path/to/img.png)&#39;</span>,
+</span></span><span style=display:flex><span>    text<span style=color:#fe8019>:</span> <span style=color:#b8bb26>&#39;![the alt text](path/to/img.png)&#39;</span>,
+</span></span><span style=display:flex><span>    tokens<span style=color:#fe8019>:</span> [
+</span></span><span style=display:flex><span>      {
+</span></span><span style=display:flex><span>        type<span style=color:#fe8019>:</span> <span style=color:#b8bb26>&#39;image&#39;</span>,
+</span></span><span style=display:flex><span>        raw<span style=color:#fe8019>:</span> <span style=color:#b8bb26>&#39;![the alt text](path/to/img.png)&#39;</span>,
+</span></span><span style=display:flex><span>        href<span style=color:#fe8019>:</span> <span style=color:#b8bb26>&#39;path/to/img.png&#39;</span>,
+</span></span><span style=display:flex><span>        title<span style=color:#fe8019>:</span> <span style=color:#fe8019>null</span>,
+</span></span><span style=display:flex><span>        text<span style=color:#fe8019>:</span> <span style=color:#b8bb26>&#39;the alt text&#39;</span>
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    ]
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>  links<span style=color:#fe8019>:</span> {}
+</span></span><span style=display:flex><span>]
+</span></span></code></pre></div><p>For the given Markdown text, the lexer parses the syntax into a (very small) tree.
+The first node in the tree is the <code>paragraph</code>, which wraps all markdown blocks.
+Next, we have the <code>image</code> with the <code>href</code> pointing to the image file.
+This is what I&rsquo;m interested in.</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-javascript data-lang=javascript><span style=display:flex><span><span style=color:#fe8019>function</span> writeImages(tokens, article_id, zip, results) {
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>for</span> (<span style=color:#fe8019>const</span> token <span style=color:#fe8019>of</span> tokens) {
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>if</span> (token.type <span style=color:#fe8019>===</span> <span style=color:#b8bb26>&#34;image&#34;</span>) {
+</span></span><span style=display:flex><span>      <span style=color:#fe8019>if</span> (fs.existsSync(token.href)) {
+</span></span><span style=display:flex><span>        <span style=color:#fe8019>const</span> zip_path <span style=color:#fe8019>=</span> <span style=color:#b8bb26>`img/</span><span style=color:#b8bb26>${</span>article_id<span style=color:#b8bb26>}</span><span style=color:#b8bb26>/</span><span style=color:#b8bb26>${</span>path.basename(token.href)<span style=color:#b8bb26>}</span><span style=color:#b8bb26>`</span>
+</span></span><span style=display:flex><span>        <span style=color:#928374;font-style:italic>// add to Zip
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>        zip.file(zip_path, fs.createReadStream(token.href))
+</span></span><span style=display:flex><span>        <span style=color:#928374;font-style:italic>// Rewrite href
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>        token.href <span style=color:#fe8019>=</span> zip_path
+</span></span><span style=display:flex><span>        <span style=color:#928374;font-style:italic>// add to manifest
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>        results.push({file<span style=color:#fe8019>:</span> zip_path, id<span style=color:#fe8019>:</span> zip_path, mimetype<span style=color:#fe8019>:</span> mime.lookup(token.href)})
+</span></span><span style=display:flex><span>      } <span style=color:#fe8019>else</span> {
+</span></span><span style=display:flex><span>        console.warn(<span style=color:#b8bb26>`Image </span><span style=color:#b8bb26>${</span>full_path<span style=color:#b8bb26>}</span><span style=color:#b8bb26> not found. Ignoring...`</span>)
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    } <span style=color:#fe8019>else</span> {
+</span></span><span style=display:flex><span>      writeImages(token.tokens, article_id, zip, results)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>return</span> results
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>This simple recursive function traverses the AST, looking for any <code>image</code> nodes.
+Once it completes, all referenced image files are in the ZIP and the <code>href</code> are updated to reflect the path inside the EPUB.
+Doing this while bundling the e-book has the benefit that it does not matter where the images are stored on disk, as long as the references to the image files are valid.</p><p>The array I return has the same objects as the <code>writeArticle</code> from earlier.
+I can update the function to return an array instead of a single object and add both article and its images to the manifest:</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-javascript data-lang=javascript><span style=display:flex><span><span style=color:#fe8019>function</span> writeArticle(article) {
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>const</span> tokens <span style=color:#fe8019>=</span> marked.lexer(article.__content)
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>const</span> images <span style=color:#fe8019>=</span> writeImages(tokens, article.id, zip, [])
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>const</span> content <span style=color:#fe8019>=</span> marked.parser(tokens)
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>// ... code as before
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>  <span style=color:#fe8019>return</span> [
+</span></span><span style=display:flex><span>    {file<span style=color:#fe8019>:</span> article.id<span style=color:#fe8019>+</span><span style=color:#b8bb26>&#34;.xhtml&#34;</span>, id<span style=color:#fe8019>:</span> article.id, title<span style=color:#fe8019>:</span> article.title, mimetype<span style=color:#fe8019>:</span> <span style=color:#b8bb26>&#34;application/xhtml+xml&#34;</span>},
+</span></span><span style=display:flex><span>    ...images
+</span></span><span style=display:flex><span>  ]
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#928374;font-style:italic>// Replace map() with flatMap()
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span><span style=color:#fe8019>const</span> files <span style=color:#fe8019>=</span> process.argv.split(<span style=color:#d3869b>2</span>).map(parseArticle).flatMap(writeArticle)
+</span></span><span style=display:flex><span><span style=color:#fe8019>const</span> manifest <span style=color:#fe8019>=</span> manifestTemplate({files})
+</span></span></code></pre></div><p>With this in place, I now have all files in the ZIP and listed in the manifest.
+Almost done!</p><h3 id=table-of-contents>Table of Contents</h3><p>I lied to you.
+In the snippet above, I snuck in an additional change.
+I added <code>title</code> to the object describing the article.</p><p>I have this information from the metadata the &ldquo;readability&rdquo; library parsed out.
+It&rsquo;s time to use it now to create the Table of Contents.</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-javascript data-lang=javascript><span style=display:flex><span><span style=color:#fe8019>function</span> writeManifest(zip, files) {
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>const</span> toc <span style=color:#fe8019>=</span> files.filter(f =&gt; <span style=color:#fe8019>!!</span>f.title)
+</span></span><span style=display:flex><span>  zip.file(<span style=color:#b8bb26>&#34;toc.xhtml&#34;</span>, tocTemplate({toc}))
+</span></span><span style=display:flex><span>  zip.file(<span style=color:#b8bb26>&#34;content.opf&#34;</span>, manifestTemplate({files, toc}))
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>I use the <code>title</code> property to filter out everything that should show up in our table of contents.
+The actual table is created using the <code>toc.xhtml</code> file, which is <a href=https://github.com/LukasKnuth/epub_tools/blob/main/templates/toc.xhtml>pretty boring</a> again (it&rsquo;s just an <code>&lt;ol></code>).
+More importantly, I have to update <code>content.opf</code> with this new information:</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#fb4934>&lt;package</span> <span style=color:#b8bb26;font-weight:700>xmlns=</span><span style=color:#b8bb26>&#34;http://www.idpf.org/2007/opf&#34;</span> <span style=color:#b8bb26;font-weight:700>version=</span><span style=color:#b8bb26>&#34;3.0&#34;</span><span style=color:#fb4934>&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>&lt;!-- Metadata element removed --&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#fb4934>&lt;manifest&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#fb4934>&lt;item</span> <span style=color:#b8bb26;font-weight:700>id=</span><span style=color:#b8bb26>&#34;toc&#34;</span> <span style=color:#b8bb26;font-weight:700>href=</span><span style=color:#b8bb26>&#34;toc.xhtml&#34;</span> <span style=color:#b8bb26;font-weight:700>media-type=</span><span style=color:#b8bb26>&#34;application/xhtml+xml&#34;</span> <span style=color:#b8bb26;font-weight:700>properties=</span><span style=color:#b8bb26>&#34;nav&#34;</span> <span style=color:#fb4934>/&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#fb4934>&lt;item</span> <span style=color:#b8bb26;font-weight:700>id=</span><span style=color:#b8bb26>&#34;style&#34;</span> <span style=color:#b8bb26;font-weight:700>href=</span><span style=color:#b8bb26>&#34;css/style.css&#34;</span> <span style=color:#b8bb26;font-weight:700>media-type=</span><span style=color:#b8bb26>&#34;text/css&#34;</span> <span style=color:#fb4934>/&gt;</span>
+</span></span><span style=display:flex><span>    {{#each files}}
+</span></span><span style=display:flex><span>    <span style=color:#fb4934>&lt;item</span> <span style=color:#b8bb26;font-weight:700>id=</span><span style=color:#b8bb26>&#34;{{id}}&#34;</span> <span style=color:#b8bb26;font-weight:700>href=</span><span style=color:#b8bb26>&#34;{{file}}&#34;</span> <span style=color:#b8bb26;font-weight:700>media-type=</span><span style=color:#b8bb26>&#34;{{mimetype}}&#34;</span> <span style=color:#fb4934>/&gt;</span>
+</span></span><span style=display:flex><span>    {{/each}}
+</span></span><span style=display:flex><span>  <span style=color:#fb4934>&lt;/manifest&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#fb4934>&lt;spine&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#fb4934>&lt;itemref</span> <span style=color:#b8bb26;font-weight:700>idref=</span><span style=color:#b8bb26>&#34;toc&#34;</span> <span style=color:#fb4934>/&gt;</span>
+</span></span><span style=display:flex><span>    {{#each toc}}
+</span></span><span style=display:flex><span>    <span style=color:#fb4934>&lt;itemref</span> <span style=color:#b8bb26;font-weight:700>idref=</span><span style=color:#b8bb26>&#34;{{id}}&#34;</span> <span style=color:#fb4934>/&gt;</span>
+</span></span><span style=display:flex><span>    {{/each}}
+</span></span><span style=display:flex><span>  <span style=color:#fb4934>&lt;/spine&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#fb4934>&lt;/package&gt;</span>
+</span></span></code></pre></div><p>I updated <code>&lt;spine></code> to only include the table of content files.
+If I didn&rsquo;t do that, the CSS file and all our images are in the <code>&lt;spine></code> as well.
+Note that the <code>toc.xhtml</code> entries are static, because they&rsquo;ll always be there.</p><p>Now there is an automatically generated Table of Contents from our actual article titles.
+Everything is coming together nicely.</p><h3 id=metadata>Metadata</h3><p>Last stop: metadata.
+I have held onto this bit for last because it&rsquo;s more involved than is apparent.
+Here is the <code>content.opf</code> file again, this time only the <code>&lt;metadata></code> part:</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#fb4934>&lt;package</span> <span style=color:#b8bb26;font-weight:700>xmlns=</span><span style=color:#b8bb26>&#34;http://www.idpf.org/2007/opf&#34;</span> <span style=color:#b8bb26;font-weight:700>unique-identifier=</span><span style=color:#b8bb26>&#34;uid&#34;</span> <span style=color:#b8bb26;font-weight:700>version=</span><span style=color:#b8bb26>&#34;3.0&#34;</span><span style=color:#fb4934>&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#fb4934>&lt;metadata</span> <span style=color:#b8bb26;font-weight:700>xmlns:dc=</span><span style=color:#b8bb26>&#34;http://purl.org/dc/elements/1.1/&#34;</span><span style=color:#fb4934>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#fb4934>&lt;dc:identifier</span> <span style=color:#b8bb26;font-weight:700>id=</span><span style=color:#b8bb26>&#34;uid&#34;</span><span style=color:#fb4934>&gt;</span>urn:uuid:{{uuid}}<span style=color:#fb4934>&lt;/dc:identifier&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#fb4934>&lt;dc:title</span> <span style=color:#b8bb26;font-weight:700>id=</span><span style=color:#b8bb26>&#34;t1&#34;</span><span style=color:#fb4934>&gt;</span>{{title}}<span style=color:#fb4934>&lt;/dc:title&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#fb4934>&lt;dc:creator</span> <span style=color:#b8bb26;font-weight:700>id=</span><span style=color:#b8bb26>&#34;author&#34;</span><span style=color:#fb4934>&gt;</span>{{author}}<span style=color:#fb4934>&lt;/dc:creator&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#fb4934>&lt;dc:language&gt;</span>en<span style=color:#fb4934>&lt;/dc:language&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#fb4934>&lt;/metadata&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>&lt;!-- manifest/spine come here --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#fb4934>&lt;/package&gt;</span>
+</span></span></code></pre></div><p>The <a href=https://www.w3.org/TR/epub-33/#sec-opf-dcmes-required>EPUB 3.3 specification</a> defines the required meta elements are <code>dc:identifier</code>, <code>dc:title</code> and <code>dc:language</code>.</p><p>While title and language are pretty clear, the identifier is supposed to identify this particular book uniquely.
+It is referenced in the <code>&lt;package></code> element, where <code>unique-identifier</code> points to the ID we gave to the <code>dc:identifier</code> element.
+Because my bootleg book doesn&rsquo;t have an official ISBN, I use <code>urn:uuid</code> and generate a new UUID each time its bundled.
+Note that the spec says:</p><blockquote><p>Unique Identifiers should have maximal persistence both for referencing and distribution purposes. EPUB creators should not issue new identifiers when making minor revisions such as updating metadata, fixing errata, or making similar minor changes.</p></blockquote><p>So if you&rsquo;re going to publish the EPUB, the identifier should be more stable than this.
+For my purposes, where I&rsquo;m just building them for myself, it&rsquo;s fine though.</p><p>To verify the book - including the metadata - I use <a href=https://www.w3.org/publishing/epubcheck/>EPUBCheck</a>.
+You can freely download it and let it run over the whole <code>.epub</code> file.
+It was helpful to point me to articles that required additional manual touch up.</p><h2 id=wrap-up>Wrap up</h2><p>That&rsquo;s it.
+Did I have to make it this complicated for myself? Probably not.
+It was a rewarding little programming exercise that I could work through without major hurdles and just build out.
+It was fun.
+And now I have a new book to read.</p><p>The snippets in this article are taken from the accompanying <a href=https://github.com/LukasKnuth/epub_tools/>repository</a>, which has the full scripts, template and docs.</p></div></article><footer id=footer><div class=footer-left>Copyright &copy; 2024 Lukas Knuth</div><div class=footer-right><nav><ul><li><a href=/writings>Writings</a></li><li><a href=/about>About</a></li><li><a href=/cv>CV</a></li><li><a href=/imprint>Imprint</a></li></ul></nav></div></footer></div></body><link rel=stylesheet href=/lib/font-awesome/css/all.min.css><script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script></html>
