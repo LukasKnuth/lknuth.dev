@@ -1,5 +1,5 @@
 ---
-title: "Old Laptop"
+title: "More with less"
 date: 2024-03-04T15:45:25+01:00
 draft: true
 ---
@@ -116,5 +116,6 @@ Once we're back from vacation, I'll buy a fresh battery and remove my single har
 With this new system and it's lower resource footprint (compared to a basic Windows install), the device is snappy again.
 I hand-picked most software for exactly this reason.
 The side effect is that I have really bloat free system.
+
 I found a special joy in doing more with less.
 
