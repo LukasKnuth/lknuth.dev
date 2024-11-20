@@ -1,13 +1,16 @@
 list:
 - name: homeserver
   url: https://github.com/LukasKnuth/homeserver
-  desc: The full configuration of my RPi server at home, including K8s and Nix OS.
+  desc: Full configuration of my Raspberry Pi server with Kubernetes via Talos Linux.
 - name: HackerSchool
   url: https://github.com/LukasKnuth/HackerSchool
   desc: An interactive learning tool for my HackerSchool "Think like a Programmer" course.
 - name: BackSlide
   url: https://gitlab.com/p91paul/BackSlide
-  desc: A Gnome Shell Extension to automatically switch wallpapers, initially written by me during my studies. Now maintained by Paolo 💪
+  desc: A Gnome Shell Extension to automatically switch wallpapers - initially written by me, now maintained by Paolo 💪
 - name: pacman
   url: https://github.com/LukasKnuth/pacman
-  desc: A faithful adaptation of the arcade classic on my own engine, written when I just learned programming.
+  desc: A faithful adaptation of the arcade classic using my own engine, written when I just learned programming.
+- name: dotfiles
+  url: https://github.com/LukasKnuth/dotfiles
+  desc: Every developer has to have a dotfiles repository, right?
