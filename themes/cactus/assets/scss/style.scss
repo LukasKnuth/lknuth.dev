@@ -143,14 +143,11 @@ body {
 
 pre {
   overflow-x: auto;
-  padding: 15px 15px 10px 15px;
+  padding: 15px;
   border: 1px dotted $color-border;
-  border-radius: 2px;
-  -webkit-border-radius: 2px;
   font-size: 18px;
   font-family: $font-family-mono;
   line-height: 1.35;
-  position: relative;
 
   code {
     display: block;
@@ -159,12 +156,24 @@ pre {
   }
 }
 
+@media (max-width: $page-width) {
+  // On devices smaller than our maximum width...
+  pre {
+    // show code blocks at full width
+    width: 100vw;
+    margin-left: 50%;
+    transform: translate(-50%);
+    padding-left: calc(100vw / 2 - 50%);
+    // non-highlighted code blocks: remove left/right borders
+    border-left: none;
+    border-right: none;
+  }
+}
+
 code {
   font-family: $font-family-mono;
   padding: 0 5px;
   border: 1px dotted $color-border;
-  border-radius: 2px;
-  -webkit-border-radius: 2px;
 }
 
 .highlight {
@@ -175,12 +184,7 @@ code {
   }
 
   pre {
-    // Make full-width but layout with page text
     border: none;
-    width: 100vw;
-    margin-left: 50%;
-    transform: translate(-50%);
-    padding-left: calc(100vw / 2 - 50%)
   }
 
   table {
