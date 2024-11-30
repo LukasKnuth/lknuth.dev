@@ -1,6 +1,6 @@
 ---
-title: "Three Levels Git Alias"
-date: 2024-11-28T23:09:43+01:00
+title: "Three Levels of Git Aliases"
+date: 2024-11-29T17:08:30+01:00
 ---
 
 [Chapter 2.7 of the Git Book](https://git-scm.com/book/en/v2/Git-Basics-Git-Aliases) is called "Git Aliases". Tucked away in it is probably the most powerful built-in feature to customize git to your own liking.
@@ -16,13 +16,13 @@ Alternatively, edit the `[alias]` section of the `.gitconfig` file in your home 
 
 ## Level 1
 
-This is a simple alias that saves us from typing a full git sub-command, including its options:
+A simple alias that saves us from typing a full git sub-command, including its options:
 
 ```bash
 sx = "status --porcelain"
 ```
 
-This allows us to type `git sx`, which is equivalent to typing `git status --porcelain`.
+We can now type `git sx`, which is equivalent to typing `git status --porcelain`.
 It's the simplest type of alias, but it already saves us from typing and remembering a bit of stuff.
 Note that we can still add any additional options we like.
 For example, `git sx --staged` is equivalent to `git status --porcelain --staged`.
@@ -33,14 +33,14 @@ This is because each line starts with four characters indicating the mode of the
 
 ## Level 2
 
-If we place an exclamation mark (or "bang" in bash-speak) at the beginning of the alias line, the given command is run in a shell.
+If we place an exclamation mark (or "bang" in bash-speak) at the beginning of the alias line, the given command is executed in a shell.
 We can use this to launch any executable (including `git` itself) and further process the output.
 
 ```bash
 sx = "!git status --porcelain | cut -c4-"
 ```
 
-The Unix [cut](https://man7.org/linux/man-pages/man1/cut.1.html) utility takes a newline separated input and removes the given number of characters from the beginning of each line.
+The Unix [cut](https://man7.org/linux/man-pages/man1/cut.1.html) utility takes a newline separated input and removes characters from each line.
 We instruct it to remove the first `4` characters and to read the input from `stdin`.
 We then pipe the `git status` output into it, removing the four characters indicating the file mode.
 
@@ -52,7 +52,7 @@ Nice, but I also want to filter the output by directory, the way that `git statu
 ## Level 3
 
 If we add the folder to filter by at the end of our command like `git sx src/`, we'll get an error from `cut: src: no such file or directory`.
-This is because what we're running is `git status --porcelain | cut -c4- folder`.
+This is because what we're running is `git status --porcelain | cut -c4- src/`.
 What we actually want is to pass the folder option to the `git status` part, before `cut` is even run.
 
 Luckily, a bang-alias is basically a shell script.
@@ -63,7 +63,7 @@ sx = "!f() { git status --porcelain $1 | cut -c4-; }; f"
 ```
 
 This declares a shell function `f` and then executes it immediately.
-Any options added when invoking the alias like `git sx src/` are captured by the function and are available using the dollar notation.
+Any options added when invoking the alias (like the folder to filter by) are captured by the function and are available using the dollar notation.
 The first option is available under `$1`, the second under `$2` and so on.
 To get all of them at once, we can use `$@`.
 
