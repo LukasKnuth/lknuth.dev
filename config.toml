@@ -49,4 +49,4 @@ link = "https://www.linkedin.com/in/lukas-knuth-1b0b18128/"
     codeFences = true
 	guessSyntax = false
 	tabWidth = 2
-	style = "gruvbox"
+	style = "catppuccin-latte"
