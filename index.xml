@@ -10,23 +10,23 @@ As with many older startups, their initial system was not designed to handle wha
 I found my passion for computers pretty early in my live and have been on a straight path towards my career ever since, getting vocational training and a bachelors degree in Computer Science.
 Since I started my professional career, I have been a Mobile Developer on Android, a Web Developer using multiple frontend frameworks, a Full-Stack Developer focused on NodeJS, Ruby and Elixir and most recently a Senior Backend Developer working mostly with Elixir.</description></item><item><title>Impressum</title><link>https://lknuth.dev/imprint-de/</link><pubDate>Wed, 19 Oct 2022 01:21:00 +0200</pubDate><guid>https://lknuth.dev/imprint-de/</guid><description>Impressum auf Englisch / Imprint in English
 Angaben gemäß § 5 TMG Lukas Knuth
-Tannenbergstraße 7
-51465 Bergisch Gladbach
-Germany
+Bechsteinstraße 9
+51067 Köln
+Deutschland
 Kontakt E-Mail: me @ die domain dieses blogs
 Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV Lukas Knuth
-Tannenbergstraße 7
-51465 Bergisch Gladbach
-Germany
+Bechsteinstraße 9
+51067 Köln
+Deutschland
 Haftung für Inhalte Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.</description></item><item><title>Imprint</title><link>https://lknuth.dev/imprint/</link><pubDate>Wed, 19 Oct 2022 01:21:00 +0200</pubDate><guid>https://lknuth.dev/imprint/</guid><description>Impressum auf Deutsch / Imprint in German
 Information in accordance with § 5 TMG Lukas Knuth
-Tannenbergstraße 7
-51465 Bergisch Gladbach
+Bechsteinstraße 9
+51067 Köln
 Germany
 Contact Information E-Mail: me @ the domain of this blog
 Responsible for content in accordance with § 55 parag. 2 RStV Lukas Knuth
-Tannenbergstraße 7
-51465 Bergisch Gladbach
+Bechsteinstraße 9
+51067 Köln
 Germany
 Accountability for content The contents of our pages have been created with the utmost care. However, we cannot guarantee the contents’ accuracy, completeness or topicality.</description></item><item><title>Dangerously Typed</title><link>https://lknuth.dev/writings/dangerously_typed/</link><pubDate>Sat, 07 Jan 2017 16:05:00 +0100</pubDate><guid>https://lknuth.dev/writings/dangerously_typed/</guid><description>At work, I&amp;rsquo;m currently building an new Node.js Application. I opted to use Node, because the application is highly parallel and while I could have build it in Java, Node already does all the hard things that come with building multi-threaded Applications.
 For my language of choice, I looked to TypeScript, because it adds some compile-time type-safety to JavaScript. For the most part, TypeScript has been helping me to write clean code that I can trust when the compiler gives it&amp;rsquo;s &amp;ldquo;all clear&amp;rdquo;.</description></item><item><title>TTS and Usability</title><link>https://lknuth.dev/writings/tts_and_usability/</link><pubDate>Fri, 13 Jun 2014 16:02:43 +0100</pubDate><guid>https://lknuth.dev/writings/tts_and_usability/</guid><description>There are limited yet very legit use-cases for Text to Speech engines in your application.
