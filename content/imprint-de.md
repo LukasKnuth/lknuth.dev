@@ -9,9 +9,9 @@ index: false
 ## Angaben gemäß § 5 TMG
 
 Lukas Knuth<br>
-Tannenbergstraße 7<br>
-51465 Bergisch Gladbach<br>
-Germany
+Bechsteinstraße 9<br>
+51067 Köln<br>
+Deutschland
 
 ## Kontakt
 
@@ -20,9 +20,9 @@ E-Mail: me @ die domain dieses blogs
 ## Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV
 
 Lukas Knuth<br>
-Tannenbergstraße 7<br>
-51465 Bergisch Gladbach<br>
-Germany
+Bechsteinstraße 9<br>
+51067 Köln<br>
+Deutschland
 
 ## Haftung für Inhalte
 
