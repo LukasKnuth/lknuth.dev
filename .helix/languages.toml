@@ -1,0 +1,4 @@
+[[language]]
+name = "yaml"
+# Use ltex-ls to allow Spellchecking on CV
+language-servers = [ "ltex-ls" ]
