@@ -3,7 +3,7 @@ languageCode = 'en-us'
 title = 'Lukas Knuth // Developer'
 copyright = "Lukas Knuth"
 
-theme = 'cactus'
+#theme = 'neon_noir'
 enableInlineShortcodes = true
 
 [[menu.main]]
@@ -42,12 +42,42 @@ name = "linkedin"
 link = "https://www.linkedin.com/in/lukas-knuth-1b0b18128/"
 
 [markup]
-	[markup.goldmark.renderer]
-	 # allow HTLM tags in markdown
-		unsafe = true
-  [markup.highlight]
-    codeFences = true
-	guessSyntax = false
-	tabWidth = 2
-	style = "catppuccin-latte"
+
+[markup.goldmark.renderer]
+# allow HTLM tags in markdown
+unsafe = true
+
+[markup.highlight]
+codeFences = true
+guessSyntax = false
+tabWidth = 2
+style = "catppuccin-latte"
+
+# Configure Build to work with Tailwind v4.
+# Mostly taken from https://github.com/bep/hugo-testing-tailwindcss-v4/tree/main/tailwindcss-cli-defer
+# See also https://gohugo.io/functions/css/tailwindcss/ and https://gohugo.io/functions/templates/defer/
+[module]
+
+[module.hugoVersion]
+min = "0.128.0"
+
+[[module.mounts]]
+source = "assets"
+target = "assets"
+
+[[module.mounts]]
+source = "content"
+target = "content"
+
+[[module.mounts]]
+source       = "hugo_stats.json"
+target       = "assets/notwatching/hugo_stats.json"
+disableWatch = true
+
+[build.buildStats]
+enable = true
+
+[[build.cachebusters]]
+source = "assets/notwatching/hugo_stats\\.json"
+target = "css"
 
