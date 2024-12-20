@@ -11,6 +11,15 @@
   --color-green-950: #1a2e05;
 }
 
+@layer components {
+  .fancy-link {
+    @apply transition-colors;
+    text-decoration: none;
+    border-image: linear-gradient(90deg, var(--color-fuchsia-400) 0%, var(--color-rose-500) 100%) 1;
+    border-bottom: 2px solid var(--color-fuchsia-400);
+  }
+}
+
 body {
   @apply antialiased;
 }

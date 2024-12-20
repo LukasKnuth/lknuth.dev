@@ -37,7 +37,7 @@
           <time datetime="{{ time .Date }}" itemprop="datePublished">{{ .Date.Format .Site.Params.dateFormat }}</time>
         </div>
         <div class="flex-1">
-          <a href="{{ .Permalink }}">{{ if .Title }} {{- .Title -}} {{ else }} {{- print "Untitled" -}}{{ end }}</a>
+          <a class="fancy-link" href="{{ .Permalink }}">{{ if .Title }} {{- .Title -}} {{ else }} {{- print "Untitled" -}}{{ end }}</a>
         </div>
       </li>
     {{ end }}
@@ -52,7 +52,7 @@
   <ul>
     {{ range .Site.Data.projects.list }}
     <li class="my-3">
-      <a href="{{ .url }}">{{ .name }}</a>: {{ .desc | markdownify }}
+      <a class="fancy-link" href="{{ .url }}">{{ .name }}</a>: {{ .desc | markdownify }}
     </li>
     {{ end }}
   </ul>
