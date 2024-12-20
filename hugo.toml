@@ -25,9 +25,10 @@ weight = 50
 
 [params]
 mainSection = "writings"
+mainSectionTitle = "Writings"
 postsOnHomePage = 5
 tagsOverview = false
-showProjectsList = true
+dateFormat = "2006-01-02"
 
 [[params.social]]
 name = "github"

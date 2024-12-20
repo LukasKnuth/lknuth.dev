@@ -1,11 +1,61 @@
 {{ define "main" }}
-  <article class="mx-auto max-w-[90ch] bg-teal-50 p-2 md:p-6 rounded-lg">
-    <h1 class="text-3xl mb-4 tracking-tight text-black font-bold uppercase">
-      {{ .Title }}
-    </h1>
 
-    <div class="markdown">
-      {{ .Content }}
-    </div>
-  </article>
+<section id="about-me" class="mx-4 md:mx-8 mt-4 md:mt-6 mb-4">
+  {{ if isset .Site.Params "social" }}
+    <p class="my-2">Find me on
+    {{ $length := (len .Site.Params.social) }}
+    {{ range $index, $elem := .Site.Params.social }}
+      <a class="" target="_blank" rel="noopener" href="{{ $elem.link }}">
+        {{ lower $elem.name }}
+      </a>
+      {{ if (lt (add $index 2) $length) }}
+        {{- print " , " -}}
+      {{ else if (lt (add $index 1) $length) }}
+        {{- print " and " -}}
+      {{ else }}
+        {{- print "." -}}
+      {{ end }}
+    {{ end }}
+    </p>
+  {{ end }}
+  <p class="my-2">
+  	Hey, I'm Lukas.
+  	I make computers do useful things <a href="/cv">for a living</a>.
+  	I'm also crazy about exercise, baking and cinema.
+  </p>
+</section>
+
+<section id="writings" class="mx-4 md:mx-8 mt-8 md:mt-12 mb-4">
+  <span class="text-3xl font-bold">
+    <a href="{{ .Site.Params.mainSection | absURL }}">{{ .Site.Params.mainSectionTitle }}</a>
+  </span>
+  {{ $mainPosts := (sort ( where site.RegularPages "Type" "in" site.Params.mainSections ) "Date" "desc") }}
+  <ul>
+    {{ range (first .Site.Params.postsOnHomePage $mainPosts) }}
+      <li class="flex items-center my-3">
+        <div class="w-32 font-mono text-sm text-zinc-500">
+          <time datetime="{{ time .Date }}" itemprop="datePublished">{{ .Date.Format .Site.Params.dateFormat }}</time>
+        </div>
+        <div class="flex-1">
+          <a href="{{ .Permalink }}">{{ if .Title }} {{- .Title -}} {{ else }} {{- print "Untitled" -}}{{ end }}</a>
+        </div>
+      </li>
+    {{ end }}
+  </ul>
+  <div class="underline mb-4">
+    <a href="{{ .Site.Params.mainSection | absURL }}">more writing</a>
+  </div>
+</section>
+
+<section id="projects" class="mx-4 md:mx-8 mt-8 md:mt-12 mb-4">
+  <span class="text-3xl font-bold">Projects</span>
+  <ul>
+    {{ range .Site.Data.projects.list }}
+    <li class="my-3">
+      <a href="{{ .url }}">{{ .name }}</a>: {{ .desc | markdownify }}
+    </li>
+    {{ end }}
+  </ul>
+</section>
+
 {{ end }}
