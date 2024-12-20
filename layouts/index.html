@@ -33,7 +33,7 @@
   <ul>
     {{ range (first .Site.Params.postsOnHomePage $mainPosts) }}
       <li class="flex items-center my-3">
-        <div class="w-32 font-mono text-sm text-zinc-500">
+        <div class="mr-2 md:mr-0 md:w-32 font-mono text-xs md:text-sm text-zinc-500">
           <time datetime="{{ time .Date }}" itemprop="datePublished">{{ .Date.Format .Site.Params.dateFormat }}</time>
         </div>
         <div class="flex-1">
