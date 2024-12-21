@@ -37,7 +37,7 @@ name = "github"
 link = "https://github.com/LukasKnuth"
 
 [[params.social]]
-name = "stack-overflow"
+name = "stackoverflow"
 link = "https://stackoverflow.com/users/717341/lukas-knuth"
 
 [[params.social]]
