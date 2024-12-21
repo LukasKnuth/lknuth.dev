@@ -1,7 +1,7 @@
 set shell := ["zsh", "-uc"]
 
 dev:
-  hugo server
+  hugo server --disableFastRender --logLevel info
 
 build:
   hugo --minify
