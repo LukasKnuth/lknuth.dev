@@ -1,0 +1,8 @@
+{{- $u := urls.Parse .Destination -}}
+<a class="fancy-link" href="{{ .Destination | safeURL }}"
+  {{- with .Title }} title="{{ . }}"{{ end -}}
+  {{- if $u.IsAbs }} rel="external"{{ end -}}
+>
+  {{- with .Text }}{{ . }}{{ end -}}
+</a>
+

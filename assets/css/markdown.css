@@ -1,1 +1,50 @@
-/* Set this up later using either layers OR figure out if tailwind-typesetting works with v4 beta! */
+.prose {
+  p {
+    @apply text-justify my-4;
+  }
+
+  blockquote {
+    @apply text-justify my-4 border-l-2 border-l-fuchsia-400 pl-4;
+  }
+  blockquote.alert {
+    @apply flex items-start gap-3 py-2 px-4 rounded bg-zinc-300;
+  }
+
+  h2 {
+    @apply text-2xl font-bold;
+  }
+
+  h3 {
+    @apply text-xl font-bold;
+  }
+
+  code {
+    @apply hyphens-manual font-mono;
+    /* For code _outside_ of highlight/pre blocks! */
+    @apply border border-solid border-zinc-300 px-1;
+  }
+
+  pre {
+    @apply py-1 px-3 my-1 overflow-x-auto border border-solid border-zinc-300 px-1;
+
+    code {
+      @apply border-none px-0;
+    }
+  }
+
+  .highlight pre {
+    @apply border-none;
+  }
+
+  ol {
+    @apply list-decimal pl-4 my-4;
+  }
+
+  ul {
+    @apply list-disc pl-4 my-4;
+  }
+
+  li {
+    @apply my-1;
+  }
+}

@@ -4,7 +4,7 @@
   <div class="my-2 text-sm text-zinc-400">
     <time datetime="{{ .Date }}" itemprop="datePublished">{{ .Date.Format .Site.Params.dateFormat }}</time>
   </div>
-  <div class="py-4" itemprop="articleBody">
+  <div class="prose" itemprop="articleBody">
     {{ .Content}}
   </div>
 </article>
