@@ -3,11 +3,18 @@
     @apply text-justify my-4;
   }
 
-  blockquote {
+  blockquote:not(.alert) {
     @apply text-justify my-4 border-l-2 border-l-fuchsia-400 pl-4;
   }
   blockquote.alert {
-    @apply flex items-start gap-3 py-2 px-4 rounded bg-zinc-300;
+    @apply flex items-start gap-3 py-2 px-4 rounded bg-zinc-200;
+
+    p:first-child {
+      @apply mt-0;
+    }
+    p:last-child {
+      @apply mb-0;
+    }
   }
 
   h2 {
