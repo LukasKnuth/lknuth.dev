@@ -1,12 +1,13 @@
-<div class="mx-4 md:mx-8 mt-4 md:mt-6 mb-4">
-  <a class="grayscale hover:grayscale-0" href="{{ .Site.BaseURL }}">
-    <div class="w-16 h-16 mr-5 float-left bg-no-repeat bg-center bg-contain rounded-md" style="background-image: url({{ "images/logo.png" | absURL }})"></div>
-    <div class="text-3xl font-bold">{{ .Site.Title }}</div>
+<div class="mx-4 md:mx-8 mt-4 md:mt-6 mb-3">
+  <a href="{{ .Site.BaseURL }}">
+    <div class="w-16 h-16 mr-3 md:mr-5 float-left bg-no-repeat bg-center bg-contain rounded-md" style="background-image: url({{ "images/logo.png" | absURL }})"></div>
+    <div class="hidden md:!block text-3xl font-bold">{{ .Site.Title }}</div>
+    <div class="md:hidden text-xl font-bold truncate text-clip">{{ .Site.Params.ShortTitle }}</div>
   </a>
   <nav>
-    <ol class="flex text-fuchsia-500">
+    <ol class="flex text-fuchsia-500 pt-1">
       {{ range .Site.Menus.main }}
-      <li class="text-base inline-block leading-4 mt-1 pr-3 mr-3 align-middle border-dotted border-r-2 last:border-none">
+      <li class="md:text-base inline-block leading-4 mt-1 pr-2 mr-2 md:pr-3 md:mr-3 align-middle border-dotted border-r-2 last:border-none">
         <a href="{{ .URL }}">{{ .Name }}</a>
       </li>
       {{ end }}

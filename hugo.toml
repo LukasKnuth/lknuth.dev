@@ -1,6 +1,6 @@
-baseURL = 'https://lknuth.dev/'
-languageCode = 'en-us'
-title = 'Lukas Knuth // Developer'
+baseURL = "https://lknuth.dev/"
+languageCode = "en-us"
+title = "Lukas Knuth // Software Engineer"
 copyright = "Lukas Knuth"
 
 #theme = 'neon_noir'
@@ -25,6 +25,7 @@ url = "/imprint"
 weight = 50
 
 [params]
+shortTitle = "Lukas Knuth // SWE"
 mainSection = "writings"
 mainSectionTitle = "Writings"
 postsOnHomePage = 5
