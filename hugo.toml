@@ -4,6 +4,7 @@ title = 'Lukas Knuth // Developer'
 copyright = "Lukas Knuth"
 
 #theme = 'neon_noir'
+disableKinds = ["taxonomy"]
 enableInlineShortcodes = true
 
 [[menu.main]]
