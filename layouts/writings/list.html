@@ -7,11 +7,11 @@
     {{ $.Scratch.Set "year" $pageYear }}
     <h2 class="mt-4 md:mt-6 font-bold">{{ $pageYear }}</h2>
     {{ end }}
-    <li class="flex items-center my-2 ml-2 md:ml-6">
-      <div class="mr-2 md:mr-0 md:w-32 font-mono text-xs md:text-sm text-subtle">
+    <li class="grid grid-cols-6 my-5 ml-2 md:ml-6">
+      <div class="col-span-6 md:col-span-1 self-center font-mono text-sm text-subtle">
         <time datetime="{{ time .Date }}" itemprop="datePublished">{{ .Date.Format .Site.Params.dateFormat }}</time>
       </div>
-      <div class="flex-1">
+      <div class="col-span-6 md:col-span-5">
         <a class="fancy-link" href="{{ .Permalink }}">{{ if .Title }} {{- .Title -}} {{ else }} {{- print "Untitled" -}}{{ end }}</a>
       </div>
     </li>
