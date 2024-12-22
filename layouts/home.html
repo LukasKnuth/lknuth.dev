@@ -20,7 +20,7 @@
     {{ $length := (len .Site.Params.social) }}
     {{ range $index, $elem := .Site.Params.social }}
       <a class="inline-block align-text-bottom" target="_blank" rel="noopener" href="{{ $elem.link }}">
-        <svg class="w-5 h-5 stroke-0 fill-black hover:fill-fuchsia-400">
+        <svg class="w-5 h-5 stroke-0 fill-black hover:fill-primary">
           <use xlink:href="#icon-{{ lower $elem.name }}"></use>
         </svg>
       </a>
@@ -49,7 +49,7 @@
   <ul>
     {{ range (first .Site.Params.postsOnHomePage $mainPosts) }}
       <li class="flex items-center my-3">
-        <div class="mr-2 md:mr-0 md:w-32 font-mono text-xs md:text-sm text-zinc-500">
+        <div class="mr-2 md:mr-0 md:w-32 font-mono text-xs md:text-sm text-subtle">
           <time datetime="{{ time .Date }}" itemprop="datePublished">{{ .Date.Format .Site.Params.dateFormat }}</time>
         </div>
         <div class="flex-1">

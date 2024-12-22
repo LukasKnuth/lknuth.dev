@@ -4,10 +4,10 @@
   }
 
   blockquote:not(.alert) {
-    @apply text-justify my-4 border-l-2 border-l-fuchsia-400 pl-4;
+    @apply text-justify my-4 border-l-2 border-l-primary pl-4;
   }
   blockquote.alert {
-    @apply flex items-start gap-3 py-2 px-4 rounded bg-zinc-200;
+    @apply flex items-start gap-3 py-2 px-4 rounded bg-surface;
 
     p:first-child {
       @apply mt-0;
@@ -28,11 +28,11 @@
   code {
     @apply hyphens-manual font-mono;
     /* For code _outside_ of highlight/pre blocks! */
-    @apply border border-solid border-zinc-300 px-1;
+    @apply border border-solid border-crust px-1;
   }
 
   pre {
-    @apply py-1 px-3 my-1 overflow-x-auto border border-solid border-zinc-300 px-1;
+    @apply py-1 px-3 my-1 overflow-x-auto border border-solid border-crust px-1;
 
     code {
       @apply border-none px-0;

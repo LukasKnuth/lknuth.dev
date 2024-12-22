@@ -1,21 +1,21 @@
 @import "tailwindcss";
 
 @theme {
-  --color-orange-300: #f56642;
-  --color-blue-100: #427bf5;
-  --color-gray-50: #f8fafc;
-  --color-gray-100: #f1f5f9;
-  --color-gray-200: #e2e8f0;
-  --color-green-800: #3f6212;
-  --color-green-900: #365314;
-  --color-green-950: #1a2e05;
+  --color-primary: var(--color-fuchsia-400);
+  --color-accent: var(--color-rose-500);
+  --color-subtle: var(--color-zinc-500);
+  --color-pane: var(--color-white);
+  --color-surface: #eff1f5; /* taken from catppuchino-latte code highlight */
+  --color-crust: var(--color-zinc-300);
+
+  /* TODO add font for mono and sans! */
 }
 
 @layer components {
   .fancy-link {
     text-decoration: none;
-    border-image: linear-gradient(90deg, var(--color-fuchsia-400) 0%, var(--color-rose-500) 100%) 1;
-    border-bottom: 2px solid var(--color-fuchsia-400);
+    border-image: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%) 1;
+    border-bottom: 2px solid var(--color-primary);
   }
 }
 

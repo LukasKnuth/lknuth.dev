@@ -42,7 +42,7 @@
     {{ end }}
     <link rel="icon" type="image/png" href="{{ "images/favicon.ico"  | absURL }}" />
   </head>
-  <body class="flex flex-col h-screen max-w-4xl mx-auto break-words text-base md:text-lg hyphens-auto leading-relaxed font-sans tracking-wider">
+  <body class="flex flex-col h-screen max-w-4xl mx-auto bg-pane break-words text-base md:text-lg hyphens-auto leading-relaxed font-sans tracking-wider">
     <header>{{ partial "header.html" . }}</header>
     <main class="grow">{{ block "main" . }}{{ end }}</main>
     <footer>{{ partial "footer.html" . }}</footer>

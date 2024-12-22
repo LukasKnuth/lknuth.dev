@@ -8,7 +8,7 @@
     <h2 class="mt-4 md:mt-6 font-bold">{{ $pageYear }}</h2>
     {{ end }}
     <li class="flex items-center my-2 ml-2 md:ml-6">
-      <div class="mr-2 md:mr-0 md:w-32 font-mono text-xs md:text-sm text-zinc-500">
+      <div class="mr-2 md:mr-0 md:w-32 font-mono text-xs md:text-sm text-subtle">
         <time datetime="{{ time .Date }}" itemprop="datePublished">{{ .Date.Format .Site.Params.dateFormat }}</time>
       </div>
       <div class="flex-1">
