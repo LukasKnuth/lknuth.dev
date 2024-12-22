@@ -7,7 +7,7 @@
 }}
 
 {{ if eq .Type "alert" }}
-  <blockquote class="alert">
+  <blockquote class="callout">
     <div>{{ transform.Emojify (index $emojis .AlertType) }}</div>
     <div>{{ .Text }}</div>
   </blockquote>

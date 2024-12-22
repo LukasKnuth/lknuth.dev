@@ -3,11 +3,11 @@
     @apply text-justify my-4;
   }
 
-  blockquote:not(.alert) {
+  blockquote:not(.callout) {
     @apply text-justify my-4 border-l-2 border-l-primary pl-4;
   }
-  blockquote.alert {
-    @apply flex items-start gap-3 py-2 px-4 rounded bg-surface;
+  blockquote.callout {
+    @apply flex items-start gap-3 my-4 py-2 px-4 rounded bg-surface;
 
     p:first-child {
       @apply mt-0;
