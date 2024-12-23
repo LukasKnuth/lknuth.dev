@@ -1,0 +1,58 @@
+{{ define "main" }}
+<section class="h-spaced mt-4">{{ .Content}}</section>
+<section class="h-spaced mt-4 pl-5 border-l border-l-subtle">
+	{{ range $.Site.Data.my_cv.list }}
+		{{ if isset . "school" }}
+			{{ partial "partials/cv/education.html" (dict "edu" . "Page" $.Page) }}
+		{{ else if isset . "company" }}
+			{{ partial "partials/cv/job.html" (dict "job" . "Page" $.Page) }}
+		{{ end }}
+	{{ end }}
+</section>
+{{ end }}
+
+{{ define "partials/cv/job.html" }}
+<div class="relative py-2">
+	<span class="inline-block absolute w-4 h-4 -left-7 top-3.5 rounded-full border-2 border-black bg-pane">&nbsp</span>
+	<div class="text-subtle italic">
+		{{ .job.from }} &mdash; 
+		{{ if isset .job "until" }}
+			{{ .job.until }}
+		{{ else }}
+			<span class="text-primary">Now</span>
+		{{ end }}
+	</div>
+	<div>
+		<span class="font-bold">{{ .job.position }}</span> 
+		at <span class="font-bold">{{ .job.company }}</span> 
+		in <span>{{ .job.city }}</span>
+	</div>
+	<div class="mt-2">
+		{{ range .job.tech_stack }}
+		<span class="tag mr-1">{{ . | lower }}</span>
+		{{ end }}
+	</div>
+	<div class="prose">
+		{{ $opts := dict "display" "block" }}
+		{{ .job.work | .Page.RenderString $opts }}
+	</div>
+</div>
+{{ end }}
+
+{{ define "partials/cv/education.html" }}
+<div class="relative py-2">
+	<span class="inline-block absolute w-4 h-4 -left-7 top-3.5 rounded-full border-2 border-black bg-pane">&nbsp</span>
+	<div class="">
+		<span class="text-subtle italic">{{ .edu.from }} &mdash; {{ .edu.until }}</span>
+		<span class="font-bold">{{ .edu.degree }}</span>
+	</div>
+	<div class="subline">
+		from <span class="font-bold">{{ .edu.school }}</span> 
+		in <span>{{ .edu.city }}</span>
+	</div>
+	<div class="prose">
+		{{ $opts := dict "display" "block" }}
+		{{ .edu.notes | .Page.RenderString $opts }}
+	</div>
+</div>
+{{ end }}

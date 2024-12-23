@@ -17,6 +17,18 @@
     border-image: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%) 1;
     border-bottom: 2px solid var(--color-primary);
   }
+
+  .h-spaced {
+    @apply mx-4 md:mx-8;
+  }
+
+  .tag {
+    @apply py-1 px-1;
+    @apply border-b-2 border-b-accent;
+    @apply border-r-2 border-r-accent;
+    @apply border-t-1 border-t-accent/50;
+    @apply border-l-1 border-l-accent/50;
+  }
 }
 
 body {
