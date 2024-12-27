@@ -1,0 +1,88 @@
+/*
+  Loads fonts from local machine if present
+  Taken from https://jonathanmh.com/p/webfonts-using-local-fonts-as-source/
+*/
+
+/* ------- JetBrains Mono (mono) -------- */
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local("JetBrainsMono-Regular"),
+    local("JetBrainsMonoNL-Regular"),
+    local("JetBrainsMonoNerdFontComplete-Regular"),
+    local("JetBrainsMonoNerdFontCompleteM-Regular"),
+    local("JetBrainsMonoNerdFontCo-Regular"),
+    url("/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local("JetBrainsMono-Italic"),
+    local("JetBrainsMonoNL-Italic"),
+    local("JetBrainsMonoNerdFontComplete-Italic"),
+    local("JetBrainsMonoNerdFontCompleteM-Italic"),
+    local("JetBrainsMonoNerdFontCom-Italic"),
+    url("/fonts/JetBrainsMono-Italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local("JetBrainsMono-Regular_Bold"),
+    local("JetBrainsMonoNL-Bold"),
+    local("JetBrainsMonoNerdFontComplete-Bold"),
+    local("JetBrainsMonoNerdFontCompleteM-Bold"),
+    local("JetBrainsMonoNerdFontCompl-Bold"),
+    url("/fonts/JetBrainsMono-Bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: local("JetBrainsMono-Italic_Bold-Italic"),
+    local("JetBrainsMonoNL-BoldItalic"),
+    local("JetBrainsMonoNerdFontComplete-Bold-Italic"),
+    local("JetBrainsMonoNerdFontCompleteM-Bold-Italic"),
+    local("JetBrainsMonoNerdFo-Bold-Italic"),
+    url("/fonts/JetBrainsMono-Bold-Italic.woff2") format("woff2");
+}
+
+/* ------- iA Writer Quattro (sans-serif) -------- */
+@font-face {
+  font-family: "iA Writer Quattro";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local("iAWriterQuattroS-Regular"),
+    url("/fonts/iAWriterQuattroS-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "iA Writer Quattro";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local("iAWriterQuattroS-Italic"),
+    url("/fonts/iAWriterQuattroS-Italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "iA Writer Quattro";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local("iAWriterQuattroS-Bold"),
+    url("/fonts/iAWriterQuattroS-Bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "iA Writer Quattro";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: local("iAWriterQuattroS-BoldItalic"),
+    url("/fonts/iAWriterQuattroS-BoldItalic.woff2") format("woff2");
+}

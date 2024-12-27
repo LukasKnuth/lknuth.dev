@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "fonts.css"
 
 @theme {
   --color-primary: var(--color-fuchsia-400);
@@ -8,7 +9,8 @@
   --color-surface: #eff1f5; /* taken from catppuchino-latte code highlight */
   --color-crust: var(--color-zinc-300);
 
-  /* TODO add font for mono and sans! */
+  --font-sans: "iA Writer Quattro", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 @layer components {
