@@ -1,5 +1,5 @@
 {{ define "main" }}
-<article class="mx-4 md:mx-8 mt-4 md:mt-6" itemscope itemtype="http://schema.org/BlogPosting">
+<article class="h-spaced mt-4 md:mt-6" itemscope itemtype="http://schema.org/BlogPosting">
   <h1 class="text-3xl font-light text-subtle" itemprop="name headline">{{ .Title }}</h1>
   <div class="my-2 text-sm text-subtle">
     <time datetime="{{ .Date }}" itemprop="datePublished">{{ .Date.Format .Site.Params.dateFormat }}</time>

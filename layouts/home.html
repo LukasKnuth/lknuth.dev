@@ -14,7 +14,7 @@
 </defs>
 </svg>
 
-<section id="about-me" class="mx-4 md:mx-8 mt-4 md:mt-6 mb-4">
+<section id="about-me" class="h-spaced mt-4 md:mt-6 mb-4">
   {{ if isset .Site.Params "social" }}
     <p class="my-2">Find me on
     {{ $length := (len .Site.Params.social) }}
@@ -41,7 +41,7 @@
   </p>
 </section>
 
-<section id="writings" class="mx-4 md:mx-8 mt-8 md:mt-12 mb-4">
+<section id="writings" class="h-spaced mt-8 md:mt-12 mb-4">
   <span class="text-3xl font-bold">
     <a href="{{ .Site.Params.mainSection | absURL }}">{{ .Site.Params.mainSectionTitle }}</a>
   </span>
@@ -63,7 +63,7 @@
   </div>
 </section>
 
-<section id="projects" class="mx-4 md:mx-8 mt-8 md:mt-12 mb-4">
+<section id="projects" class="h-spaced mt-8 md:mt-12 mb-4">
   <span class="text-3xl font-bold">Projects</span>
   <ul>
     {{ range .Site.Data.projects.list }}

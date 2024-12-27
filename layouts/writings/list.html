@@ -1,5 +1,5 @@
 {{ define "main"}}
-<section id="archive" class="mx-4 md:mx-8 mb-4">
+<section id="archive" class="h-spaced mb-4">
   <ol>
   {{ range (sort .Pages "Date" "desc") }}
     {{ $pageYear := (.Date.Format "2006") }}
