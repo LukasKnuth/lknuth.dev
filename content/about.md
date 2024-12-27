@@ -1,15 +1,25 @@
 ---
-date: 2022-10-19T01:21:00+02:00
+date: 2024-12-27T22:21:00+02:00
 title: About
 ---
 
-Hi, I'm Lukas. I make computers do useful things for a living.
+Hi, I'm Lukas.
 
-I found my passion for computers pretty early in my live and have been on a straight path towards my career ever since, getting vocational training and a bachelors degree in Computer Science.
+I knew very early that I wanted to program computers for a living.
+Having done it for a while now, I still enjoy it immensely and have no plans to shift careers to woodworking.
+More than ever I enjoy making things simple and working on solutions in a team.
 
-Since I started my professional career, I have been a Mobile Developer on Android, a Web Developer using multiple frontend frameworks, a Full-Stack Developer focused on NodeJS, Ruby and Elixir and most recently a Senior Backend Developer working mostly with Elixir.
+I like endurance cycling.
+You can find me on the bike or indoor trainer most days of the week.
+It lets me attain a meditative state where my head is truly completely empty.
 
-I most enjoy the technical aspects of the job, the actual coding as well as communicating complex technical concepts efficiently to non-technical colleagues.
+I enjoy games, both on the board and on the screen.
+I prefer games with strong moment-to-moment gameplay - like platformers, shooters and competitive games.
+These days I'm looking for short games that can fit into a busy schedule.
+
+If your interest is piqued, read about my [recent personal pursuits](/now) or find my [professional career path](/cv) on their dedicated pages.
+
+## In this Blog
 
 The writings in this Blog represent my own opinions.
 The topics range broadly, and so does the quality.
@@ -26,6 +36,7 @@ E-Mail: me @ the domain of this blog
 
 ## Tools
 
-* Created with [Hugo](https://gohugo.io/)
-* Hosted by [Github](https://pages.github.com/)
-* Theme [cactus by monkeyWzr](https://github.com/monkeyWzr/hugo-theme-cactus)
+* Built with [Hugo](https://gohugo.io/), styled with [Tailwind CSS](https://tailwindcss.com/)
+* Theme inspired by [cactus by monkeyWzr](https://github.com/monkeyWzr/hugo-theme-cactus)
+* Circuit Board pattern from [Hero Patterns](https://heropatterns.com/)
+* Hosted on [GitHub](https://pages.github.com/), behind [Cloudflare](https://cloudflare.com/)
