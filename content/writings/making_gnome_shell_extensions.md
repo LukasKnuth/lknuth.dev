@@ -6,9 +6,9 @@ description: Getting started on making GNOME Shell Extensions
 
 I like the GNOME Shell and I've liked it since it was in the "testing"-repo of ArchLinux. It's a fast and aesthetic desktop environment. But it's a long way from offering everything you'd like to have. Luckily, it can be extended.
 
-<div class="important">
-    <p>The following advices, instructions or sources where compiled when <b>GNOME Shell 3.6.2</b> was the latest version. While specific information here might be outdated, the general idea still holds value today.</p>
-</div>
+> [!caution]
+> The following advice, instructions or sources where compiled when **GNOME Shell 3.6.2** was the latest version.
+> While specific information here might be outdated, the general idea still holds value today.
 
 **Note that this is not a real step-by-step guide** on how to create your first extension. There are many of those out there and I would just repeat them. Instead, this is more like an advice-collection on different aspects of creating extensions. So, **be sure to check the links**.
 
