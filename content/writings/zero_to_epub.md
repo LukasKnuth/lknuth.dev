@@ -68,9 +68,7 @@ Throughout the guide, they use [their own tooling](https://github.com/standardeb
 Going through the guide, it struck me that there was a bunch of manual work involved.
 While I was initially happy to do it _once_ for the one book I really wanted to make, I felt an itch.
 
-![XKCD 1319](https://imgs.xkcd.com/comics/automation.png)
-
-> I'd rather spend four hours automating a task that takes one hour to do manually.
+![XKCD 1319](https://imgs.xkcd.com/comics/automation.png "I'd rather spend four hours automating a task that takes one hour to do manually.")
 
 ## Automation
 

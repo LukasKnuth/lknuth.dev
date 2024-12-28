@@ -3,7 +3,11 @@
     @apply text-justify my-4;
   }
 
-  blockquote:not(.callout) {
+  figure img {
+    @apply mx-auto;
+  }
+
+  figure figcaption, blockquote:not(.callout) {
     @apply text-justify my-4 border-l-2 border-l-primary pl-4;
   }
   blockquote.callout {

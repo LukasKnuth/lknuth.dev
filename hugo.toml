@@ -50,6 +50,10 @@ link = "https://www.linkedin.com/in/lukas-knuth-1b0b18128/"
 # allow HTLM tags in markdown
 unsafe = true
 
+[markup.goldmark.parser]
+# Allow truly standalone images with captions
+wrapStandAloneImageWithinParagraph = false
+
 [markup.highlight]
 codeFences = true
 guessSyntax = false
