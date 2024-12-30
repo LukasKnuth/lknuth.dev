@@ -40,7 +40,21 @@
   }
 
   pre {
-    @apply py-1 px-3 my-1 overflow-x-auto border border-solid border-crust px-1;
+    @apply py-2 px-3 my-1 overflow-x-auto border border-solid border-crust;
+
+    /* NOTE: Not using helper classes because resetting everything for all other
+      sizes that aren't small is hard to do well. This reads easier, too.
+      We sadly can't use `var(--breakpoint-sm)` inside the `@media` query, so the
+      min width is hardcoded from default Tailwind values.
+    */
+    @media (width < 40rem) {
+      width: 100vw;
+      margin-left: 50%;
+      transform: translate(-50%);
+      padding-left: calc(100vw / 2 - 50%);
+      border-left: none;
+      border-right: none;
+    }
 
     code {
       @apply border-none px-0;
