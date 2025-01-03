@@ -76,4 +76,20 @@
   li {
     @apply my-1;
   }
+
+  table {
+    @apply w-full text-left;
+
+    thead tr {
+      @apply bg-surface border-b border-crust;
+    }
+
+    tbody tr {
+      @apply odd:bg-pane even:bg-surface border-b border-crust;
+    }
+    
+    td, th {
+      @apply px-6 py-3;
+    }
+  }
 }
