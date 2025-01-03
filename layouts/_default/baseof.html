@@ -4,8 +4,6 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel='canonical' href='{{ .Permalink }}'>
-    <title>{{ if .IsPage }} {{ .Title }} | {{ end }}{{ .Site.Params.Author }}</title>
     <meta name="author" content="{{ .Site.Params.Author }}">
     {{ with .Summary }}<meta name="description" content="{{ . | plainify | strings.TrimRight " \r\n\t" }}">{{ end }}
     {{ if .Params.index | default true }}
@@ -14,6 +12,7 @@
     {{ else }}
     <meta name="robots" content="noindex">
     {{ end }}
+    <title>{{ if .IsPage }} {{ .Title }} | {{ end }}{{ .Site.Params.Author }}</title>
     {{ with (templates.Defer (dict "key" "global")) }}
       {{ $t := debug.Timer "tailwindcss" }}
       {{ with resources.Get "css/main.css" }}
@@ -37,7 +36,11 @@
       {{ end }}
       {{ $t.Stop }}
     {{ end }}
-    <link rel="icon" type="image/png" href="{{ "images/favicon.ico" | absURL }}" />
+    <link rel='canonical' href='{{ .Permalink }}'>
+    <!-- Created via https://realfavicongenerator.net/ -->
+    <link rel="icon" type="image/png" href="{{ "images/favicon-96x96.png" | absURL }}" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="{{ "images/favicon.svg" | absURL }}" />
+    <link rel="shortcut icon" href="{{ "images/favicon.ico" | absURL }}" />
     <link rel="alternate" type="application/rss+xml" href="{{ "writings/index.xml" | absURL }}" title="Writings" />
   </head>
   <body id="very-top" class="flex flex-col h-screen max-w-4xl mx-auto bg-pane break-words text-base md:text-lg hyphens-auto leading-relaxed font-sans">
