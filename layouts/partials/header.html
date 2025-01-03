@@ -1,8 +1,12 @@
 <div class="h-spaced mt-4 md:mt-6 mb-3">
   <a href="{{ .Site.BaseURL }}">
     <div class="w-16 h-16 mr-3 md:mr-5 float-left bg-no-repeat bg-center bg-contain rounded-md" style="background-image: url({{ "images/penguin_in_portrait.png" | absURL }})"></div>
-    <div class="hidden md:!block text-3xl font-bold">{{ .Site.Title }}</div>
-    <div class="md:hidden text-xl font-bold truncate text-clip">{{ .Site.Params.ShortTitle }}</div>
+    <div class="hidden md:!block text-3xl font-bold">
+      <span>{{ .Site.Params.Author }}</span><span class="pl-1 pr-3 tracking-[-0.3em]">//</span><span>{{ .Site.Title }}</span>
+    </div>
+    <div class="md:hidden text-xl font-bold truncate text-clip">
+      <span>{{ .Site.Params.Author }}</span><span class="pl-1 pr-2 tracking-[-0.3em]">//</span><span>{{ .Site.Params.ShortTitle }}</span>
+    </div>
   </a>
   <nav>
     <ol class="flex text-fuchsia-500 pt-1">

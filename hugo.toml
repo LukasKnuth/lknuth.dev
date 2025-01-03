@@ -1,7 +1,6 @@
 baseURL = "https://lknuth.dev/"
 languageCode = "en-us"
-title = "Lukas Knuth // Software Engineer"
-copyright = "Lukas Knuth"
+title = "Software Engineer"
 
 #theme = 'neon_noir'
 disableKinds = ["taxonomy"]
@@ -25,7 +24,8 @@ url = "/now"
 weight = 12
 
 [params]
-shortTitle = "Lukas Knuth // SWE"
+author = "Lukas Knuth"
+shortTitle = "SWE"
 mainSection = "writings"
 mainSectionTitle = "Writings"
 postsOnHomePage = 5

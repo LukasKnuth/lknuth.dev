@@ -5,7 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='canonical' href='{{ .Permalink }}'>
-    <title>{{ if .IsPage }} {{ .Title }} | {{ end }}{{ .Site.Title }}</title>
+    <title>{{ if .IsPage }} {{ .Title }} | {{ end }}{{ .Site.Params.Author }}</title>
+    <meta name="author" content="{{ .Site.Params.Author }}">
     {{ with .Site.Params.description }}<meta name="description" content="{{ . }}">{{ end }}
     {{ if .Params.index | default true }}
     <meta name="robots" content="all,follow">
