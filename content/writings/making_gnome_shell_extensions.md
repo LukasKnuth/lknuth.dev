@@ -1,7 +1,10 @@
 ---
 title: "Making GNOME Shell Extensions"
 date: 2013-02-09T15:57:38+01:00
-description: Getting started on making GNOME Shell Extensions
+summary: |
+  Getting into GNOME Shell extension development is hard and involves a lot of source-code reading.
+
+  This post collects resources that helped me get into it as well as general advice. It aims to be a jump-off point, rather than a guide.
 ---
 
 I like the GNOME Shell and I've liked it since it was in the "testing"-repo of ArchLinux. It's a fast and aesthetic desktop environment. But it's a long way from offering everything you'd like to have. Luckily, it can be extended.

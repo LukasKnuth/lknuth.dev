@@ -1,7 +1,6 @@
 ---
 title: "Zero to EPUB"
 date: 2024-05-03T14:00:00+01:00
-description: I made an EPUB from scratch to learn how they work.
 ---
 
 I like Low Tech Magazine.
@@ -12,6 +11,8 @@ It's sold as a hard-copy book, but not as an EPUB.
 Since I'm almost exclusively reading my books digitally these days - and the articles are all available on their website, I thought I'd just create an EPUB myself.
 
 The irony of this is not lost on me.
+
+<!--more-->
 
 ## Getting the goods
 

@@ -1,10 +1,11 @@
 ---
 title: "Working unbuffered Streams"
 date: 2012-10-15T15:54:32+01:00
-description: How to handle unbuffered streams in Java.
 ---
 
-When working with I/O in Java, you can normally choose from a variety of `Stream` and `Reader` or `Writer` classes to handle all the "dirty" work for you. But what happens under the hood? And why is this stuff so error prone?
+When working with I/O in Java, you can normally choose from a variety of `Stream` and `Reader` or `Writer` classes to handle all the "dirty" work for you. But what happens under the hood? And why is this stuff so error-prone?
+
+<!--more-->
 
 ## Being the buffer
 

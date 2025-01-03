@@ -1,12 +1,13 @@
 ---
 title: "Dangerously Typed"
 date: 2017-01-07T16:05:00+01:00
-description: Why you should be careful when extending build-in types in TypeScript
 ---
 
-At work, I'm currently building an new Node.js Application. I opted to use Node, because the application is highly parallel and while I could have build it in Java, Node already does all the hard things that come with building multi-threaded Applications.
+At work, I'm currently building a new Node.js Application. I opted to use Node, because the application is highly parallel and while I could have built it in Java, Node already does all the hard things that come with building multithreaded Applications.
 
-For my language of choice, I looked to [TypeScript](https://www.typescriptlang.org/), because it adds some compile-time type-safety to JavaScript. For the most part, TypeScript has been helping me to write clean code that I can trust when the compiler gives it's "all clear". But recently, while hunting an unrelated bug, I stumbled upon something dangerous.
+For my language of choice, I looked to [TypeScript](https://www.typescriptlang.org/), because it adds some compile-time type-safety to JavaScript. For the most part, TypeScript has been helping me to write clean code that I can trust when the compiler gives the "all clear". But recently, while hunting an unrelated bug, I stumbled upon something dangerous.
+
+<!--more-->
 
 ## Minimal working example
 

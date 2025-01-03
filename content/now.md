@@ -5,6 +5,8 @@ title: Now
 
 What's happening with me _now_?
 
+<!--more-->
+
 ## Cycling
 
 My plan in early 2025 is to take the bike _up_ the Rhine from Cologne to The Hague, Holland where it ends in the North Sea.

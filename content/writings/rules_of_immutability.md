@@ -1,18 +1,19 @@
 ---
 title: "Rules of Immutability"
 date: 2012-07-17T22:00:00+01:00
-description: About mutable and immutable objects and defensive copying.
 ---
 
 In a perfect world, every *value container* (an object that only holds multiple fields of data and defines methods for access) is immutable. Immutability should always be a design-goal, especially, when creating a library or API.
 
 In this article, I'm going to explain what immutable objects are, why they are cool and what stumbling blocks you should watch out for.
 
-<div class="important">
-<p>Although immutability, as a design-pattern, has no origin in any particular language, the following examples (and most of the writing) <b>focus on the situation in the Java programming language</b> and <i>might</i> not hold for other languages.</p>
+<!--more-->
 
-<p>For examples in other programming languages, the below linked <a href="http://en.wikipedia.org/wiki/Immutable_object#Implementation">Wikipedia article</a> can be consulted, although it's not that extensive as the following exposition.</p>
-</div>
+> [!note]
+> Although the idea of immutability is applicable to most programming languages, specifics vary greatly.
+> More functional languages usually enforce immutability at the language level while imperative languages allow you to opt-in as needed.
+> 
+> The following article is focused on **Java 7**, but the ideas discussed are transferable to other languages.
 
 ## What makes an object "immutable"?
 

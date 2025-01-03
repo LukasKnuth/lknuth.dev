@@ -1,12 +1,13 @@
 ---
 title: "Generating Qrcodes With Zxing"
 date: 2013-08-25T16:00:11+01:00
-description: About how to use the ZXing library to generate QR-Codes on Android
 ---
 
 When it comes to reading QR-codes, most Android applications use the [ZXing library](https://github.com/zxing/zxing). It's capabilities and ease of use when *reading* QR-Codes is already known, but ZXing can also *generate* QR-Codes.
 
 Sadly, a lack of documentation makes it pretty hard to dive into this topic, so this article aims to provide a simple starting point.
+
+<!--more-->
 
 ## Integration choices
 

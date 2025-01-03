@@ -1,10 +1,11 @@
 ---
 title: "Catching Practice"
 date: 2012-07-06T20:40:00+01:00
-description: General advices on how to handle exceptional cases in Java.
 ---
 
 I recently answered a question on StackOverflow, asking if catching an `Error` would be reasonable in a particular case. The original question and my answer can be found [here](http://stackoverflow.com/q/11017304/717341), however I felt that my answer could be extended with a more general discussion of the implications and additional examples.
+
+<!--more-->
 
 ## Clarification: Throwable, Error, Exception
 

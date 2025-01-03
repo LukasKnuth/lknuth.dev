@@ -1,12 +1,13 @@
 ---
 title: "UDP Multicast on Android"
 date: 2012-09-04T15:51:15+01:00
-description: About the problems with UDP multicast on the Android mobile OS
 ---
 
 I started working on a small inventory system, that keeps track of all the things I buy. To enter new items quickly into the system, I needed a barcode-scanner to scan new articles, transfer them to my computer and allow me to (for example) paste them into a focused input-field.
 
 I wrote a small Android application, that uses [zxing](https://github.com/zxing/zxing) to scan the barcodes and a simple multicasted UDP network connection to broadcast the contents of the code to all listening network devices. This way, I don't need to enter any IP addresses or host-names in the app to reach the listening server application on my computer. The `MulticastSocket` of the java standard library seemed perfect for this purpose.
+
+<!--more-->
 
 ## When Android interferes
 

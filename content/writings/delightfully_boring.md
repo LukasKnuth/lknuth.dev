@@ -1,6 +1,11 @@
 ---
 title: Delightfully Boring
 date: 2023-05-15T13:30:00+02:00
+summary: |
+  When I joined 7Mind a year ago, I was hired partially to help migrate the existing system away from micro-services towards a new monolithic Elixir application.
+  This decision was made before I had joined, but having worked in a company that went very all-in on micro-services before, I welcomed it.
+
+  In this article we'll look at the value that micro-services bring to an organization and how at 7Mind we capture the same value with a single modulithic application.
 ---
 
 This article was originally published on [tech.7mind.de](https://tech.7mind.de/posts/delightfully_boring/)

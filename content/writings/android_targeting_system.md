@@ -1,12 +1,13 @@
 ---
 title: "Android targeting system"
 date: 2012-08-02T15:48:26+01:00
-description: About the Android targeting system, how it works and it's stumbling blocks.
 ---
 
 I recently started supporting API Level 9 in my current project, which brought a problem with the ActionBar along. I had used it extensively in development (which was targeting post-Honeycomb devices), but it's only available on API Level 11 and later.
 
 Long story short, I started using [ActionBarSherlock](http://actionbarsherlock.com/) to get the ActionBar working on all devices and discovered an interesting fact about the Android building system and it's targeting mechanism.
+
+<!--more-->
 
 ## Targeting in Android
 

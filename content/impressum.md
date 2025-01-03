@@ -2,6 +2,7 @@
 date: 2024-12-22T20:37:00+02:00
 title: Impressum
 index: false
+summary: Impressum und Datenschutzerklärung
 ---
 
 > [!tip]

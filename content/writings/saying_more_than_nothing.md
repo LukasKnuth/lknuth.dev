@@ -1,12 +1,13 @@
 ---
 title: "Saying more than nothing"
 date: 2012-07-23T22:00:00+01:00
-description: When to use null and when to rather say something more.
 ---
 
 As I was reading around on StackOverflow, digging through other peoples source code, I spotted multiple methods returning `null` in a variety of circumstances. I also found rather imaginative ways to handle null-values.
 
 Although there is nothing wrong with `null`, the concept of null-pointers seems to be somewhat misunderstood. Let's change that.
+
+<!--note-->
 
 ## What are null-pointers?
 

@@ -1,6 +1,7 @@
 ---
 date: 2024-12-27T22:21:00+02:00
 title: About
+summary: About me, contact and how I made this website.
 ---
 
 Hi, I'm Lukas.

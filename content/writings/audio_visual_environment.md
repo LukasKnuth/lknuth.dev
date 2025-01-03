@@ -1,12 +1,13 @@
 ---
 title: "Audio Visual Environment"
 date: 2012-11-06T15:56:34+01:00
-description: About sounds to code to and why you should care.
 ---
 
 I'm a highly audio-visual human being. I like to listen to music anywhere I go, at any given time, largely for the sake of being entertained, but also because I can't (and don't want to) listen to other people talking. I live in the city and don't own a car myself, so I'm taking the train or bus almost everywhere.
 
 But in this article, I want to focus on "coding sounds", the audio visual environment i create for myself to help me stay focused for long periods of time.
+
+<!--more-->
 
 ## What qualifies good coding sounds
 

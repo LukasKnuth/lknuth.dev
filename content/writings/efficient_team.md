@@ -5,6 +5,8 @@ date: 2023-06-02T15:10:00+02:00
 
 Some years ago I worked in a team of software developers which I still consider the most productive team I have ever been a part of. We built a large system for our internal users with a dozen product team members and had a turnaround time from _idea_ to _implementation_ of about three weeks. This is how we did it.
 
+<!--more-->
+
 ## Day to day
 
 The work that needed doing was split into two buckets: the eternal pull-queue of tasks like maintenance or smaller adjustments to existing services, and the frequent but short projects we did to build new services or make larger changes to existing ones.

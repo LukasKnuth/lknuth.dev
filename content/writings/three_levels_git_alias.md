@@ -8,6 +8,8 @@ date: 2024-11-29T17:08:30+01:00
 Aliases allow you to define a shorthand for a git sub-command - including its options - that you commonly type in your workflow.
 We'll illustrate three increasingly powerful levels of customization enabled by aliases using a simple example:
 
+<!--more-->
+
 I want to open all modified files in my worktree with my editor.
 To do this, we'll return a newline separated list of modified file paths from git and pipe it into [xargs](https://www.man7.org/linux/man-pages/man1/xargs.1.html) to open all of them with [Helix](https://helix-editor.com/): `git sx | xargs hx`
 

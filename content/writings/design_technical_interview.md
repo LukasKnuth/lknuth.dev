@@ -11,6 +11,8 @@ Above all, we wanted our interview to favor candidates that are good fits.
 Now, after working with our new hire for about 11 months, we know that we succeeded.
 This is how we went about designing the interview.
 
+<!--more-->
+
 ## What do we _actually_ do?
 
 To start, we looked at our day-to-day work and distilled it down to a few bullet points.

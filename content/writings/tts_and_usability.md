@@ -1,16 +1,21 @@
 ---
 title: "TTS and Usability"
 date: 2014-06-13T16:02:43+01:00
-description: An introduction to TTS on Android
 ---
 
 There are limited yet very legit use-cases for Text to Speech engines in your application.
 
-An example for such a case is an application that has focus and is doing its thing, but doesn't require physical interaction with the device. These applications might still want to update the user regularly, without touching or looking at the device. An example of such an application is a Navigation-app or my own [BikeTrack](https://github.com/LukasKnuth/bike-track).
+An example for such a case is an application that has focus and is doing its thing, but doesn't require physical interaction with the device.
+These applications might still want to update the user regularly, without touching or looking at the device.
+An example of such an application is a Navigation App.
+
+Let's see how TTS can be used responsibly.
+
+<!--more-->
 
 ## Making Android talk
 
-Android exposes it's Text to Speech abilities via the `TextToSpeech`-class since API Level 4 (Android 1.6), so it should be available on all devices.
+Android exposes its Text to Speech abilities via the `TextToSpeech`-class since API Level 4 (Android 1.6), so it should be available on all devices.
 
 ```java
 TextToSpeech tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
