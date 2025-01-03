@@ -2,7 +2,6 @@ baseURL = "https://lknuth.dev/"
 languageCode = "en-us"
 title = "Software Engineer"
 
-#theme = 'neon_noir'
 disableKinds = ["taxonomy"]
 enableInlineShortcodes = true
 
