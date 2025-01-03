@@ -19,15 +19,15 @@
     <p class="my-2">Find me on
     {{ $length := (len .Site.Params.social) }}
     {{ range $index, $elem := .Site.Params.social }}
-      <a class="inline-block align-text-bottom" rel="noopener" href="{{ $elem.link }}">
+      <a class="inline-block align-text-bottom pl-1 pr-2" rel="noopener" href="{{ $elem.link }}">
         <svg class="w-5 h-5 stroke-0 fill-black hover:fill-primary">
           <use xlink:href="#icon-{{ lower $elem.name }}"></use>
         </svg>
       </a>
       {{ if (lt (add $index 2) $length) }}
-        {{- print " , " -}}
+        {{- print "," -}}
       {{ else if (lt (add $index 1) $length) }}
-        {{- print " and " -}}
+        {{- print "and" -}}
       {{ else }}
         {{- print "." -}}
       {{ end }}

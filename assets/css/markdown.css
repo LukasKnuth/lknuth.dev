@@ -30,7 +30,7 @@
   }
 
   h2, h3 {
-    @apply font-bold before:content-['Ξ'] before:text-accent;
+    @apply font-bold before:content-['Ξ'] before:text-accent before:mr-2;
   }
 
   code {
@@ -66,15 +66,15 @@
   }
 
   ol {
-    @apply list-decimal pl-4 my-4;
+    @apply list-decimal ps-7 my-4;
   }
 
   ul {
-    @apply list-disc pl-4 my-4;
+    @apply list-disc ps-4 my-4;
   }
 
   li {
-    @apply my-1;
+    @apply ps-1;
   }
 
   table {
