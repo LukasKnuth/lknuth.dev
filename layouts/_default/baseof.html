@@ -6,35 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="{{ .Site.Params.Author }}">
     {{ with .Summary }}<meta name="description" content="{{ . | plainify | strings.TrimRight " \r\n\t" }}">{{ end }}
-    {{ if .Params.index | default true }}
+    {{- if .Params.index | default true }}
     <meta name="robots" content="all,follow">
     <meta name="googlebot" content="index,follow,snippet,archive">
     {{ else }}
     <meta name="robots" content="noindex">
-    {{ end }}
+    {{ end -}}
     <title>{{ if .IsPage }} {{ .Title }} | {{ end }}{{ .Site.Params.Author }}</title>
     {{ with (templates.Defer (dict "key" "global")) }}
-      {{ $t := debug.Timer "tailwindcss" }}
-      {{ with resources.Get "css/main.css" }}
-        {{ $opts := dict
+      {{- $t := debug.Timer "tailwindcss" -}}
+      {{- with resources.Get "css/main.css" -}}
+        {{- $opts := dict
           "inlineImports" true
           "optimize" (not hugo.IsDevelopment)
-        }}
-        {{ with . | css.TailwindCSS $opts }}
-          {{ if hugo.IsDevelopment }}
-            <link rel="stylesheet" href="{{ .RelPermalink }}" />
-          {{ else }}
-            {{ with . | minify | fingerprint }}
-              <link
-                rel="stylesheet"
-                href="{{ .RelPermalink }}"
-                integrity="{{ .Data.Integrity }}"
-                crossorigin="anonymous" />
-            {{ end }}
-          {{ end }}
-        {{ end }}
-      {{ end }}
-      {{ $t.Stop }}
+        -}}
+        {{- with . | css.TailwindCSS $opts -}}
+          {{- if hugo.IsDevelopment -}}
+            {{ printf `<link rel="stylesheet" href=%q>` .RelPermalink | safeHTML }}
+          {{- else -}}
+            {{- with . | minify | fingerprint -}}
+            {{ printf `<link rel="stylesheet" href=%q integrity=%q crossorigin="anonymous">` .RelPermalink .Data.Integrity | safeHTML }}
+            {{- end -}}
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+      {{- $t.Stop -}}
     {{ end }}
     <link rel='canonical' href='{{ .Permalink }}'>
     <!-- Created via https://realfavicongenerator.net/ -->
