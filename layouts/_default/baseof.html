@@ -2,21 +2,17 @@
 <html lang="{{ .Site.LanguageCode }}">
   <head>
     <meta charset="utf-8" />
-    <title>
-      {{ .Title }}
-    </title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{{ if .IsPage }} {{ .Title }} | {{ end }}{{ .Site.Title }}</title>
-    <link rel = 'canonical' href = '{{ .Permalink }}'>
-    {{ with .Site.Params.description }}<meta name="description" content="{{ . }}">{{ end }}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='canonical' href='{{ .Permalink }}'>
+    <title>{{ if .IsPage }} {{ .Title }} | {{ end }}{{ .Site.Title }}</title>
+    {{ with .Site.Params.description }}<meta name="description" content="{{ . }}">{{ end }}
     {{ if .Params.index | default true }}
     <meta name="robots" content="all,follow">
     <meta name="googlebot" content="index,follow,snippet,archive">
     {{ else }}
     <meta name="robots" content="noindex">
     {{ end }}
-    <meta name="description" content="{{ .Description }}" />
     {{ with (templates.Defer (dict "key" "global")) }}
       {{ $t := debug.Timer "tailwindcss" }}
       {{ with resources.Get "css/main.css" }}
