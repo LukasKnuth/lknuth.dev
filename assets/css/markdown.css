@@ -42,12 +42,10 @@
   pre {
     @apply py-2 px-3 my-1 overflow-x-auto border border-solid border-crust;
 
-    /* NOTE: Not using helper classes because resetting everything for all other
-      sizes that aren't small is hard to do well. This reads easier, too.
-      We sadly can't use `var(--breakpoint-sm)` inside the `@media` query, so the
-      min width is hardcoded from default Tailwind values.
+    /* NOTE: Using the old `theme()` method here because we can't use the native
+      `var(--breakpoint-sm)` inside the `@media` query, as suggested by Tailwind4 docs
     */
-    @media (width < 40rem) {
+    @media (width < theme(--breakpoint-sm)) {
       width: 100vw;
       margin-left: 50%;
       transform: translate(-50%);
