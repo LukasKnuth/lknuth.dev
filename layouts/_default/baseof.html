@@ -37,7 +37,8 @@
       {{ end }}
       {{ $t.Stop }}
     {{ end }}
-    <link rel="icon" type="image/png" href="{{ "images/favicon.ico"  | absURL }}" />
+    <link rel="icon" type="image/png" href="{{ "images/favicon.ico" | absURL }}" />
+    <link rel="alternate" type="application/rss+xml" href="{{ "writings/index.xml" | absURL }}" title="Writings" />
   </head>
   <body id="very-top" class="flex flex-col h-screen max-w-4xl mx-auto bg-pane break-words text-base md:text-lg hyphens-auto leading-relaxed font-sans">
     <header>{{ partial "header.html" . }}</header>

@@ -44,6 +44,10 @@ link = "https://stackoverflow.com/users/717341/lukas-knuth"
 name = "linkedin"
 link = "https://www.linkedin.com/in/lukas-knuth-1b0b18128/"
 
+[outputs]
+home = ["html"]
+section = ["html", "rss"]
+
 [markup]
 
 [markup.goldmark.renderer]
