@@ -13,7 +13,7 @@
 
 {{ define "partials/cv/job.html" }}
 <div class="relative py-2">
-	<span class="inline-block absolute w-4 h-4 -left-7 top-3.5 rounded-full border-2 border-black bg-pane">&nbsp</span>
+	<span class="inline-block absolute w-4 h-4 -left-7 top-3.5 rounded-full border-2 border-writing bg-pane">&nbsp</span>
 	<div class="text-subtle italic">
 		{{ .job.from }} &mdash; 
 		{{ if isset .job "until" }}
@@ -41,7 +41,7 @@
 
 {{ define "partials/cv/education.html" }}
 <div class="relative py-2">
-	<span class="inline-block absolute w-4 h-4 -left-7 top-3.5 rounded-full border-2 border-black bg-pane">&nbsp</span>
+	<span class="inline-block absolute w-4 h-4 -left-7 top-3.5 rounded-full border-2 border-writing bg-pane">&nbsp</span>
 	<div class="">
 		<span class="text-subtle italic">{{ .edu.from }} &mdash; {{ .edu.until }}</span>
 		<span class="font-bold">{{ .edu.degree }}</span>

@@ -20,7 +20,7 @@
     {{ $length := (len .Site.Params.social) }}
     {{ range $index, $elem := .Site.Params.social }}
       <a class="inline-block align-text-bottom pl-1 pr-2" rel="noopener" href="{{ $elem.link }}">
-        <svg class="w-5 h-5 stroke-0 fill-black hover:fill-primary">
+        <svg class="w-5 h-5 stroke-0 fill-writing hover:fill-primary">
           <use xlink:href="#icon-{{ lower $elem.name }}"></use>
         </svg>
       </a>
