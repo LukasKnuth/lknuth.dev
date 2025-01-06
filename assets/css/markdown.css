@@ -49,19 +49,7 @@
   }
 
   pre {
-    @apply py-2 px-3 my-1 overflow-x-auto border border-solid border-crust;
-
-    /* NOTE: Using the old `theme()` method here because we can't use the native
-      `var(--breakpoint-sm)` inside the `@media` query, as suggested by Tailwind4 docs
-    */
-    @media (width < theme(--breakpoint-sm)) {
-      width: 100vw;
-      margin-left: 50%;
-      transform: translate(-50%);
-      padding-left: calc(100vw / 2 - 50%);
-      border-left: none;
-      border-right: none;
-    }
+    @apply py-2 px-4 my-1 content-scrollable border-solid border-crust border-y md:border-x;
 
     code {
       @apply border-none px-0;
@@ -84,8 +72,11 @@
     @apply ps-1;
   }
 
+  .table-scroll {
+    @apply content-scrollable;
+  }
   table {
-    @apply w-full text-left;
+    @apply table-auto w-full text-left;
 
     thead tr {
       @apply bg-surface border-b border-crust;
@@ -96,7 +87,7 @@
     }
     
     td, th {
-      @apply px-6 py-3;
+      @apply px-6 py-3 text-nowrap;
     }
   }
 }

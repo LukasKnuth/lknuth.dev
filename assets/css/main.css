@@ -38,7 +38,18 @@
   @apply mx-4 md:mx-8;
 }
 
+@utility content-scrollable {
+  @apply overflow-x-auto;
 
+  /* NOTE: Using the old `theme()` method here because we can't use the native
+    `var(--breakpoint-sm)` inside the `@media` query, as suggested by Tailwind4 docs
+  */
+  @media (width < theme(--breakpoint-sm)) {
+    width: 100vw;
+    margin-left: 50%;
+    transform: translate(-50%);
+  }
+}
 
 @layer components {
   .tag {
