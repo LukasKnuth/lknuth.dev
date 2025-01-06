@@ -61,8 +61,4 @@
   }
 }
 
-body {
-  @apply antialiased;
-}
-
 @import "markdown.css";
