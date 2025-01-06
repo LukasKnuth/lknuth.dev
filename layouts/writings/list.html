@@ -12,7 +12,7 @@
         <time datetime="{{ time .Date }}" itemprop="datePublished">{{ .Date.Format .Site.Params.dateFormat }}</time>
       </div>
       <div class="col-span-6 md:col-span-5">
-        <a class="fancy-link" href="{{ .Permalink }}">{{ if .Title }} {{- .Title -}} {{ else }} {{- print "Untitled" -}}{{ end }}</a>
+        <a class="underline-fancy" href="{{ .Permalink }}">{{ if .Title }} {{- .Title -}} {{ else }} {{- print "Untitled" -}}{{ end }}</a>
       </div>
     </li>
     {{ end }}

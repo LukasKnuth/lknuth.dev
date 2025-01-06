@@ -28,17 +28,19 @@
   --drop-shadow-*: initial;
 }
 
+@utility underline-fancy {
+  text-decoration: none;
+  border-image: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%) 1;
+  border-bottom: 2px solid var(--color-primary);
+}
+
+@utility h-spaced {
+  @apply mx-4 md:mx-8;
+}
+
+
+
 @layer components {
-  .fancy-link {
-    text-decoration: none;
-    border-image: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%) 1;
-    border-bottom: 2px solid var(--color-primary);
-  }
-
-  .h-spaced {
-    @apply mx-4 md:mx-8;
-  }
-
   .tag {
     @apply py-1 px-1;
     @apply border-b-2 border-b-accent;

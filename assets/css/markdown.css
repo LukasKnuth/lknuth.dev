@@ -1,4 +1,8 @@
 .prose {
+  a {
+    @apply underline-fancy;
+  }
+
   p {
     @apply text-justify my-4;
   }
@@ -31,6 +35,11 @@
 
   h2, h3 {
     @apply font-bold before:content-['Ξ'] before:text-accent before:mr-2;
+
+    a {
+      /* Removes underline-fancy styling from the anchor links */
+      @apply border-none;
+    }
   }
 
   code {
