@@ -57,6 +57,10 @@ unsafe = true
 # Allow truly standalone images with captions
 wrapStandAloneImageWithinParagraph = false
 
+[markup.goldmark.parser.attribute]
+# Allow markdown attributes on block elements
+block = true
+
 [markup.highlight]
 codeFences = true
 guessSyntax = false
