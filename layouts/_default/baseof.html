@@ -5,7 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="{{ .Site.Params.Author }}">
-    {{ with .Summary }}<meta name="description" content="{{ . | plainify | strings.TrimRight " \r\n\t" }}">{{ end }}
+    {{- with .Summary | plainify | strings.TrimRight " \r\n\t" -}}
+    <meta name="description" content="{{ . }}">
+    <meta property="og:description" value="{{ . }}">
+    {{ end -}}
+    <meta property="og:title" value="{{ .Title }}" />
+    <meta property="og:url" value="{{ .Permalink }}" />
+    {{- if .IsPage }}
+    <meta property="og:type" value="article" />
+    <meta property="og:article:author" value="{{ .Site.Params.Author }}" />
+    <meta property="og:article:published_time" value="{{ .Date.Format "2006-01-02T15:04:05Z0700" }}" />
+    {{ end -}}
     {{- if .Params.index | default true }}
     <meta name="robots" content="all,follow">
     <meta name="googlebot" content="index,follow,snippet,archive">
