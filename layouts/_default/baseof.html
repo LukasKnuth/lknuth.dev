@@ -49,7 +49,7 @@
     <link rel="shortcut icon" href="{{ "images/favicon.ico" | absURL }}" />
     <link rel="alternate" type="application/rss+xml" href="{{ "writings/index.xml" | absURL }}" title="Writings" />
   </head>
-  <body id="very-top" class="flex flex-col h-screen max-w-4xl mx-auto bg-pane break-words text-base text-writing md:text-lg antialiased hyphens-auto leading-relaxed font-sans">
+  <body id="very-top" class="flex flex-col h-screen max-w-6xl container mx-auto bg-pane break-words text-base text-writing md:text-lg antialiased hyphens-auto leading-relaxed font-sans">
     <header>{{ partial "header.html" . }}</header>
     <main class="grow">{{ block "main" . }}{{ end }}</main>
     <footer>{{ partial "footer.html" . }}</footer>

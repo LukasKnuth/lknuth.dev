@@ -20,7 +20,6 @@
     The CSS variable definitions currently make up 50% of the final CSS file - so we remove them.
     If things aren't displaying as expected, remove these statements. 
    */
-  --container-*: initial;
   --ease-*: initial;
   --animate-*: initial;
   --shadow-* : initial;
