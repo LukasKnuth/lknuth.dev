@@ -429,11 +429,203 @@ This is fast enough that we also don't need a loading screen.
 
 The last step now is to implement polling the browser for game inputs.
 I won't go into how this works for keyboard because it is quite boring.
-
-Since this project is all about making the game accessible, we can't ignore mobile devices.
+But, since this project is all about making the game accessible, we can't ignore mobile devices.
 And most of these don't ship with keyboards [anymore](https://en.wikipedia.org/wiki/HTC_Dream).
 
-TODO WRITE THIS UP as well!
+[Touch input in the browser](https://developer.mozilla.org/en-US/docs/Games/Techniques/Control_mechanisms/Mobile_touch) uses a _push_ system, where we register a listener on an Element and receive callbacks:
+
+```java
+private JoystickState last_input_state = JoystickState.NEUTRAL;
+private TouchInput touch_input = new TouchInput();
+
+canvas.addEventListener("touchmove", new EventListener<TouchEvent>() {
+	public void handleEvent(TouchEvent evt) {
+	  last_input_state = touch_input.onTouchMove(evt);
+	}
+});
+// Repeat for `touchstart`, `touchend` and `touchcancel`
+```
+
+The touch gesture detection is in the `TouchInput` class.
+We simply subscribe to all touch specific events on our `<canvas>` element and forward them there.
+The `JoystickState` is another very simple enum with five constants: `UP|DOWN|LEFT|RIGHT` and `NEUTRAL` - meaning no input is currently given.
+
+My goal was to support two distinct input methods:
+Flicking on the screen in a direction or holding down and swiping in directions as pacman moves.
+The latter means we can't just use `touchdown` and `touchup` and calculate the distance/direction, we need to do this continuously on every `touchmove` event:
+
+```java
+/**
+ * Handles Touch input (usually on mobile devices) for the pacman game.
+ */
+public class TouchInput {
+  private static final double MIN_DISTANCE = 45.0;
+  private static final double NOT_SET = -1.0;
+
+  private double previous_x = NOT_SET;
+  private double previous_y = NOT_SET;
+  private JoystickState state = JoystickState.NEUTRAL;
+
+  public JoystickState onTouchMove(TouchEvent event) {
+	  event.preventDefault();
+    // We only support fling/swipe, so we only need one finger
+	  Touch first_finger = event.getChangedTouches().get(0);
+	  if (first_finger == null) {
+      // No touch input currently, can't determine a direction
+	    return JoystickState.NEUTRAL;
+    } else {
+	    double new_x = first_finger.getClientX();
+	    double new_y = first_finger.getClientY();
+	    this.state = handleChange(previous_x, previous_y, new_x, new_y);
+      // Only update if we have a new direction
+	    if (this.state != JoystickState.NEUTRAL) {
+		    this.previous_x = new_x;
+		    this.previous_y = new_y;
+	    }
+	    return this.state;
+	  }
+  }
+
+	private static JoystickState handleChange(double previous_x, double previous_y, double new_x, double new_y) {
+    // How _far_ did the user swipe/fling?
+    double change_x = previous_x - new_x;
+    double change_y = previous_y - new_y;
+    if (Math.abs(change_x) >= MIN_DISTANCE) {
+      // We're past the threshold, which direction though?
+      return (change_x < 0.0) ? JoystickState.RIGHT : JoystickState.LEFT;
+    } else if (Math.abs(change_y) >= MIN_DISTANCE) {
+      return (change_y < 0.0) ? JoystickState.DOWN : JoystickState.UP;
+    } else {
+      // We're not past the movement threshold, can't determine a direction yet.
+      return JoystickState.NEUTRAL;
+    }
+	}
+
+  // The same logic happens for `touchend` and `touchstart` handlers.
+  public JoystickState onTouchCancel(TouchEvent event) {
+    event.preventDefault();
+    // When the fling is complete or the swipe is ended, reset
+    this.previous_x = NOT_SET;
+    this.previous_y = NOT_SET;
+    this.state = JoystickState.NEUTRAL;
+    return this.state;
+  }
+}
+```
+
+We keep a running X|Y coordinate of the last _complete_ gesture (either swipe or fling).
+From that coordinate, we calculate the distance to the current touch coordinate.
+If the distance exceeds our threshold/deadzone/minimum, we determine the direction of the gesture and return it.
+When the touch gesture is ended/cancelled or a new one is started, reset the whole state.
+
+This code is simple and easy to understand, but it does have problems.
+If the gesture is perfectly diagonal, the horizontal direction is just always preferred.
+A developer with stronger mathematical knowledge might use `atan2` for this problem, but my experiments didn't yield _better_ game feel.
+I decided to keep the code I understood and moved on.
+
+### Bonus points: Gamepad
+
+Because modern browsers are basically operating systems at this point, of course they have [Gamepad support](https://developer.mozilla.org/en-US/docs/Games/Techniques/Control_mechanisms/Desktop_with_gamepad).
+First, we again have some listeners that are called when a Gamepad is connected to the computer (and the browser supports it).
+
+```java
+gamepad_input = new GamepadInput();
+// IMPORTANT: These events are always dispatched on `Window`!
+Window.current().addEventListener("gamepadconnected", new EventListener<GamepadEvent>() {
+	public void handleEvent(GamepadEvent evt) {
+	  gamepad_input.onConnected(evt);
+	}
+});
+Window.current().addEventListener("gamepaddisconnected", new EventListener<GamepadEvent>() {
+	public void handleEvent(GamepadEvent evt) {
+	  gamepad_input.onDisconnected(evt);
+	}
+});
+```
+
+Again I moved the actual Gamepad handling code into its own `GamepadInput` class.
+Since pacman is a single player game, we only need to support a single gamepad instance.
+
+```java
+private static final int NOT_CONNECTED = -1;
+private static final String STANDARD_MAPPING = "standard";
+private int current_gamepad_index = NOT_CONNECTED;
+
+public void onConnected(GamepadEvent evt) {
+  int gamepad_index = evt.getGamepad().getIndex();
+  String mapping = evt.getGamepad().getMapping();
+  // Only allow one gamepad - keep the same gamepad if a new one is connected
+  // Only allow gamepads using the standard button mapping
+  if (this.current_gamepad_index == NOT_CONNECTED && mapping == STANDARD_MAPPING) {
+    this.current_gamepad_index = gamepad_index;
+  }
+}
+
+public void onDisconnected(GamepadEvent evt) {
+  int gamepad_index = evt.getGamepad().getIndex();
+  // Only reset if the disconnected gamepad is the one we where using
+  if (gamepad_index == this.current_gamepad_index) {
+    this.current_gamepad_index = NOT_CONNECTED;
+  }
+}
+```
+
+The `GamepadEvent` has a `getIndex()` method that allows us to track a specific gamepad.
+This input is a _poll_ based input, meaning there is no listener that is called when a button is pressed.
+Instead, we can ask for the whole gamepads state _right now_ as part of our gameloop.
+
+```java
+// Canonical Index on Standard Gamepad
+private static final int IDX_DIGI_L = 14;
+private static final int IDX_DIGI_R = 15;
+private static final int IDX_DIGI_U = 12;
+private static final int IDX_DIGI_D = 13;
+
+public JoystickState getDirection() {
+  if (this.current_gamepad_index != NOT_CONNECTED) {
+    Gamepad pad = Navigator.getGamepads()[this.current_gamepad_index];
+    if (pad.isConnected()) {
+      // Check all relevant buttons (shortened for the article)
+      GamepadButton[] btns = gamepad.getButtons();
+      if (btns[IDX_DIGI_D].isPressed()) {
+        return JoystickState.DOWN;
+      } else if (btns[IDX_DIGI_U].isPressed()) {
+        return JoystickState.UP;
+      } else if (btns[IDX_DIGI_L].isPressed()) {
+        return JoystickState.LEFT;
+      } else if (btns[IDX_DIGI_R].isPressed()) {
+        return JoystickState.RIGHT;
+      }
+    }
+  }
+  return JoystickState.NEUTRAL;
+}
+```
+
+The W3C standard describes a ["Standard Gamepad"](https://w3c.github.io/gamepad/#dfn-standard-gamepad) that all _known_ gamepads should be remapped to.
+We're verifying that the current gamepad has this mapping in our `onConnected` method above.
+This allows us to support most commonly used gamepads like Playstation and xBox with one configuration.
+
+Now, all we need to do is poll the state in our gameloop:
+
+```java
+public void onAnimationFrame(double timestamp) {
+  // ... other gameloop code
+
+  if (this.last_input_state == JoystickState.NEUTRAL) {
+    // Poll gamepad if we don't have a direction from other inputs yet...
+    this.last_input_state = gamepad_input.getDirection();
+  }
+
+  GameLoop.INSTANCE.step(this.last_input_state, web_canvas);
+
+  // Clear for next frame
+  this.last_input_state = JoystickState.NEUTRAL;
+}
+```
+
+With this small change, we can control the game with a gamepad now as well.
+At this point I think we're in a good spot to wrap up.
 
 ## Finishing Up
 
