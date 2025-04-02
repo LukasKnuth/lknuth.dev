@@ -455,68 +455,70 @@ Flicking on the screen in a direction or holding down and swiping in directions 
 The latter means we can't just use `touchdown` and `touchup` and calculate the distance/direction, we need to do this continuously on every `touchmove` event:
 
 ```java
-/**
- * Handles Touch input (usually on mobile devices) for the pacman game.
- */
-public class TouchInput {
-  private static final double MIN_DISTANCE = 45.0;
-  private static final double NOT_SET = -1.0;
+private static final double NOT_SET = -1.0;
 
-  private double previous_x = NOT_SET;
-  private double previous_y = NOT_SET;
-  private JoystickState state = JoystickState.NEUTRAL;
+private double previous_x = NOT_SET;
+private double previous_y = NOT_SET;
+private JoystickState state = JoystickState.NEUTRAL;
 
-  public JoystickState onTouchMove(TouchEvent event) {
-	  event.preventDefault();
-    // We only support fling/swipe, so we only need one finger
-	  Touch first_finger = event.getChangedTouches().get(0);
-	  if (first_finger == null) {
-      // No touch input currently, can't determine a direction
-	    return JoystickState.NEUTRAL;
-    } else {
-	    double new_x = first_finger.getClientX();
-	    double new_y = first_finger.getClientY();
-	    this.state = handleChange(previous_x, previous_y, new_x, new_y);
-      // Only update if we have a new direction
-	    if (this.state != JoystickState.NEUTRAL) {
-		    this.previous_x = new_x;
-		    this.previous_y = new_y;
-	    }
-	    return this.state;
-	  }
-  }
-
-	private static JoystickState handleChange(double previous_x, double previous_y, double new_x, double new_y) {
-    // How _far_ did the user swipe/fling?
-    double change_x = previous_x - new_x;
-    double change_y = previous_y - new_y;
-    if (Math.abs(change_x) >= MIN_DISTANCE) {
-      // We're past the threshold, which direction though?
-      return (change_x < 0.0) ? JoystickState.RIGHT : JoystickState.LEFT;
-    } else if (Math.abs(change_y) >= MIN_DISTANCE) {
-      return (change_y < 0.0) ? JoystickState.DOWN : JoystickState.UP;
-    } else {
-      // We're not past the movement threshold, can't determine a direction yet.
-      return JoystickState.NEUTRAL;
+public JoystickState onTouchMove(TouchEvent event) {
+  event.preventDefault();
+  // We only support fling/swipe, so we only need one finger
+  Touch first_finger = event.getChangedTouches().get(0);
+  if (first_finger == null) {
+    // No touch input currently, can't determine a direction
+    return JoystickState.NEUTRAL;
+  } else {
+    double new_x = first_finger.getClientX();
+    double new_y = first_finger.getClientY();
+    this.state = handleChange(previous_x, previous_y, new_x, new_y);
+    // Only update if we have a new direction
+    if (this.state != JoystickState.NEUTRAL) {
+	    this.previous_x = new_x;
+	    this.previous_y = new_y;
     }
-	}
-
-  // The same logic happens for `touchend` and `touchstart` handlers.
-  public JoystickState onTouchCancel(TouchEvent event) {
-    event.preventDefault();
-    // When the fling is complete or the swipe is ended, reset
-    this.previous_x = NOT_SET;
-    this.previous_y = NOT_SET;
-    this.state = JoystickState.NEUTRAL;
     return this.state;
   }
+}
+
+// The same logic happens for `touchend` and `touchstart` handlers.
+public JoystickState onTouchCancel(TouchEvent event) {
+  event.preventDefault();
+  // When the fling is complete or the swipe is ended, reset
+  this.previous_x = NOT_SET;
+  this.previous_y = NOT_SET;
+  this.state = JoystickState.NEUTRAL;
+  return this.state;
 }
 ```
 
 We keep a running X|Y coordinate of the last _complete_ gesture (either swipe or fling).
-From that coordinate, we calculate the distance to the current touch coordinate.
-If the distance exceeds our threshold/deadzone/minimum, we determine the direction of the gesture and return it.
 When the touch gesture is ended/cancelled or a new one is started, reset the whole state.
+Now for determining the direction of the gesture:
+
+```java
+private static final double MIN_DISTANCE = 45.0;
+
+private static JoystickState handleChange(double previous_x, double previous_y, double new_x, double new_y) {
+  // How _far_ did the user swipe/fling?
+  double change_x = previous_x - new_x;
+  double change_y = previous_y - new_y;
+  if (Math.abs(change_x) >= MIN_DISTANCE) {
+    // We're past the threshold, which direction though?
+    return (change_x < 0.0) ? JoystickState.RIGHT : JoystickState.LEFT;
+  } else if (Math.abs(change_y) >= MIN_DISTANCE) {
+    return (change_y < 0.0) ? JoystickState.DOWN : JoystickState.UP;
+  } else {
+    // We're not past the movement threshold, can't determine a direction yet.
+    return JoystickState.NEUTRAL;
+  }
+}
+```
+
+From the last completed gestures coordinate, we calculate the distance to the current touch coordinate.
+If the absolute distance exceeds our threshold/deadzone/minimum, we continue.
+The browsers coordinate system places `0|0` at the top-left of the screen/element.
+By looking at the leading sign of the previously calculated distance we can determine the direction.
 
 This code is simple and easy to understand, but it does have problems.
 If the gesture is perfectly diagonal, the horizontal direction is just always preferred.
@@ -545,6 +547,7 @@ Window.current().addEventListener("gamepaddisconnected", new EventListener<Gamep
 
 Again I moved the actual Gamepad handling code into its own `GamepadInput` class.
 Since pacman is a single player game, we only need to support a single gamepad instance.
+Also, we don't want to switch to a newly connected gamepad while the user is still playing.
 
 ```java
 private static final int NOT_CONNECTED = -1;
