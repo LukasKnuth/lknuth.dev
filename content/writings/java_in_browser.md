@@ -3,93 +3,74 @@ title: "Java in the Browser"
 date: 2025-03-31T18:40:09+02:00
 ---
 
-Like most computer engineers, I wanted to work with games.
-But not _creating_ new games, that was boring to me.
-And since I fancied myself a capable engineer, I wanted to write a game engine.
+Like most people in software, I was once into game development.
+Back in 2012 I had been learning to program for two years.
+I was basically a senior developer.
+Java was the only programming language that I knew.
+And because I fancied myself a capable engineer, I wanted to build the game engine myself, from scratch.
 
 So I stole somebody else's game.
-I wanted something that was simple-ish, but not too simple.
-So I picked pacman.
-
 I read through the (excellent) [PAC-MAN Dossier](https://pacman.holenet.info/).
 The document has _everything_ you need to build your own version of the game.
-It details the basic game rules, the point system and how the Ghost AI works.
+It details the basic game rules, the point system and how the ghost AI works.
 It's also not too technical, so you get to make the interesting decisions for yourself.
 
-So I went to work.
-I stole all the assets.
-And I built a game engine.
-From scratch.
-In Java.
+<!--more-->
 
-<!-- Worked on it from April 12 2012 until June 3rd 2012 -->
 It took me about two months to get the game into a state that I was satisfied with.
-It has the faithful implementation of all four ghost AIs.
-You can control pacman through the original maze and collect points.
-The game resets the level when you clear it, but it keeps your score.
-
-The project lived at [github.com/LukasKnuth/pacman](https://github.com/LukasKnuth/pacman/) for 13 years...
-
-Until I was recently cleaning out my old repositories and stumbled upon it.
-
-## Digital Exhibit
-
-The goal for this project was to make my version of the game more accessible.
+And then I left it alone for 13 years.
+Until I found the repository again during my GitHub spring-cleaning.
 Up until this point, the repository didn't even have a build script.
-But even with that, people would still be expected to install Java on their machines to run it.
-
-It would be soo much nicer if I could just run the game in a browser.
-If I lower the barrier for entry this much, people might even play the game for a few rounds.
-
-Crucially, what I _didn't want_ was to make a large rewrite of the game.
-I could improve the game, fix some of its bugs and add some features I left out.
-I decided that wasn't in the spirit of the project.
+Also, interested players would have to install Java on their machines.
+The barrier to play the game is just too high.
 
 The goal is to make my old Java game run in the browser while keeping as much of its charm/jank intact.
+Crucially, what I _didn't want_ was to change the game logic.
+No fixing of bugs, not adding features or polishing the mechanics.
+I decided that wasn't in the spirit of the project.
+A **digital exhibit**.
 
 ## Java in the Browser
 
 My first idea was to compile it to WASM.
 Surely these days every programming language compiles to WASM, right?
-
 There is actually a project, [JWebAssembly](https://github.com/i-net-software/JWebAssembly), that does this.
-However, their repository didn't have a commit in the last two years - which either means it's complete or abandoned.
+However, their repository didn't have a commit in the last two years - which either means it's completed or abandoned.
 
 Next I found [CheerpJ](https://cheerpj.com/).
 As far as I can tell, this is a full re-implementation of the entire JDK in Web Assembly.
-It's a drop-in solution, just take your old `.jar` files and some JavaScript boilerplate and done.
+It's a drop-in solution, just take your old `.jar` files and some JavaScript boilerplate, and you're done.
 The applications run without modification.
 Boring.
 
 The last project I found was [TeaVM](https://teavm.org/).
 It is an ahead-of-time compiler for Java that can generate Web Assembly or JavaScript.
-The project is well integrated but does require you to adapt code to work with it.
+The project brings everything you need but does require you to adapt code to work with it.
 Perfect.
 
 ## Support multiple platforms
 
 The game uses Java Swing to render itself to a desktop window.
 It also uses some AWT classes (another Java Desktop toolkit) as well.
-None of these classes are [available in TeaVM](https://teavm.org/jcl-report/recent/jcl.html).
-
+None of them are [available in TeaVM](https://teavm.org/jcl-report/recent/jcl.html).
 The plan is as follows then:
 
 1. Find any `javax.swing.*` or `java.awt.*` references in the code
-2. Create interfaces for this functionality 
+2. Create interfaces to abstract the functionality 
 3. Implement the interfaces for Desktop with the `javax.swing.*` and `java.awt.*` classes
 4. Implement the interfaces for Web with the [TeaVM JSO APIs](https://javadoc.io/doc/org.teavm/teavm-jso-apis/latest/index.html)
 5. Profit
 
-I create a basic Gradle project layout: a `game` project with the game logic and all my abstractions.
+I created a basic Gradle project layout: a `game` project with the game logic and all my interfaces.
 A second `desktop` project that depends on `game` where all the desktop specific code will be moved to.
-Then, a new `web` project, also depends on `game`, which will then have the web specific code built with TeaVM.
+Then, a new `web` project (also depends on `game`) which will have the web specific code built with TeaVM.
 
 ### Rendering and Resource Loading
 
 Because I didn't want to spend too much time on the boring stuff, I decided to make the abstraction as thin as possible.
-For most things, that meant literally copy-and-pasting the Swing/AWT calls out of the codebase and creating an interface function with the same name and parameter signature.
+For most things, that meant literally copy-and-pasting the Swing/AWT calls out of the codebase and creating a function in the interface with the same name and parameter signature.
 
-For the renderer for example, I ended up with the following minimum set of draw calls:
+To render the game for example, I ended up with the following minimum set of draw calls:
 
 ```java
 /**
@@ -111,7 +92,7 @@ public interface Canvas {
 }
 ```
 
-For any AWT specific classes, such as `Color` and `Font`, I made my own (much simpler) versions.
+For any AWT specific classes, such as `Color` and `Font`, I made my own (much simpler) versions in the `game` project.
 The abstract `Canvas` expects my versions and the platform specific implementations are expected to convert between the types.
 The rest of the **Desktop** implementation is just forwarding calls:
 
@@ -121,23 +102,26 @@ The rest of the **Desktop** implementation is just forwarding calls:
  *  render method.
  */
 public class SwingCanvas implements Canvas {
+  private final Graphics graphics;
+
 	public void drawString(String text, int x, int y) {
 	  this.graphics.drawString(text, x, y);
 	}
 
-	public void drawImage(ImageResource resource, int x, int y) {
-		this.graphics.drawImage(this.resourceCache.get(resource), x, y, null);
+	public void setColor(Color color) {
+		this.graphics.setColor(new java.awt.Color(color.r, color.g, color.b));
 	}
 
-	public void fillOval(int x, int y, int width, int height) {
-	  this.graphics.fillOval(x, y, width, height);
+	public void drawImage(ImageResource resource, int x, int y) {
+		this.graphics.drawImage(this.resourceCache.get(resource), x, y, null);
 	}
   // ...
 }
 ```
 
 I also decided to solve **resource loading** in the specific platforms.
-For the desktop for example, I can simply load images/sounds from the folders/jar file.
+For the desktop, I can simply load images/sounds from the folders/jar file.
+But later, on the web, a different strategy would be required.
 
 I removed any resource loading from the game and instead replaced it with a simple Enumeration:
 
@@ -177,11 +161,11 @@ private void preloadCache() {
 ```
 
 I did the same for the sound system and its resources as well.
-Now most of the game was using my interfaces, except...
+Now most of the game was using the abstractions, except...
 
 ### Game Loop
 
-The original game used Javas Executors to spawn a thread that re-evaluated the game every 16ms.
+The original game used Java Executors to spawn a thread that re-evaluated the game every 16ms.
 Under ideal circumstances, that means the game simulates and renders at a stable 60 FPS.
 However, the executors are also not available in TeaVM.
 
@@ -214,7 +198,7 @@ private void startLoop() {
 }
 ```
 
-The code above also shows another platform-specific tech: The double buffer.
+The code above also shows another platform-specific concern: The double buffer.
 This is a technique to reduce flickering by painting the next frame to an off-screen buffer first, then swapping the whole buffer out.
 It must be done manually on some platforms while others do it automatically.
 
@@ -313,10 +297,10 @@ public void onAnimationFrame(double timestamp) {
 The first call to `Window.requestAnimationFrame()` registers our loop to be started.
 The browser will call the method on its next repaint.
 Then, as part of rendering the next frame, we immediately register ourselves _again_ to be called on the next repaint.
-This is our loop done.
+We're looping!
 
 There is one problem with this approach: We don't control how often `step()` is called anymore.
-Depending on the hardware (and many more factors) the browser automatically decides the appropriate frame-rate of our game.
+Depending on the hardware (and some other factors) the browser automatically decides the appropriate frame-rate of our game.
 On my MacBook with my 120Hz monitor attached, the game now runs at 120 FPS instead of the expected 60 FPS.
 This means that everything in the game is now twice as fast.
 
@@ -353,36 +337,37 @@ Lets fix that next.
 ### Resource Loading
 
 To render an image bitmap to an HTML canvas, we can use the [`drawImage()`-method](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage).
-It can draw an image from multiple sources, but I want to keep it _very_ simple.
+It can draw an image from multiple sources, but I wanted to keep it _very_ simple.
 
 1. No async code. It adds complexity, especially when using TeaVM.
 2. No loading over the network. I don't want to build a loading screen or deal with network failure.
 
 Ideally, the resources would just be downloaded together with the code and the game would just start when _everything_ is ready.
-How about Base64 encoded data URIs?
+
 The image resources are tiny (a few bytes each), so the bloat won't be too bad.
-But if we don't want to load the images over the network, we need to somehow include them in the code at compile time...
+But if we don't want to load the images over the network, we need to somehow include them in the code at compile time.
+How about Base64 encoded data URIs?
 
 ```groovy
 task genBase64Resources(dependsOn: ":game:build") {
-  # NOTE: Simplified slightly a bit for readability...
+  // NOTE: Simplified for readability, see link below for full code...
   doLast {
-    # Load the games compiled classes into the Gradle runner JRE
+    // Load the previously compiled `game` classes into the Gradle build runner
     def classLoader = new URLClassLoader(classpath.collect { it.toURI().toURL() } as URL[])
-    # Inspect the specific Enum that lists all our resources
+    // Inspect the `ImageResource` Enum that lists all image resources
     def containerClass = classLoader.loadClass("org.ita23.pacman.res.ImageResource");
 
-    # Lets generate some Java source code
+    // Lets generate some Java source code
     def code = StringBuilder.newInstance()
     code << "public final class Base64Resource {\n"
     code << " public static String getResource(String path){\n"
     code << "  switch (path) {\n"
 
     containerClass.getEnumConstants().each {
-      # One `case` for each ImageResource Enum constant
+      // One `case` for each ImageResource Enum constant
       code << "case \"" << it.resource_path << "\": "
       code << "return \"data:image/png;base64,"
-      # Load the resource file and encode its content as Base64
+      // Load the resource file and encode its content as Base64
       new File(respath, it.resource_path).withInputStream {
         code << Base64.encoder.encodeToString(it.readAllBytes())
       }
@@ -390,19 +375,16 @@ task genBase64Resources(dependsOn: ":game:build") {
     }
     code << "}}}\n"
 
-    # Write everything to the source file
+    // Write everything to the source file
     outputFile.text = code.toString()
   }
 }
 ```
 
-This custom Gradle task generates Java source code for a new `Base64Resource` class.
+This [custom Gradle task](https://github.com/LukasKnuth/pacman/blob/619a3b6b30830e9ab7ba524ad150f3f594e59fb5/web/build.gradle#L28-L71) generates Java source code for a new `Base64Resource` class.
 The class has a single `getResource(String)`-method that accepts the resource path to be loaded.
 In the method, a switch-case statement returns the Base64 encoded data URI for the given resource.
-
-The generated code is then added to the compile step and can now be used in our web platform.
-I could have used something more fancy to create the source code, but a simple `StringBuilder` is good enough, too.
-It looks like this (properly formatted):
+The result looks like this (properly formatted):
 
 ```java
 public final class Base64Resource {
@@ -411,11 +393,13 @@ public final class Base64Resource {
       case "/graphics/maze.png": return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAboAAAGzBAMAAACr1s9+AA...";
       case "/graphics/cherry.png": return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR..."
       // ...
-      default: throw new RuntimeException("unknown resource_path: "+path);
     }
   }
 }
 ```
+
+The generated code is then added to the compile step and can now be used in our web platform.
+I could have used something more fancy to create the source code, but a simple `StringBuilder` is good enough, too.
 
 Now we can make use of this in our web specific `Canvas` implementation by simply creating new `HTMLImageElement` and supplying the `src` attribute.
 
@@ -449,14 +433,29 @@ I won't go into how this works for keyboard because it is quite boring.
 Since this project is all about making the game accessible, we can't ignore mobile devices.
 And most of these don't ship with keyboards [anymore](https://en.wikipedia.org/wiki/HTC_Dream).
 
-TODO is this interresting/relevant?
+TODO WRITE THIS UP as well!
 
 ## Finishing Up
 
 Finally, we have a playable game.
-I wrote a bit of Github Actions code to have it build and deploy the page to Github Pages.
+I setup a Github Action to have it build and deploy the page to Github Pages.
 You can [play the game for yourself](https://lukasknuth.github.io/pacman/) if you're curious.
 
 For now, I've opted not to implement sound in the web version for simplicity’s sake.
+
+The result is a single, minified JavaScript file at **94 kB** compressed.
+This file contains the code, and all the assets.
+It runs well on Safari, Firefox and Chrome - even the mobile versions.
+
+Overall, this was a very fun project without any big technical hurdles.
+Working with TeaVM was very easy, although I needed to read a good bit of example source code to understand how it works.
+The documentation is sparse, but the following resources helped me a lot:
+
+- [List of available classes](https://teavm.org/jcl-report/recent/jcl.html)
+- [JavaDocs for TeaVM](https://javadoc.io/doc/org.teavm/)
+- [Samples from the TeaVM repo](https://github.com/konsoletyper/teavm/tree/master/samples)
+- [Google Groups/Mailing list](https://groups.google.com/g/teavm)
+
+The little debugging I had to do was simply `System.out.println`, which shows up in the browsers developer console.
 
 TODO bit more polish on web version (don't start immediately, download link, github link, explanations)
