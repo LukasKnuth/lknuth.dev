@@ -3,32 +3,28 @@ title: "Java in the Browser"
 date: 2025-03-31T18:40:09+02:00
 ---
 
-Like most people in software, I was once into game development.
+Like most aspiring software engineers, I wanted to program games.
 Back in 2012 I had been learning to program for two years.
 I was basically a senior developer.
 Java was the only programming language that I knew.
 And because I fancied myself a capable engineer, I wanted to build the game engine myself, from scratch.
 
-So I stole somebody else's game.
-I read through the (excellent) [PAC-MAN Dossier](https://pacman.holenet.info/).
+So I stole somebody else's game - I read through the (excellent) [PAC-MAN Dossier](https://pacman.holenet.info/).
 The document has _everything_ you need to build your own version of the game.
 It details the basic game rules, the point system and how the ghost AI works.
-It's also not too technical, so you get to make the interesting decisions for yourself.
-
-<!--more-->
+And it's also not too technical, so you get to make the interesting decisions for yourself.
 
 It took me about two months to get the game into a state that I was satisfied with.
 And then I left it alone for 13 years.
-Until I found the repository again during my GitHub spring-cleaning.
-Up until this point, the repository didn't even have a build script.
-Also, interested players would have to install Java on their machines.
-The barrier to play the game is just too high.
+Until I found the repository again a few weeks ago.
 
-The goal is to make my old Java game run in the browser while keeping as much of its charm/jank intact.
-Crucially, what I _didn't want_ was to change the game logic.
-No fixing of bugs, not adding features or polishing the mechanics.
-I decided that wasn't in the spirit of the project.
-A **digital exhibit**.
+<!--more-->
+
+Sadly, the barrier to play the game is just too high - there wasn't even a build script.
+And, any interested players would have to install Java on their machines.
+Ideally, I can make my old Java game run in the browser, while preserving its charm/jank.
+No fixing of bugs, no adding of features or polishing mechanics.
+That wouldn't be in the spirit of the project - a **digital exhibit**.
 
 ## Java in the Browser
 
@@ -51,13 +47,13 @@ Perfect.
 ## Support multiple platforms
 
 The game uses Java Swing to render itself to a desktop window.
-It also uses some AWT classes (another Java Desktop toolkit) as well.
-None of them are [available in TeaVM](https://teavm.org/jcl-report/recent/jcl.html).
+It also uses some AWT classes (the older Java Desktop toolkit that Swing builds on top of).
+None of which are [available in TeaVM](https://teavm.org/jcl-report/recent/jcl.html).
 The plan is as follows then:
 
 1. Find any `javax.swing.*` or `java.awt.*` references in the code
 2. Create interfaces to abstract the functionality 
-3. Implement the interfaces for Desktop with the `javax.swing.*` and `java.awt.*` classes
+3. Implement the interfaces for Desktop with the original `javax.swing.*` and `java.awt.*` classes
 4. Implement the interfaces for Web with the [TeaVM JSO APIs](https://javadoc.io/doc/org.teavm/teavm-jso-apis/latest/index.html)
 5. Profit
 
@@ -67,7 +63,7 @@ Then, a new `web` project (also depends on `game`) which will have the web speci
 
 ### Rendering and Resource Loading
 
-Because I didn't want to spend too much time on the boring stuff, I decided to make the abstraction as thin as possible.
+Because I didn't want to spend too much time on chores, I decided to make the abstraction as thin as possible.
 For most things, that meant literally copy-and-pasting the Swing/AWT calls out of the codebase and creating a function in the interface with the same name and parameter signature.
 
 To render the game for example, I ended up with the following minimum set of draw calls:
@@ -97,31 +93,25 @@ The abstract `Canvas` expects my versions and the platform specific implementati
 The rest of the **Desktop** implementation is just forwarding calls:
 
 ```java
-/**
- * A Pacman canvas to draw the game on using Swing/AWT as the underlying
- *  render method.
- */
-public class SwingCanvas implements Canvas {
-  private final Graphics graphics;
+private final Graphics graphics;
 
-	public void drawString(String text, int x, int y) {
-	  this.graphics.drawString(text, x, y);
-	}
-
-	public void setColor(Color color) {
-		this.graphics.setColor(new java.awt.Color(color.r, color.g, color.b));
-	}
-
-	public void drawImage(ImageResource resource, int x, int y) {
-		this.graphics.drawImage(this.resourceCache.get(resource), x, y, null);
-	}
-  // ...
+public void drawString(String text, int x, int y) {
+  this.graphics.drawString(text, x, y);
 }
+
+public void setColor(Color color) {
+	this.graphics.setColor(new java.awt.Color(color.r, color.g, color.b));
+}
+
+public void drawImage(ImageResource resource, int x, int y) {
+	this.graphics.drawImage(this.resourceCache.get(resource), x, y, null);
+}
+// ...
 ```
 
-I also decided to solve **resource loading** in the specific platforms.
+I also decided to solve **resource loading** in each specific platform.
 For the desktop, I can simply load images/sounds from the folders/jar file.
-But later, on the web, a different strategy would be required.
+But later, on the web, a different strategy will be required.
 
 I removed any resource loading from the game and instead replaced it with a simple Enumeration:
 
@@ -136,7 +126,7 @@ public enum ImageResource {
 
   INKY_DOWN_1("/graphics/inky/inky_down_1.png"),
   INKY_DOWN_2("/graphics/inky/inky_down_2.png"),
-  // ...
+  // many, many more...
 
   public final String resource_path;
   private ImageResource(String resource_path) {
@@ -161,17 +151,17 @@ private void preloadCache() {
 ```
 
 I did the same for the sound system and its resources as well.
-Now most of the game was using the abstractions, except...
+Now most of the game code is using the abstractions, except...
 
 ### Game Loop
 
 The original game used Java Executors to spawn a thread that re-evaluated the game every 16ms.
 Under ideal circumstances, that means the game simulates and renders at a stable 60 FPS.
-However, the executors are also not available in TeaVM.
+However, Executors are also not available in TeaVM.
 
 Rather than throwing interfaces at the problem again, I decided the _loop_ part of "Game Loop" was a platform specific issue.
 This turned out to be a very good call later.
-I moved most of the games initialization code from the `main()`-method to a new `Bootstrap` class in the game project, to be reused by other platforms.
+I moved most of the games initialization code from the `main()`-method to a new `Bootstrap` class in the game project, to be reused by each platform.
 
 I then refactored the `GameLoop` class to expose a simple `step`-method that would simulate and render _one frame_ of the game.
 All the platform has to do is setup the game loop and canvas, then call `step` repeatedly:
@@ -190,7 +180,9 @@ private Runnable game_loop = new Runnable() {
 };
 
 private void startLoop() {
+  Bootstrap.bootstrap(getWidth(), getHeight());
   GameLoop.INSTANCE.lock();
+  // Execute the Runnable
   game_loop_executor = Executors.newSingleThreadScheduledExecutor();
   game_loop_handler = game_loop_executor.scheduleAtFixedRate(
     game_loop, 0L, 16L, TimeUnit.MILLISECONDS
@@ -202,7 +194,7 @@ The code above also shows another platform-specific concern: The double buffer.
 This is a technique to reduce flickering by painting the next frame to an off-screen buffer first, then swapping the whole buffer out.
 It must be done manually on some platforms while others do it automatically.
 
-Lastly, we use the `getJoystickState()`-method to read any game inputs.
+Lastly, the `getJoystickState()`-method is called to get any game inputs.
 This, again, is platform specific.
 The desktop platform only supports the keyboard for controlling pacman.
 
@@ -212,13 +204,15 @@ With this, we're done for the desktop.
 
 ## Porting to the Web
 
-Now comes the interesting part: implementing our new interfaces for the **web** platform.
+With the chores out of the way, now comes the interesting part: implementing our new interfaces for the **web** platform.
+TeaVM has a bundled-in extension it calls [JSO](https://teavm.org/docs/runtime/jso.html) which offers Java bindings for JavaScript functions available in browsers.
+This allows us to research an approach for JavaScript and then translate it almost 1:1 to Java code.
 
 ### The `<canvas>` element
 
 For rendering the frames on the website, I chose the simple [HTML Canvas](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement) element.
-So again, we implement our `Canvas` interface, but this time we use the TeaVM bindings for [`CanvasRenderingContext2D`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D) to implement it.
-The API is _similar_ to the `java.awt.Graphics` API we used on the desktop - with some surprises.
+So again, let's implement the `Canvas` interface, but this time using the TeaVM bindings for [`CanvasRenderingContext2D`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D).
+The API is _similar_ to the `java.awt.Graphics` API from the desktop - with some surprises.
 
 ```java
 public void setColor(Color color) {
@@ -229,8 +223,8 @@ public void setColor(Color color) {
 }
 ```
 
-This example is straightforward, although we already have a subtle difference.
-Since the interface (and the game code by extension) is very close to the AWT draw calls, we will just emulate their behavior.
+This example is straightforward, although there is already a subtle difference.
+Since the interface (and the game code by extension) is very close to the AWT draw calls, we'll just emulate this behavior.
 For other draw calls, this was more complicated though:
 
 ```java
@@ -260,15 +254,14 @@ public void fillArc(int x, int y, int width, int height, int startAngle, int arc
 
 Through much trail and error, I finally got the `fillArc()` to work.
 Luckily, most other functions weren't this complicated to port.
-
 I made the conscious choice to not implement the `drawImage()`-methods - _yet_.
 Instead, to get early feedback, I went ahead and worked on...
 
-### GameLoop with animation frames
+### GameLoop without looping
 
 There isn't really a good equivalent to a thread in a browser.
 At least not for games.
-Instead, usually the [`Window.requestAnimationFrame()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame)-method is used.
+Instead, one can use the [`Window.requestAnimationFrame()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame)-method.
 It tells the browser to call the given callback before it repaints.
 
 ```java
@@ -294,15 +287,14 @@ public void onAnimationFrame(double timestamp) {
 }
 ```
 
-The first call to `Window.requestAnimationFrame()` registers our loop to be started.
-The browser will call the method on its next repaint.
-Then, as part of rendering the next frame, we immediately register ourselves _again_ to be called on the next repaint.
-We're looping!
+The first call to `Window.requestAnimationFrame()` "starts" the loop.
+The browser will call the method on the next repaint.
+Then, as part of rendering the next frame, the callback immediately registers itself _again_ to be called on the next repaint.
+And we're looping!
 
 There is one problem with this approach: We don't control how often `step()` is called anymore.
-Depending on the hardware (and some other factors) the browser automatically decides the appropriate frame-rate of our game.
-On my MacBook with my 120Hz monitor attached, the game now runs at 120 FPS instead of the expected 60 FPS.
-This means that everything in the game is now twice as fast.
+Depending on the hardware (and some other factors) the browser automatically decides the appropriate frame-rate itself.
+On my MacBook with my 120Hz monitor attached, the game now runs at 120 FPS instead of the expected 60 FPS - meaning everything in the game is now twice as fast.
 
 Let's not do that and instead only call `step()` at the expected interval (taken from [this SO answer](https://stackoverflow.com/a/19772220/717341)):
 
@@ -328,22 +320,21 @@ There are other (and better) ways to deal with this.
 One option is to separate game simulation from rendering and calculate the time delta between two frames.
 If you're interested in learning more, there is an [excellent chapter](https://gameprogrammingpatterns.com/game-loop.html#sample-code) from the book "Game Programming Patterns" by Robert Nystrom that is available online **for free**.
 
-With the gameloop now done, we can see the game in action for the first time in the browser!
+With the gameloop done, I could see the game in action for the first time in the browser!
 Well, partially.
-Since we can't draw images yet, we only see the edible dots, the score and pacman.
+Since images aren't drawn yet, you only see the edible dots, the score and pacman.
 Everything else is not showing up.
-Lets fix that next.
+Let's fix that next.
 
 ### Resource Loading
 
-To render an image bitmap to an HTML canvas, we can use the [`drawImage()`-method](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage).
+To render an image bitmap to an HTML canvas, one uses the [`drawImage()`-method](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage).
 It can draw an image from multiple sources, but I wanted to keep it _very_ simple.
 
 1. No async code. It adds complexity, especially when using TeaVM.
 2. No loading over the network. I don't want to build a loading screen or deal with network failure.
 
 Ideally, the resources would just be downloaded together with the code and the game would just start when _everything_ is ready.
-
 The image resources are tiny (a few bytes each), so the bloat won't be too bad.
 But if we don't want to load the images over the network, we need to somehow include them in the code at compile time.
 How about Base64 encoded data URIs?
@@ -379,6 +370,11 @@ task genBase64Resources(dependsOn: ":game:build") {
     outputFile.text = code.toString()
   }
 }
+
+// Add the genreated code to be compiled along with `web` platform
+sourceSets.main.java {
+  srcDir(genBase64Resources)
+}
 ```
 
 This [custom Gradle task](https://github.com/LukasKnuth/pacman/blob/619a3b6b30830e9ab7ba524ad150f3f594e59fb5/web/build.gradle#L28-L71) generates Java source code for a new `Base64Resource` class.
@@ -398,10 +394,10 @@ public final class Base64Resource {
 }
 ```
 
-The generated code is then added to the compile step and can now be used in our web platform.
-I could have used something more fancy to create the source code, but a simple `StringBuilder` is good enough, too.
+I could have used something more fancy to create the source code, but for this simple case, `StringBuilder` is good enough.
 
-Now we can make use of this in our web specific `Canvas` implementation by simply creating new `HTMLImageElement` and supplying the `src` attribute.
+The generated code is added to the compile step for `web`.
+Now we can make use of this in the web-specific `Canvas` implementation by simply creating new `HTMLImageElement` and supplying the `src` attribute.
 
 ```java
 private void loadImages() {
@@ -418,21 +414,21 @@ public void drawImage(ImageResource resource, int x, int y) {
 ```
 
 > [!tip]
-> We don't add the newly created `HTMLImageElement` to the DOM, which means its never rendered on the HTML page.
-> We simply use the browsers' ability to decode an Image from the Base64 data URI and then hold on to the result in memory.
+> Because the created `HTMLImageElement` is never added to the DOM, it's never rendered on the HTML page.
+> I simply use the browsers' ability to decode an Image from the Base64 data URI and then hold on to the result in memory.
 
-The solution is quite simple, does not use any async/promise code, and we don't need to handle any network failures.
+The solution is quite simple, does not use any async/promise code, and I don't need to handle any network failures.
 The game screen is simply black until the code is fully loaded and the game launches.
-This is fast enough that we also don't need a loading screen.
+This is fast enough that a loading screen isn't necessary either.
 
 ### Game Input
 
 The last step now is to implement polling the browser for game inputs.
 I won't go into how this works for keyboard because it is quite boring.
-But, since this project is all about making the game accessible, we can't ignore mobile devices.
+But, since this project is all about making the game accessible, I can't ignore mobile devices.
 And most of these don't ship with keyboards [anymore](https://en.wikipedia.org/wiki/HTC_Dream).
 
-[Touch input in the browser](https://developer.mozilla.org/en-US/docs/Games/Techniques/Control_mechanisms/Mobile_touch) uses a _push_ system, where we register a listener on an Element and receive callbacks:
+The [touch input API](https://developer.mozilla.org/en-US/docs/Games/Techniques/Control_mechanisms/Mobile_touch) in the browser uses a _push_ system, where we register a listener on an Element and receive callbacks:
 
 ```java
 private JoystickState last_input_state = JoystickState.NEUTRAL;
@@ -446,13 +442,13 @@ canvas.addEventListener("touchmove", new EventListener<TouchEvent>() {
 // Repeat for `touchstart`, `touchend` and `touchcancel`
 ```
 
-The touch gesture detection is in the `TouchInput` class.
-We simply subscribe to all touch specific events on our `<canvas>` element and forward them there.
+The actual touch gesture detection is in the `TouchInput` class.
+Here, I simply subscribed to all touch specific events on the `<canvas>` element and forward them.
 The `JoystickState` is another very simple enum with five constants: `UP|DOWN|LEFT|RIGHT` and `NEUTRAL` - meaning no input is currently given.
 
 My goal was to support two distinct input methods:
-Flicking on the screen in a direction or holding down and swiping in directions as pacman moves.
-The latter means we can't just use `touchdown` and `touchup` and calculate the distance/direction, we need to do this continuously on every `touchmove` event:
+Flicking on the screen in a direction **and** holding down and swiping direction changes as pacman moves along.
+The latter means I can't just use `touchdown` and `touchup` and calculate the distance/direction - instead this must be done continuously on every `touchmove` event:
 
 ```java
 private static final double NOT_SET = -1.0;
@@ -492,7 +488,7 @@ public JoystickState onTouchCancel(TouchEvent event) {
 }
 ```
 
-We keep a running X|Y coordinate of the last _complete_ gesture (either swipe or fling).
+Keep a running `X|Y` coordinate of the last _complete_ gesture (either swipe or fling).
 When the touch gesture is ended/cancelled or a new one is started, reset the whole state.
 Now for determining the direction of the gesture:
 
@@ -515,20 +511,20 @@ private static JoystickState handleChange(double previous_x, double previous_y, 
 }
 ```
 
-From the last completed gestures coordinate, we calculate the distance to the current touch coordinate.
-If the absolute distance exceeds our threshold/deadzone/minimum, we continue.
-The browsers coordinate system places `0|0` at the top-left of the screen/element.
-By looking at the leading sign of the previously calculated distance we can determine the direction.
+From the last completed gestures coordinate, calculate the distance to the current touch coordinate.
+If the absolute distance exceeds the threshold/deadzone/minimum, continue.
+In the browsers coordinate system, `0|0` is the top-left of the screen/element.
+Determine the direction by looking at the leading sign of the previously calculated distance.
 
 This code is simple and easy to understand, but it does have problems.
 If the gesture is perfectly diagonal, the horizontal direction is just always preferred.
-A developer with stronger mathematical knowledge might use `atan2` for this problem, but my experiments didn't yield _better_ game feel.
+A developer with a stronger mathematical background might use `atan2` for this problem, but my experiments didn't yield _better_ game feel.
 I decided to keep the code I understood and moved on.
 
 ### Bonus points: Gamepad
 
 Because modern browsers are basically operating systems at this point, of course they have [Gamepad support](https://developer.mozilla.org/en-US/docs/Games/Techniques/Control_mechanisms/Desktop_with_gamepad).
-First, we again have some listeners that are called when a Gamepad is connected to the computer (and the browser supports it).
+First, there are listeners that are called when a Gamepad is connected to the computer (if the browser supports it).
 
 ```java
 gamepad_input = new GamepadInput();
@@ -546,8 +542,8 @@ Window.current().addEventListener("gamepaddisconnected", new EventListener<Gamep
 ```
 
 Again I moved the actual Gamepad handling code into its own `GamepadInput` class.
-Since pacman is a single player game, we only need to support a single gamepad instance.
-Also, we don't want to switch to a newly connected gamepad while the user is still playing.
+Since pacman is a single player game, only a single gamepad instance is supported.
+Also, the player doesn't want to switch to a newly connected gamepad while they are still playing on the old one.
 
 ```java
 private static final int NOT_CONNECTED = -1;
@@ -573,9 +569,9 @@ public void onDisconnected(GamepadEvent evt) {
 }
 ```
 
-The `GamepadEvent` has a `getIndex()` method that allows us to track a specific gamepad.
+The `GamepadEvent` has a `getIndex()` method that allows tracking a specific gamepad.
 This input is a _poll_ based input, meaning there is no listener that is called when a button is pressed.
-Instead, we can ask for the whole gamepads state _right now_ as part of our gameloop.
+Instead, the game will ask for the whole gamepads state _right now_ as part of the gameloop.
 
 ```java
 // Canonical Index on Standard Gamepad
@@ -606,10 +602,8 @@ public JoystickState getDirection() {
 ```
 
 The W3C standard describes a ["Standard Gamepad"](https://w3c.github.io/gamepad/#dfn-standard-gamepad) that all _known_ gamepads should be remapped to.
-We're verifying that the current gamepad has this mapping in our `onConnected` method above.
-This allows us to support most commonly used gamepads like Playstation and xBox with one configuration.
-
-Now, all we need to do is poll the state in our gameloop:
+I verify that the current gamepad has this mapping in our `onConnected` method above.
+This allows includes most commonly used gamepads like PlayStation and Xbox with one configuration.
 
 ```java
 public void onAnimationFrame(double timestamp) {
@@ -627,22 +621,21 @@ public void onAnimationFrame(double timestamp) {
 }
 ```
 
-With this small change, we can control the game with a gamepad now as well.
-At this point I think we're in a good spot to wrap up.
+With the gameloop updated, the game can now be controlled with a gamepad as well.
 
 ## Finishing Up
 
-Finally, we have a playable game.
-I setup a Github Action to have it build and deploy the page to Github Pages.
-You can [play the game for yourself](https://lukasknuth.github.io/pacman/) if you're curious.
-
+Finally, we have an easily playable game.
 For now, I've opted not to implement sound in the web version for simplicity’s sake.
 
+I set up a CI to have it build and deploy everything to GitHub Pages.
+You can [play the game for yourself](https://lukasknuth.github.io/pacman/) if you're curious.
 The result is a single, minified JavaScript file at **94 kB** compressed.
 This file contains the code, and all the assets.
 It runs well on Safari, Firefox and Chrome - even the mobile versions.
 
 Overall, this was a very fun project without any big technical hurdles.
+The little debugging I had to do was simply `System.out.println`, which shows up in the browsers developer console.
 Working with TeaVM was very easy, although I needed to read a good bit of example source code to understand how it works.
 The documentation is sparse, but the following resources helped me a lot:
 
@@ -651,6 +644,9 @@ The documentation is sparse, but the following resources helped me a lot:
 - [Samples from the TeaVM repo](https://github.com/konsoletyper/teavm/tree/master/samples)
 - [Google Groups/Mailing list](https://groups.google.com/g/teavm)
 
-The little debugging I had to do was simply `System.out.println`, which shows up in the browsers developer console.
+What helps it tremendously is that you can simply research something for JavaScript and the ideas and most of the code will translate almost 1:1 to TeaVM.
+Any prior experience with web APIs still applies.
 
-TODO bit more polish on web version (don't start immediately, download link, github link, explanations)
+I was impressed that the code I wrote as a beginner 13 years ago now runs (with little changes) on a different platform.
+It's a testament to the Java platforms backward compatibility and the diverse and mature tooling that exists around it.
+
