@@ -1,0 +1,450 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=author content="Lukas Knuth"><meta name=description content="Like most aspiring software engineers, I wanted to program games. Back in 2012 I had been learning to program for two years. I was basically a senior developer. Java was the only programming language that I knew. And because I fancied myself a capable engineer, I wanted to build the game engine myself, from scratch.
+So I stole somebody else&amp;rsquo;s game - I read through the (excellent) PAC-MAN Dossier. The document has everything you need to build your own version of the game. It details the basic game rules, the point system and how the ghost AI works. And it&amp;rsquo;s also not too technical, so you get to make the interesting decisions for yourself.
+It took me about two months to get the game into a state that I was satisfied with. And then I left it alone for 13 years. Until I found the repository again a few weeks ago."><meta property="og:description" value="Like most aspiring software engineers, I wanted to program games. Back in 2012 I had been learning to program for two years. I was basically a senior developer. Java was the only programming language that I knew. And because I fancied myself a capable engineer, I wanted to build the game engine myself, from scratch.
+So I stole somebody else&amp;rsquo;s game - I read through the (excellent) PAC-MAN Dossier. The document has everything you need to build your own version of the game. It details the basic game rules, the point system and how the ghost AI works. And it&amp;rsquo;s also not too technical, so you get to make the interesting decisions for yourself.
+It took me about two months to get the game into a state that I was satisfied with. And then I left it alone for 13 years. Until I found the repository again a few weeks ago."><meta property="og:title" value="Java in the Browser"><meta property="og:url" value=https://lknuth.dev/writings/java_in_browser/><meta property="og:type" value=article><meta property="og:article:author" value="Lukas Knuth"><meta property="og:article:published_time" value=2025-03-31T18:40:09+0200><meta name=robots content="all,follow"><meta name=googlebot content="index,follow,snippet,archive"><title>Java in the Browser | Lukas Knuth</title>
+<link rel="stylesheet" href="/css/main.min.1009311aee1c278610d4b8f3f3b936c63a37ae1a198956a133b2b619cd437e1d.css" integrity="sha256-EAkxGu4cJ4YQ1Ljz87k2xjo3rhoZiVahM7K2Gc1Dfh0=" crossorigin="anonymous">
+<link rel=canonical href=https://lknuth.dev/writings/java_in_browser/><link rel=icon type=image/png href=https://lknuth.dev/images/favicon-96x96.png sizes=96x96><link rel=icon type=image/svg+xml href=https://lknuth.dev/images/favicon.svg><link rel="shortcut icon" href=https://lknuth.dev/images/favicon.ico><link rel=alternate type=application/rss+xml href=https://lknuth.dev/writings/index.xml title=Writings></head><body id=very-top class="flex flex-col h-screen max-w-6xl container mx-auto bg-pane break-words text-base text-writing md:text-lg antialiased hyphens-auto leading-relaxed font-sans"><header><div class="h-spaced mt-4 md:mt-6 mb-3"><a href=https://lknuth.dev/><div class="w-16 h-16 mr-3 md:mr-5 float-left bg-no-repeat bg-center bg-contain rounded-md" style=background-image:url(https://lknuth.dev/images/favicon.svg)></div><div class="hidden md:!block text-3xl font-bold"><span>Lukas Knuth</span><span class="pl-1 pr-3 tracking-[-0.3em]">//</span><span>Software Engineer</span></div><div class="md:hidden text-xl font-bold truncate text-clip"><span>Lukas Knuth</span><span class="pl-1 pr-2 tracking-[-0.3em]">//</span><span>SWE</span></div></a><nav><ol class="flex text-primary pt-1"><li class="md:text-base inline-block leading-4 mt-1 pr-2 mr-2 md:pr-3 md:mr-3 align-middle border-dotted border-r-2 last:border-none"><a href=/writings>Writings</a></li><li class="md:text-base inline-block leading-4 mt-1 pr-2 mr-2 md:pr-3 md:mr-3 align-middle border-dotted border-r-2 last:border-none"><a href=/about>About</a></li><li class="md:text-base inline-block leading-4 mt-1 pr-2 mr-2 md:pr-3 md:mr-3 align-middle border-dotted border-r-2 last:border-none"><a href=/cv>CV</a></li><li class="md:text-base inline-block leading-4 mt-1 pr-2 mr-2 md:pr-3 md:mr-3 align-middle border-dotted border-r-2 last:border-none"><a href=/now>Now</a></li></ol></nav></div></header><main class=grow><article class="h-spaced mt-4 md:mt-6" itemscope itemtype=http://schema.org/BlogPosting><h1 class="text-3xl font-light text-subtle" itemprop="name headline">Java in the Browser</h1><div class="my-2 text-sm text-subtle"><time datetime="2025-03-31 18:40:09 +0200 +0200" itemprop=datePublished>2025-03-31</time></div><div class=prose itemprop=articleBody><p>Like most aspiring software engineers, I wanted to program games.
+Back in 2012 I had been learning to program for two years.
+I was basically a senior developer.
+Java was the only programming language that I knew.
+And because I fancied myself a capable engineer, I wanted to build the game engine myself, from scratch.</p><p>So I stole somebody else&rsquo;s game - I read through the (excellent) <a href=https://pacman.holenet.info/ rel=external>PAC-MAN Dossier</a>.
+The document has <em>everything</em> you need to build your own version of the game.
+It details the basic game rules, the point system and how the ghost AI works.
+And it&rsquo;s also not too technical, so you get to make the interesting decisions for yourself.</p><p>It took me about two months to get the game into a state that I was satisfied with.
+And then I left it alone for 13 years.
+Until I found the repository again a few weeks ago.</p><p>Sadly, the barrier to play the game is just too high - there wasn&rsquo;t even a build script.
+And, any interested players would have to install Java on their machines.
+Ideally, I can make my old Java game run in the browser, while preserving its charm/jank.
+No fixing of bugs, no adding of features or polishing mechanics.
+That wouldn&rsquo;t be in the spirit of the project - a <strong>digital exhibit</strong>.</p><h2 id=java-in-the-browser><a href=#java-in-the-browser>Java in the Browser</a></h2><p>My first idea was to compile it to WASM.
+Surely these days every programming language compiles to WASM, right?
+There is actually a project, <a href=https://github.com/i-net-software/JWebAssembly rel=external>JWebAssembly</a>, that does this.
+However, their repository didn&rsquo;t have a commit in the last two years - which either means it&rsquo;s completed or abandoned.</p><p>Next I found <a href=https://cheerpj.com/ rel=external>CheerpJ</a>.
+As far as I can tell, this is a full re-implementation of the entire JDK in Web Assembly.
+It&rsquo;s a drop-in solution, just take your old <code>.jar</code> files and some JavaScript boilerplate, and you&rsquo;re done.
+The applications run without modification.
+Boring.</p><p>The last project I found was <a href=https://teavm.org/ rel=external>TeaVM</a>.
+It is an ahead-of-time compiler for Java that can generate Web Assembly or JavaScript.
+The project brings everything you need but does require you to adapt code to work with it.
+Perfect.</p><h2 id=support-multiple-platforms><a href=#support-multiple-platforms>Support multiple platforms</a></h2><p>The game uses Java Swing to render itself to a desktop window.
+It also uses some AWT classes (the older Java Desktop toolkit that Swing builds on top of).
+None of which are <a href=https://teavm.org/jcl-report/recent/jcl.html rel=external>available in TeaVM</a>.
+The plan is as follows then:</p><ol><li>Find any <code>javax.swing.*</code> or <code>java.awt.*</code> references in the code</li><li>Create interfaces to abstract the functionality</li><li>Implement the interfaces for Desktop with the original <code>javax.swing.*</code> and <code>java.awt.*</code> classes</li><li>Implement the interfaces for Web with the <a href=https://javadoc.io/doc/org.teavm/teavm-jso-apis/latest/index.html rel=external>TeaVM JSO APIs</a></li><li>Profit</li></ol><p>I created a basic Gradle project layout: a <code>game</code> project with the game logic and all my interfaces.
+A second <code>desktop</code> project that depends on <code>game</code> where all the desktop specific code will be moved to.
+Then, a new <code>web</code> project (also depends on <code>game</code>) which will have the web specific code built with TeaVM.</p><h3 id=rendering-and-resource-loading><a href=#rendering-and-resource-loading>Rendering and Resource Loading</a></h3><p>Because I didn&rsquo;t want to spend too much time on chores, I decided to make the abstraction as thin as possible.
+For most things, that meant literally copy-and-pasting the Swing/AWT calls out of the codebase and creating a function in the interface with the same name and parameter signature.</p><p>To render the game for example, I ended up with the following minimum set of draw calls:</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic>/**
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic> * A canvas to draw things onto. The actual drawing logic is implemented for each
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic> * supported platform in their respective project.
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic> */</span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>public</span> <span style=color:#d20f39>interface</span> <span style=color:#df8e1d>Canvas</span> {
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>setColor</span>(Color color);
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>setFont</span>(Font font);
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>drawString</span>(String text, <span style=color:#d20f39>int</span> x, <span style=color:#d20f39>int</span> y);
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>drawImage</span>(ImageResource resource, <span style=color:#d20f39>int</span> x, <span style=color:#d20f39>int</span> y);
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>drawImage</span>(ImageResource resource, <span style=color:#d20f39>int</span> x, <span style=color:#d20f39>int</span> y, <span style=color:#d20f39>int</span> width, <span style=color:#d20f39>int</span> height);
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>fillOval</span>(<span style=color:#d20f39>int</span> x, <span style=color:#d20f39>int</span> y, <span style=color:#d20f39>int</span> width, <span style=color:#d20f39>int</span> height);
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>fillArc</span>(<span style=color:#d20f39>int</span> x, <span style=color:#d20f39>int</span> y, <span style=color:#d20f39>int</span> width, <span style=color:#d20f39>int</span> height, <span style=color:#d20f39>int</span> startAngle, <span style=color:#d20f39>int</span> arcAngle);
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>drawRect</span>(<span style=color:#d20f39>int</span> x, <span style=color:#d20f39>int</span> y, <span style=color:#d20f39>int</span> width, <span style=color:#d20f39>int</span> height);
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>fillRect</span>(<span style=color:#d20f39>int</span> x, <span style=color:#d20f39>int</span> y, <span style=color:#d20f39>int</span> width, <span style=color:#d20f39>int</span> height);
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>setStrokeWidth</span>(<span style=color:#d20f39>float</span> width);
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>public</span> <span style=color:#d20f39>float</span> <span style=color:#1e66f5>getStrokeWidth</span>();
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>For any AWT specific classes, such as <code>Color</code> and <code>Font</code>, I made my own (much simpler) versions in the <code>game</code> project.
+The abstract <code>Canvas</code> expects my versions and the platform specific implementations are expected to convert between the types.
+The rest of the <strong>Desktop</strong> implementation is just forwarding calls:</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>final</span> Graphics graphics;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>drawString</span>(String text, <span style=color:#d20f39>int</span> x, <span style=color:#d20f39>int</span> y) {
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>graphics</span>.<span style=color:#1e66f5>drawString</span>(text, x, y);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>setColor</span>(Color color) {
+</span></span><span style=display:flex><span>	<span style=color:#8839ef>this</span>.<span style=color:#1e66f5>graphics</span>.<span style=color:#1e66f5>setColor</span>(<span style=color:#8839ef>new</span> java.<span style=color:#1e66f5>awt</span>.<span style=color:#1e66f5>Color</span>(color.<span style=color:#1e66f5>r</span>, color.<span style=color:#1e66f5>g</span>, color.<span style=color:#1e66f5>b</span>));
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>drawImage</span>(ImageResource resource, <span style=color:#d20f39>int</span> x, <span style=color:#d20f39>int</span> y) {
+</span></span><span style=display:flex><span>	<span style=color:#8839ef>this</span>.<span style=color:#1e66f5>graphics</span>.<span style=color:#1e66f5>drawImage</span>(<span style=color:#8839ef>this</span>.<span style=color:#1e66f5>resourceCache</span>.<span style=color:#1e66f5>get</span>(resource), x, y, <span style=color:#fe640b>null</span>);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic>// ...</span>
+</span></span></code></pre></div><p>I also decided to solve <strong>resource loading</strong> in each specific platform.
+For the desktop, I can simply load images/sounds from the folders/jar file.
+But later, on the web, a different strategy will be required.</p><p>I removed any resource loading from the game and instead replaced it with a simple Enumeration:</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic>/**
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic> * A collection of all known graphical resouces used in the game.
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic> * Can be passed to {@code Renderer} to render on-screen.
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic> */</span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>public</span> <span style=color:#d20f39>enum</span> ImageResource {
+</span></span><span style=display:flex><span>  MAZE(<span style=color:#40a02b>&#34;/graphics/maze.png&#34;</span>),
+</span></span><span style=display:flex><span>  CHERRY(<span style=color:#40a02b>&#34;/graphics/cherry.png&#34;</span>),
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  INKY_DOWN_1(<span style=color:#40a02b>&#34;/graphics/inky/inky_down_1.png&#34;</span>),
+</span></span><span style=display:flex><span>  INKY_DOWN_2(<span style=color:#40a02b>&#34;/graphics/inky/inky_down_2.png&#34;</span>),
+</span></span><span style=display:flex><span>  <span style=color:#9ca0b0;font-style:italic>// many, many more...</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>public</span> <span style=color:#d20f39>final</span> String resource_path;
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>private</span> <span style=color:#1e66f5>ImageResource</span>(String resource_path) {
+</span></span><span style=display:flex><span>    <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>resource_path</span> <span style=color:#04a5e5;font-weight:700>=</span> resource_path;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Each enum constant has the path to its resource hard coded.
+The platform specific <code>Canvas</code> implementation is then expected to load these files.
+The desktop platform does this by iterating all constants and using a classpath loader:</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>final</span> Map<span style=color:#04a5e5;font-weight:700>&lt;</span>ImageResource, Image<span style=color:#04a5e5;font-weight:700>&gt;</span> resourceCache;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>preloadCache</span>() {
+</span></span><span style=display:flex><span>	<span style=color:#8839ef>for</span> (ImageResource resource : ImageResource.<span style=color:#1e66f5>values</span>()) {
+</span></span><span style=display:flex><span>		Image image <span style=color:#04a5e5;font-weight:700>=</span> ClasspathResourceLoader.<span style=color:#1e66f5>loadImage</span>(resource);
+</span></span><span style=display:flex><span>		<span style=color:#8839ef>this</span>.<span style=color:#1e66f5>resourceCache</span>.<span style=color:#1e66f5>put</span>(resource, image);
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>I did the same for the sound system and its resources as well.
+Now most of the game code is using the abstractions, except&mldr;</p><h3 id=game-loop><a href=#game-loop>Game Loop</a></h3><p>The original game used Java Executors to spawn a thread that re-evaluated the game every 16ms.
+Under ideal circumstances, that means the game simulates and renders at a stable 60 FPS.
+However, Executors are also not available in TeaVM.</p><p>Rather than throwing interfaces at the problem again, I decided the <em>loop</em> part of &ldquo;Game Loop&rdquo; was a platform specific issue.
+This turned out to be a very good call later.
+I moved most of the games initialization code from the <code>main()</code>-method to a new <code>Bootstrap</code> class in the game project, to be reused by each platform.</p><p>I then refactored the <code>GameLoop</code> class to expose a simple <code>step</code>-method that would simulate and render <em>one frame</em> of the game.
+All the platform has to do is setup the game loop and canvas, then call <code>step</code> repeatedly:</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#d20f39>private</span> Runnable game_loop <span style=color:#04a5e5;font-weight:700>=</span> <span style=color:#8839ef>new</span> Runnable() {
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>run</span>() {
+</span></span><span style=display:flex><span>    Graphics off_screen_buffer <span style=color:#04a5e5;font-weight:700>=</span> double_buffer.<span style=color:#1e66f5>getDrawGraphics</span>();
+</span></span><span style=display:flex><span>    JoystickState input <span style=color:#04a5e5;font-weight:700>=</span> getJoystickState();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    GameLoop.<span style=color:#1e66f5>INSTANCE</span>.<span style=color:#1e66f5>step</span>(input, <span style=color:#8839ef>new</span> SwingCanvas(off_screen_buffer));
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    off_screen_buffer.<span style=color:#1e66f5>dispose</span>();
+</span></span><span style=display:flex><span>    double_buffer.<span style=color:#1e66f5>show</span>();
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>startLoop</span>() {
+</span></span><span style=display:flex><span>  Bootstrap.<span style=color:#1e66f5>bootstrap</span>(getWidth(), getHeight());
+</span></span><span style=display:flex><span>  GameLoop.<span style=color:#1e66f5>INSTANCE</span>.<span style=color:#1e66f5>lock</span>();
+</span></span><span style=display:flex><span>  <span style=color:#9ca0b0;font-style:italic>// Execute the Runnable</span>
+</span></span><span style=display:flex><span>  game_loop_executor <span style=color:#04a5e5;font-weight:700>=</span> Executors.<span style=color:#1e66f5>newSingleThreadScheduledExecutor</span>();
+</span></span><span style=display:flex><span>  game_loop_handler <span style=color:#04a5e5;font-weight:700>=</span> game_loop_executor.<span style=color:#1e66f5>scheduleAtFixedRate</span>(
+</span></span><span style=display:flex><span>    game_loop, 0L, 16L, TimeUnit.<span style=color:#1e66f5>MILLISECONDS</span>
+</span></span><span style=display:flex><span>  );
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>The code above also shows another platform-specific concern: The double buffer.
+This is a technique to reduce flickering by painting the next frame to an off-screen buffer first, then swapping the whole buffer out.
+It must be done manually on some platforms while others do it automatically.</p><p>Lastly, the <code>getJoystickState()</code>-method is called to get any game inputs.
+This, again, is platform specific.
+The desktop platform only supports the keyboard for controlling pacman.</p><p>Because both the <code>Canvas</code> and the <code>JoystickState</code> are changing each frame, they are simply arguments to the <code>step()</code>-method.
+The platform can poll this information on every loop iteration and pass it to the game loop.
+With this, we&rsquo;re done for the desktop.</p><h2 id=porting-to-the-web><a href=#porting-to-the-web>Porting to the Web</a></h2><p>With the chores out of the way, now comes the interesting part: implementing our new interfaces for the <strong>web</strong> platform.
+TeaVM has a bundled-in extension it calls <a href=https://teavm.org/docs/runtime/jso.html rel=external>JSO</a> which offers Java bindings for JavaScript functions available in browsers.
+This allows us to research an approach for JavaScript and then translate it almost 1:1 to Java code.</p><h3 id=the-canvas-element><a href=#the-canvas-element>The <code>&lt;canvas></code> element</a></h3><p>For rendering the frames on the website, I chose the simple <a href=https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement rel=external>HTML Canvas</a> element.
+So again, let&rsquo;s implement the <code>Canvas</code> interface, but this time using the TeaVM bindings for <a href=https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D rel=external><code>CanvasRenderingContext2D</code></a>.
+The API is <em>similar</em> to the <code>java.awt.Graphics</code> API from the desktop - with some surprises.</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>setColor</span>(Color color) {
+</span></span><span style=display:flex><span>	<span style=color:#9ca0b0;font-style:italic>// NOTE: The original Swing implementation uses one color for both - so we</span>
+</span></span><span style=display:flex><span>	<span style=color:#9ca0b0;font-style:italic>// emulate this behaviour</span>
+</span></span><span style=display:flex><span>	<span style=color:#8839ef>this</span>.<span style=color:#1e66f5>render</span>.<span style=color:#1e66f5>setFillStyle</span>(<span style=color:#40a02b>&#34;rgb(&#34;</span> <span style=color:#04a5e5;font-weight:700>+</span> color.<span style=color:#1e66f5>r</span> <span style=color:#04a5e5;font-weight:700>+</span> <span style=color:#40a02b>&#34;,&#34;</span> <span style=color:#04a5e5;font-weight:700>+</span> color.<span style=color:#1e66f5>g</span> <span style=color:#04a5e5;font-weight:700>+</span> <span style=color:#40a02b>&#34;,&#34;</span> <span style=color:#04a5e5;font-weight:700>+</span> color.<span style=color:#1e66f5>b</span> <span style=color:#04a5e5;font-weight:700>+</span> <span style=color:#40a02b>&#34;)&#34;</span>);
+</span></span><span style=display:flex><span>	<span style=color:#8839ef>this</span>.<span style=color:#1e66f5>render</span>.<span style=color:#1e66f5>setStrokeStyle</span>(<span style=color:#40a02b>&#34;rgb(&#34;</span> <span style=color:#04a5e5;font-weight:700>+</span> color.<span style=color:#1e66f5>r</span> <span style=color:#04a5e5;font-weight:700>+</span> <span style=color:#40a02b>&#34;,&#34;</span> <span style=color:#04a5e5;font-weight:700>+</span> color.<span style=color:#1e66f5>g</span> <span style=color:#04a5e5;font-weight:700>+</span> <span style=color:#40a02b>&#34;,&#34;</span> <span style=color:#04a5e5;font-weight:700>+</span> color.<span style=color:#1e66f5>b</span> <span style=color:#04a5e5;font-weight:700>+</span> <span style=color:#40a02b>&#34;)&#34;</span>);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>This example is straightforward, although there is already a subtle difference.
+Since the interface (and the game code by extension) is very close to the AWT draw calls, we&rsquo;ll just emulate this behavior.
+For other draw calls, this was more complicated though:</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>fillArc</span>(<span style=color:#d20f39>int</span> x, <span style=color:#d20f39>int</span> y, <span style=color:#d20f39>int</span> width, <span style=color:#d20f39>int</span> height, <span style=color:#d20f39>int</span> startAngle, <span style=color:#d20f39>int</span> arcAngle) {
+</span></span><span style=display:flex><span>	<span style=color:#d20f39>int</span> radius <span style=color:#04a5e5;font-weight:700>=</span> width <span style=color:#04a5e5;font-weight:700>/</span> 2;
+</span></span><span style=display:flex><span>	<span style=color:#9ca0b0;font-style:italic>// Adjust X/Y from top-left (in Swing) to center (HTML canvas)</span>
+</span></span><span style=display:flex><span>	<span style=color:#d20f39>int</span> centerX <span style=color:#04a5e5;font-weight:700>=</span> x <span style=color:#04a5e5;font-weight:700>+</span> radius;
+</span></span><span style=display:flex><span>	<span style=color:#d20f39>int</span> centerY <span style=color:#04a5e5;font-weight:700>=</span> y <span style=color:#04a5e5;font-weight:700>+</span> radius;
+</span></span><span style=display:flex><span>	<span style=color:#9ca0b0;font-style:italic>// This value can briefly become negative, which flashes on Web.</span>
+</span></span><span style=display:flex><span>	<span style=color:#9ca0b0;font-style:italic>// It does nothing in the Swing implementation, go figure...</span>
+</span></span><span style=display:flex><span>	arcAngle <span style=color:#04a5e5;font-weight:700>=</span> Math.<span style=color:#1e66f5>max</span>(arcAngle, 0);
+</span></span><span style=display:flex><span>	<span style=color:#9ca0b0;font-style:italic>// Positive angles means COUNTER-clockwise rotation in Swing...</span>
+</span></span><span style=display:flex><span>	startAngle <span style=color:#04a5e5;font-weight:700>=</span> <span style=color:#04a5e5;font-weight:700>-</span>startAngle;
+</span></span><span style=display:flex><span>	arcAngle <span style=color:#04a5e5;font-weight:700>=</span> <span style=color:#04a5e5;font-weight:700>-</span>arcAngle;
+</span></span><span style=display:flex><span>	<span style=color:#9ca0b0;font-style:italic>// Convert from degrees to radians</span>
+</span></span><span style=display:flex><span>	<span style=color:#d20f39>double</span> startRad <span style=color:#04a5e5;font-weight:700>=</span> Math.<span style=color:#1e66f5>toRadians</span>(startAngle);
+</span></span><span style=display:flex><span>	<span style=color:#d20f39>double</span> endRad <span style=color:#04a5e5;font-weight:700>=</span> Math.<span style=color:#1e66f5>toRadians</span>(startAngle <span style=color:#04a5e5;font-weight:700>+</span> arcAngle);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#8839ef>this</span>.<span style=color:#1e66f5>render</span>.<span style=color:#1e66f5>beginPath</span>();
+</span></span><span style=display:flex><span>	<span style=color:#9ca0b0;font-style:italic>// NOTE: last &#34;true&#34; to draw counter-clockwise!</span>
+</span></span><span style=display:flex><span>	<span style=color:#8839ef>this</span>.<span style=color:#1e66f5>render</span>.<span style=color:#1e66f5>arc</span>(centerX, centerY, radius, startRad, endRad, <span style=color:#fe640b>true</span>);
+</span></span><span style=display:flex><span>	<span style=color:#8839ef>this</span>.<span style=color:#1e66f5>render</span>.<span style=color:#1e66f5>lineTo</span>(centerX, centerY);
+</span></span><span style=display:flex><span>	<span style=color:#8839ef>this</span>.<span style=color:#1e66f5>render</span>.<span style=color:#1e66f5>closePath</span>();
+</span></span><span style=display:flex><span>	<span style=color:#8839ef>this</span>.<span style=color:#1e66f5>render</span>.<span style=color:#1e66f5>fill</span>();
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Through much trail and error, I finally got the <code>fillArc()</code> to work.
+Luckily, most other functions weren&rsquo;t this complicated to port.
+I made the conscious choice to not implement the <code>drawImage()</code>-methods - <em>yet</em>.
+Instead, to get early feedback, I went ahead and worked on&mldr;</p><h3 id=gameloop-without-looping><a href=#gameloop-without-looping>GameLoop without looping</a></h3><p>There isn&rsquo;t really a good equivalent to a thread in a browser.
+At least not for games.
+Instead, one can use the <a href=https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame rel=external><code>Window.requestAnimationFrame()</code></a>-method.
+It tells the browser to call the given callback before it repaints.</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>startLoop</span>() {
+</span></span><span style=display:flex><span>  HTMLDocument document <span style=color:#04a5e5;font-weight:700>=</span> Window.<span style=color:#1e66f5>current</span>().<span style=color:#1e66f5>getDocument</span>();
+</span></span><span style=display:flex><span>  HTMLCanvasElement canvas <span style=color:#04a5e5;font-weight:700>=</span> (HTMLCanvasElement) document.<span style=color:#1e66f5>getElementById</span>(<span style=color:#40a02b>&#34;pacman_canvas&#34;</span>);
+</span></span><span style=display:flex><span>  CanvasRenderingContext2D context <span style=color:#04a5e5;font-weight:700>=</span> (CanvasRenderingContext2D) canvas.<span style=color:#1e66f5>getContext</span>(<span style=color:#40a02b>&#34;2d&#34;</span>);
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>web_canvas</span> <span style=color:#04a5e5;font-weight:700>=</span> <span style=color:#8839ef>new</span> WebCanvas(context);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  GameLoop.<span style=color:#1e66f5>INSTANCE</span>.<span style=color:#1e66f5>lock</span>();
+</span></span><span style=display:flex><span>  Window.<span style=color:#1e66f5>requestAnimationFrame</span>(<span style=color:#8839ef>this</span>);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>onAnimationFrame</span>(<span style=color:#d20f39>double</span> timestamp) {
+</span></span><span style=display:flex><span>  <span style=color:#9ca0b0;font-style:italic>// register for next frame</span>
+</span></span><span style=display:flex><span>  Window.<span style=color:#1e66f5>requestAnimationFrame</span>(<span style=color:#8839ef>this</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  JoystickState input <span style=color:#04a5e5;font-weight:700>=</span> getJoystickState();
+</span></span><span style=display:flex><span>  GameLoop.<span style=color:#1e66f5>INSTANCE</span>.<span style=color:#1e66f5>step</span>(last_input_state, web_canvas);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#9ca0b0;font-style:italic>// Clear for next frame</span>
+</span></span><span style=display:flex><span>  last_input_state <span style=color:#04a5e5;font-weight:700>=</span> JoystickState.<span style=color:#1e66f5>NEUTRAL</span>;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>The first call to <code>Window.requestAnimationFrame()</code> &ldquo;starts&rdquo; the loop.
+The browser will call the method on the next repaint.
+Then, as part of rendering the next frame, the callback immediately registers itself <em>again</em> to be called on the next repaint.
+And we&rsquo;re looping!</p><p>There is one problem with this approach: We don&rsquo;t control how often <code>step()</code> is called anymore.
+Depending on the hardware (and some other factors) the browser automatically decides the appropriate frame-rate itself.
+On my MacBook with my 120Hz monitor attached, the game now runs at 120 FPS instead of the expected 60 FPS - meaning everything in the game is now twice as fast.</p><p>Let&rsquo;s not do that and instead only call <code>step()</code> at the expected interval (taken from <a href=https://stackoverflow.com/a/19772220/717341 rel=external>this SO answer</a>):</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>static</span> <span style=color:#d20f39>final</span> <span style=color:#d20f39>double</span> TARGET_FPS_INTERVAL <span style=color:#04a5e5;font-weight:700>=</span> 1000 <span style=color:#04a5e5;font-weight:700>/</span> 60;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>onAnimationFrame</span>(<span style=color:#d20f39>double</span> timestamp) {
+</span></span><span style=display:flex><span>  Window.<span style=color:#1e66f5>requestAnimationFrame</span>(<span style=color:#8839ef>this</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#9ca0b0;font-style:italic>// Ensure we render/simulate at 60FPS</span>
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>double</span> elapsed <span style=color:#04a5e5;font-weight:700>=</span> timestamp <span style=color:#04a5e5;font-weight:700>-</span> <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>last_frame_time</span>;
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>if</span> (elapsed <span style=color:#04a5e5;font-weight:700>&gt;</span> TARGET_FPS_INTERVAL) {
+</span></span><span style=display:flex><span>    <span style=color:#9ca0b0;font-style:italic>// NOTE: subtract any time we waited &#34;too long&#34; on the current frame as well</span>
+</span></span><span style=display:flex><span>    <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>last_frame_time</span> <span style=color:#04a5e5;font-weight:700>=</span> timestamp <span style=color:#04a5e5;font-weight:700>-</span> (elapsed <span style=color:#04a5e5;font-weight:700>%</span> TARGET_FPS_INTERVAL);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    JoystickState input <span style=color:#04a5e5;font-weight:700>=</span> getJoystickState();
+</span></span><span style=display:flex><span>    GameLoop.<span style=color:#1e66f5>INSTANCE</span>.<span style=color:#1e66f5>step</span>(last_input_state, web_canvas);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>There are other (and better) ways to deal with this.
+One option is to separate game simulation from rendering and calculate the time delta between two frames.
+If you&rsquo;re interested in learning more, there is an <a href=https://gameprogrammingpatterns.com/game-loop.html#sample-code rel=external>excellent chapter</a> from the book &ldquo;Game Programming Patterns&rdquo; by Robert Nystrom that is available online <strong>for free</strong>.</p><p>With the gameloop done, I could see the game in action for the first time in the browser!
+Well, partially.
+Since images aren&rsquo;t drawn yet, you only see the edible dots, the score and pacman.
+Everything else is not showing up.
+Let&rsquo;s fix that next.</p><h3 id=resource-loading><a href=#resource-loading>Resource Loading</a></h3><p>To render an image bitmap to an HTML canvas, one uses the <a href=https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage rel=external><code>drawImage()</code>-method</a>.
+It can draw an image from multiple sources, but I wanted to keep it <em>very</em> simple.</p><ol><li>No async code. It adds complexity, especially when using TeaVM.</li><li>No loading over the network. I don&rsquo;t want to build a loading screen or deal with network failure.</li></ol><p>Ideally, the resources would just be downloaded together with the code and the game would just start when <em>everything</em> is ready.
+The image resources are tiny (a few bytes each), so the bloat won&rsquo;t be too bad.
+But if we don&rsquo;t want to load the images over the network, we need to somehow include them in the code at compile time.
+How about Base64 encoded data URIs?</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-groovy data-lang=groovy><span style=display:flex><span>task <span style=color:#1e66f5>genBase64Resources</span><span style=color:#04a5e5;font-weight:700>(</span><span style=color:#04a5e5>dependsOn:</span> <span style=color:#40a02b>&#34;:game:build&#34;</span><span style=color:#04a5e5;font-weight:700>)</span> <span style=color:#04a5e5;font-weight:700>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#9ca0b0;font-style:italic>// NOTE: Simplified for readability, see link below for full code...
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic></span>  doLast <span style=color:#04a5e5;font-weight:700>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#9ca0b0;font-style:italic>// Load the previously compiled `game` classes into the Gradle build runner
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic></span>    <span style=color:#d20f39>def</span> classLoader <span style=color:#04a5e5;font-weight:700>=</span> <span style=color:#8839ef>new</span> URLClassLoader<span style=color:#04a5e5;font-weight:700>(</span>classpath<span style=color:#04a5e5;font-weight:700>.</span><span style=color:#1e66f5>collect</span> <span style=color:#04a5e5;font-weight:700>{</span> it<span style=color:#04a5e5;font-weight:700>.</span><span style=color:#1e66f5>toURI</span><span style=color:#04a5e5;font-weight:700>().</span><span style=color:#1e66f5>toURL</span><span style=color:#04a5e5;font-weight:700>()</span> <span style=color:#04a5e5;font-weight:700>}</span> <span style=color:#8839ef>as</span> URL<span style=color:#04a5e5;font-weight:700>[])</span>
+</span></span><span style=display:flex><span>    <span style=color:#9ca0b0;font-style:italic>// Inspect the `ImageResource` Enum that lists all image resources
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic></span>    <span style=color:#d20f39>def</span> containerClass <span style=color:#04a5e5;font-weight:700>=</span> classLoader<span style=color:#04a5e5;font-weight:700>.</span><span style=color:#1e66f5>loadClass</span><span style=color:#04a5e5;font-weight:700>(</span><span style=color:#40a02b>&#34;org.ita23.pacman.res.ImageResource&#34;</span><span style=color:#04a5e5;font-weight:700>);</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#9ca0b0;font-style:italic>// Lets generate some Java source code
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic></span>    <span style=color:#d20f39>def</span> code <span style=color:#04a5e5;font-weight:700>=</span> StringBuilder<span style=color:#04a5e5;font-weight:700>.</span><span style=color:#1e66f5>newInstance</span><span style=color:#04a5e5;font-weight:700>()</span>
+</span></span><span style=display:flex><span>    code <span style=color:#04a5e5;font-weight:700>&lt;&lt;</span> <span style=color:#40a02b>&#34;public final class Base64Resource {\n&#34;</span>
+</span></span><span style=display:flex><span>    code <span style=color:#04a5e5;font-weight:700>&lt;&lt;</span> <span style=color:#40a02b>&#34; public static String getResource(String path){\n&#34;</span>
+</span></span><span style=display:flex><span>    code <span style=color:#04a5e5;font-weight:700>&lt;&lt;</span> <span style=color:#40a02b>&#34;  switch (path) {\n&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    containerClass<span style=color:#04a5e5;font-weight:700>.</span><span style=color:#1e66f5>getEnumConstants</span><span style=color:#04a5e5;font-weight:700>().</span><span style=color:#1e66f5>each</span> <span style=color:#04a5e5;font-weight:700>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#9ca0b0;font-style:italic>// One `case` for each ImageResource Enum constant
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic></span>      code <span style=color:#04a5e5;font-weight:700>&lt;&lt;</span> <span style=color:#40a02b>&#34;case \&#34;&#34;</span> <span style=color:#04a5e5;font-weight:700>&lt;&lt;</span> it<span style=color:#04a5e5;font-weight:700>.</span><span style=color:#1e66f5>resource_path</span> <span style=color:#04a5e5;font-weight:700>&lt;&lt;</span> <span style=color:#40a02b>&#34;\&#34;: &#34;</span>
+</span></span><span style=display:flex><span>      code <span style=color:#04a5e5;font-weight:700>&lt;&lt;</span> <span style=color:#40a02b>&#34;return \&#34;data:image/png;base64,&#34;</span>
+</span></span><span style=display:flex><span>      <span style=color:#9ca0b0;font-style:italic>// Load the resource file and encode its content as Base64
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic></span>      <span style=color:#8839ef>new</span> <span style=color:#1e66f5>File</span><span style=color:#04a5e5;font-weight:700>(</span>respath<span style=color:#04a5e5;font-weight:700>,</span> it<span style=color:#04a5e5;font-weight:700>.</span><span style=color:#1e66f5>resource_path</span><span style=color:#04a5e5;font-weight:700>).</span><span style=color:#1e66f5>withInputStream</span> <span style=color:#04a5e5;font-weight:700>{</span>
+</span></span><span style=display:flex><span>        code <span style=color:#04a5e5;font-weight:700>&lt;&lt;</span> Base64<span style=color:#04a5e5;font-weight:700>.</span><span style=color:#1e66f5>encoder</span><span style=color:#04a5e5;font-weight:700>.</span><span style=color:#1e66f5>encodeToString</span><span style=color:#04a5e5;font-weight:700>(</span>it<span style=color:#04a5e5;font-weight:700>.</span><span style=color:#1e66f5>readAllBytes</span><span style=color:#04a5e5;font-weight:700>())</span>
+</span></span><span style=display:flex><span>      <span style=color:#04a5e5;font-weight:700>}</span>
+</span></span><span style=display:flex><span>      code <span style=color:#04a5e5;font-weight:700>&lt;&lt;</span> <span style=color:#40a02b>&#34;\&#34;;\n&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#04a5e5;font-weight:700>}</span>
+</span></span><span style=display:flex><span>    code <span style=color:#04a5e5;font-weight:700>&lt;&lt;</span> <span style=color:#40a02b>&#34;}}}\n&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#9ca0b0;font-style:italic>// Write everything to the source file
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic></span>    outputFile<span style=color:#04a5e5;font-weight:700>.</span><span style=color:#1e66f5>text</span> <span style=color:#04a5e5;font-weight:700>=</span> code<span style=color:#04a5e5;font-weight:700>.</span><span style=color:#1e66f5>toString</span><span style=color:#04a5e5;font-weight:700>()</span>
+</span></span><span style=display:flex><span>  <span style=color:#04a5e5;font-weight:700>}</span>
+</span></span><span style=display:flex><span><span style=color:#04a5e5;font-weight:700>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic>// Add the genreated code to be compiled along with `web` platform
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic></span>sourceSets<span style=color:#04a5e5;font-weight:700>.</span><span style=color:#1e66f5>main</span><span style=color:#04a5e5;font-weight:700>.</span><span style=color:#1e66f5>java</span> <span style=color:#04a5e5;font-weight:700>{</span>
+</span></span><span style=display:flex><span>  srcDir<span style=color:#04a5e5;font-weight:700>(</span>genBase64Resources<span style=color:#04a5e5;font-weight:700>)</span>
+</span></span><span style=display:flex><span><span style=color:#04a5e5;font-weight:700>}</span>
+</span></span></code></pre></div><p>This <a href=https://github.com/LukasKnuth/pacman/blob/619a3b6b30830e9ab7ba524ad150f3f594e59fb5/web/build.gradle#L28-L71 rel=external>custom Gradle task</a> generates Java source code for a new <code>Base64Resource</code> class.
+The class has a single <code>getResource(String)</code>-method that accepts the resource path to be loaded.
+In the method, a switch-case statement returns the Base64 encoded data URI for the given resource.
+The result looks like this (properly formatted):</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#d20f39>public</span> <span style=color:#d20f39>final</span> <span style=color:#d20f39>class</span> <span style=color:#df8e1d>Base64Resource</span> {
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>public</span> <span style=color:#d20f39>static</span> String <span style=color:#1e66f5>getResource</span>(String path){
+</span></span><span style=display:flex><span>    <span style=color:#8839ef>switch</span> (path) {
+</span></span><span style=display:flex><span>      <span style=color:#8839ef>case</span> <span style=color:#40a02b>&#34;/graphics/maze.png&#34;</span>: <span style=color:#8839ef>return</span> <span style=color:#40a02b>&#34;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAboAAAGzBAMAAACr1s9+AA...&#34;</span>;
+</span></span><span style=display:flex><span>      <span style=color:#8839ef>case</span> <span style=color:#40a02b>&#34;/graphics/cherry.png&#34;</span>: <span style=color:#8839ef>return</span> <span style=color:#40a02b>&#34;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR...&#34;</span>
+</span></span><span style=display:flex><span>      <span style=color:#9ca0b0;font-style:italic>// ...</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>I could have used something more fancy to create the source code, but for this simple case, <code>StringBuilder</code> is good enough.</p><p>The generated code is added to the compile step for <code>web</code>.
+Now we can make use of this in the web-specific <code>Canvas</code> implementation by simply creating new <code>HTMLImageElement</code> and supplying the <code>src</code> attribute.</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>loadImages</span>() {
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>for</span> (ImageResource resource : ImageResource.<span style=color:#1e66f5>values</span>()) {
+</span></span><span style=display:flex><span>    HTMLImageElement image <span style=color:#04a5e5;font-weight:700>=</span> Window.<span style=color:#1e66f5>getDocument</span>().<span style=color:#1e66f5>createElement</span>(<span style=color:#40a02b>&#34;img&#34;</span>);
+</span></span><span style=display:flex><span>    image.<span style=color:#1e66f5>setSrc</span>(Base64Resource.<span style=color:#1e66f5>getResource</span>(resource.<span style=color:#1e66f5>resource_path</span>));
+</span></span><span style=display:flex><span>    <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>imageCache</span>.<span style=color:#1e66f5>put</span>(resource, image);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>drawImage</span>(ImageResource resource, <span style=color:#d20f39>int</span> x, <span style=color:#d20f39>int</span> y) {
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>render</span>.<span style=color:#1e66f5>drawImage</span>(<span style=color:#8839ef>this</span>.<span style=color:#1e66f5>imageCache</span>.<span style=color:#1e66f5>get</span>(resource), x, y);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><blockquote class=callout><div>💡</div><div><p>Because the created <code>HTMLImageElement</code> is never added to the DOM, it&rsquo;s never rendered on the HTML page.
+I simply use the browsers&rsquo; ability to decode an Image from the Base64 data URI and then hold on to the result in memory.</p></div></blockquote><p>The solution is quite simple, does not use any async/promise code, and I don&rsquo;t need to handle any network failures.
+The game screen is simply black until the code is fully loaded and the game launches.
+This is fast enough that a loading screen isn&rsquo;t necessary either.</p><h3 id=game-input><a href=#game-input>Game Input</a></h3><p>The last step now is to implement polling the browser for game inputs.
+I won&rsquo;t go into how this works for keyboard because it is quite boring.
+But, since this project is all about making the game accessible, I can&rsquo;t ignore mobile devices.
+And most of these don&rsquo;t ship with keyboards <a href=https://en.wikipedia.org/wiki/HTC_Dream rel=external>anymore</a>.</p><p>The <a href=https://developer.mozilla.org/en-US/docs/Games/Techniques/Control_mechanisms/Mobile_touch rel=external>touch input API</a> in the browser uses a <em>push</em> system, where we register a listener on an Element and receive callbacks:</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#d20f39>private</span> JoystickState last_input_state <span style=color:#04a5e5;font-weight:700>=</span> JoystickState.<span style=color:#1e66f5>NEUTRAL</span>;
+</span></span><span style=display:flex><span><span style=color:#d20f39>private</span> TouchInput touch_input <span style=color:#04a5e5;font-weight:700>=</span> <span style=color:#8839ef>new</span> TouchInput();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>canvas.<span style=color:#1e66f5>addEventListener</span>(<span style=color:#40a02b>&#34;touchmove&#34;</span>, <span style=color:#8839ef>new</span> EventListener<span style=color:#04a5e5;font-weight:700>&lt;</span>TouchEvent<span style=color:#04a5e5;font-weight:700>&gt;</span>() {
+</span></span><span style=display:flex><span>	<span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>handleEvent</span>(TouchEvent evt) {
+</span></span><span style=display:flex><span>	  last_input_state <span style=color:#04a5e5;font-weight:700>=</span> touch_input.<span style=color:#1e66f5>onTouchMove</span>(evt);
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>});
+</span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic>// Repeat for `touchstart`, `touchend` and `touchcancel`</span>
+</span></span></code></pre></div><p>The actual touch gesture detection is in the <code>TouchInput</code> class.
+Here, I simply subscribed to all touch specific events on the <code>&lt;canvas></code> element and forward them.
+The <code>JoystickState</code> is another very simple enum with five constants: <code>UP|DOWN|LEFT|RIGHT</code> and <code>NEUTRAL</code> - meaning no input is currently given.</p><p>My goal was to support two distinct input methods:
+Flicking on the screen in a direction <strong>and</strong> holding down and swiping direction changes as pacman moves along.
+The latter means I can&rsquo;t just use <code>touchdown</code> and <code>touchup</code> and calculate the distance/direction - instead this must be done continuously on every <code>touchmove</code> event:</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>static</span> <span style=color:#d20f39>final</span> <span style=color:#d20f39>double</span> NOT_SET <span style=color:#04a5e5;font-weight:700>=</span> <span style=color:#04a5e5;font-weight:700>-</span>1.<span style=color:#1e66f5>0</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>double</span> previous_x <span style=color:#04a5e5;font-weight:700>=</span> NOT_SET;
+</span></span><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>double</span> previous_y <span style=color:#04a5e5;font-weight:700>=</span> NOT_SET;
+</span></span><span style=display:flex><span><span style=color:#d20f39>private</span> JoystickState state <span style=color:#04a5e5;font-weight:700>=</span> JoystickState.<span style=color:#1e66f5>NEUTRAL</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>public</span> JoystickState <span style=color:#1e66f5>onTouchMove</span>(TouchEvent event) {
+</span></span><span style=display:flex><span>  event.<span style=color:#1e66f5>preventDefault</span>();
+</span></span><span style=display:flex><span>  <span style=color:#9ca0b0;font-style:italic>// We only support fling/swipe, so we only need one finger</span>
+</span></span><span style=display:flex><span>  Touch first_finger <span style=color:#04a5e5;font-weight:700>=</span> event.<span style=color:#1e66f5>getChangedTouches</span>().<span style=color:#1e66f5>get</span>(0);
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>if</span> (first_finger <span style=color:#04a5e5;font-weight:700>==</span> <span style=color:#fe640b>null</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#9ca0b0;font-style:italic>// No touch input currently, can&#39;t determine a direction</span>
+</span></span><span style=display:flex><span>    <span style=color:#8839ef>return</span> JoystickState.<span style=color:#1e66f5>NEUTRAL</span>;
+</span></span><span style=display:flex><span>  } <span style=color:#8839ef>else</span> {
+</span></span><span style=display:flex><span>    <span style=color:#d20f39>double</span> new_x <span style=color:#04a5e5;font-weight:700>=</span> first_finger.<span style=color:#1e66f5>getClientX</span>();
+</span></span><span style=display:flex><span>    <span style=color:#d20f39>double</span> new_y <span style=color:#04a5e5;font-weight:700>=</span> first_finger.<span style=color:#1e66f5>getClientY</span>();
+</span></span><span style=display:flex><span>    <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>state</span> <span style=color:#04a5e5;font-weight:700>=</span> handleChange(previous_x, previous_y, new_x, new_y);
+</span></span><span style=display:flex><span>    <span style=color:#9ca0b0;font-style:italic>// Only update if we have a new direction</span>
+</span></span><span style=display:flex><span>    <span style=color:#8839ef>if</span> (<span style=color:#8839ef>this</span>.<span style=color:#1e66f5>state</span> <span style=color:#04a5e5;font-weight:700>!=</span> JoystickState.<span style=color:#1e66f5>NEUTRAL</span>) {
+</span></span><span style=display:flex><span>	    <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>previous_x</span> <span style=color:#04a5e5;font-weight:700>=</span> new_x;
+</span></span><span style=display:flex><span>	    <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>previous_y</span> <span style=color:#04a5e5;font-weight:700>=</span> new_y;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#8839ef>return</span> <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>state</span>;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic>// The same logic happens for `touchend` and `touchstart` handlers.</span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>public</span> JoystickState <span style=color:#1e66f5>onTouchCancel</span>(TouchEvent event) {
+</span></span><span style=display:flex><span>  event.<span style=color:#1e66f5>preventDefault</span>();
+</span></span><span style=display:flex><span>  <span style=color:#9ca0b0;font-style:italic>// When the fling is complete or the swipe is ended, reset</span>
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>previous_x</span> <span style=color:#04a5e5;font-weight:700>=</span> NOT_SET;
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>previous_y</span> <span style=color:#04a5e5;font-weight:700>=</span> NOT_SET;
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>state</span> <span style=color:#04a5e5;font-weight:700>=</span> JoystickState.<span style=color:#1e66f5>NEUTRAL</span>;
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>return</span> <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>state</span>;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Keep a running <code>X|Y</code> coordinate of the last <em>complete</em> gesture (either swipe or fling).
+When the touch gesture is ended/cancelled or a new one is started, reset the whole state.
+Now for determining the direction of the gesture:</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>static</span> <span style=color:#d20f39>final</span> <span style=color:#d20f39>double</span> MIN_DISTANCE <span style=color:#04a5e5;font-weight:700>=</span> 45.<span style=color:#1e66f5>0</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>static</span> JoystickState <span style=color:#1e66f5>handleChange</span>(<span style=color:#d20f39>double</span> previous_x, <span style=color:#d20f39>double</span> previous_y, <span style=color:#d20f39>double</span> new_x, <span style=color:#d20f39>double</span> new_y) {
+</span></span><span style=display:flex><span>  <span style=color:#9ca0b0;font-style:italic>// How _far_ did the user swipe/fling?</span>
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>double</span> change_x <span style=color:#04a5e5;font-weight:700>=</span> previous_x <span style=color:#04a5e5;font-weight:700>-</span> new_x;
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>double</span> change_y <span style=color:#04a5e5;font-weight:700>=</span> previous_y <span style=color:#04a5e5;font-weight:700>-</span> new_y;
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>if</span> (Math.<span style=color:#1e66f5>abs</span>(change_x) <span style=color:#04a5e5;font-weight:700>&gt;=</span> MIN_DISTANCE) {
+</span></span><span style=display:flex><span>    <span style=color:#9ca0b0;font-style:italic>// We&#39;re past the threshold, which direction though?</span>
+</span></span><span style=display:flex><span>    <span style=color:#8839ef>return</span> (change_x <span style=color:#04a5e5;font-weight:700>&lt;</span> 0.<span style=color:#1e66f5>0</span>) <span style=color:#04a5e5;font-weight:700>?</span> JoystickState.<span style=color:#1e66f5>RIGHT</span> : JoystickState.<span style=color:#1e66f5>LEFT</span>;
+</span></span><span style=display:flex><span>  } <span style=color:#8839ef>else</span> <span style=color:#8839ef>if</span> (Math.<span style=color:#1e66f5>abs</span>(change_y) <span style=color:#04a5e5;font-weight:700>&gt;=</span> MIN_DISTANCE) {
+</span></span><span style=display:flex><span>    <span style=color:#8839ef>return</span> (change_y <span style=color:#04a5e5;font-weight:700>&lt;</span> 0.<span style=color:#1e66f5>0</span>) <span style=color:#04a5e5;font-weight:700>?</span> JoystickState.<span style=color:#1e66f5>DOWN</span> : JoystickState.<span style=color:#1e66f5>UP</span>;
+</span></span><span style=display:flex><span>  } <span style=color:#8839ef>else</span> {
+</span></span><span style=display:flex><span>    <span style=color:#9ca0b0;font-style:italic>// We&#39;re not past the movement threshold, can&#39;t determine a direction yet.</span>
+</span></span><span style=display:flex><span>    <span style=color:#8839ef>return</span> JoystickState.<span style=color:#1e66f5>NEUTRAL</span>;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>From the last completed gestures coordinate, calculate the distance to the current touch coordinate.
+If the absolute distance exceeds the threshold/deadzone/minimum, continue.
+In the browsers coordinate system, <code>0|0</code> is the top-left of the screen/element.
+Determine the direction by looking at the leading sign of the previously calculated distance.</p><p>This code is simple and easy to understand, but it does have problems.
+If the gesture is perfectly diagonal, the horizontal direction is just always preferred.
+A developer with a stronger mathematical background might use <code>atan2</code> for this problem, but my experiments didn&rsquo;t yield <em>better</em> game feel.
+I decided to keep the code I understood and moved on.</p><h3 id=bonus-points-gamepad><a href=#bonus-points-gamepad>Bonus points: Gamepad</a></h3><p>Because modern browsers are basically operating systems at this point, of course they have <a href=https://developer.mozilla.org/en-US/docs/Games/Techniques/Control_mechanisms/Desktop_with_gamepad rel=external>Gamepad support</a>.
+First, there are listeners that are called when a Gamepad is connected to the computer (if the browser supports it).</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span>gamepad_input <span style=color:#04a5e5;font-weight:700>=</span> <span style=color:#8839ef>new</span> GamepadInput();
+</span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic>// IMPORTANT: These events are always dispatched on `Window`!</span>
+</span></span><span style=display:flex><span>Window.<span style=color:#1e66f5>current</span>().<span style=color:#1e66f5>addEventListener</span>(<span style=color:#40a02b>&#34;gamepadconnected&#34;</span>, <span style=color:#8839ef>new</span> EventListener<span style=color:#04a5e5;font-weight:700>&lt;</span>GamepadEvent<span style=color:#04a5e5;font-weight:700>&gt;</span>() {
+</span></span><span style=display:flex><span>	<span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>handleEvent</span>(GamepadEvent evt) {
+</span></span><span style=display:flex><span>	  gamepad_input.<span style=color:#1e66f5>onConnected</span>(evt);
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>});
+</span></span><span style=display:flex><span>Window.<span style=color:#1e66f5>current</span>().<span style=color:#1e66f5>addEventListener</span>(<span style=color:#40a02b>&#34;gamepaddisconnected&#34;</span>, <span style=color:#8839ef>new</span> EventListener<span style=color:#04a5e5;font-weight:700>&lt;</span>GamepadEvent<span style=color:#04a5e5;font-weight:700>&gt;</span>() {
+</span></span><span style=display:flex><span>	<span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>handleEvent</span>(GamepadEvent evt) {
+</span></span><span style=display:flex><span>	  gamepad_input.<span style=color:#1e66f5>onDisconnected</span>(evt);
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>});
+</span></span></code></pre></div><p>Again I moved the actual Gamepad handling code into its own <code>GamepadInput</code> class.
+Since pacman is a single player game, only a single gamepad instance is supported.
+Also, the player doesn&rsquo;t want to switch to a newly connected gamepad while they are still playing on the old one.</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>static</span> <span style=color:#d20f39>final</span> <span style=color:#d20f39>int</span> NOT_CONNECTED <span style=color:#04a5e5;font-weight:700>=</span> <span style=color:#04a5e5;font-weight:700>-</span>1;
+</span></span><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>static</span> <span style=color:#d20f39>final</span> String STANDARD_MAPPING <span style=color:#04a5e5;font-weight:700>=</span> <span style=color:#40a02b>&#34;standard&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>int</span> current_gamepad_index <span style=color:#04a5e5;font-weight:700>=</span> NOT_CONNECTED;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>onConnected</span>(GamepadEvent evt) {
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>int</span> gamepad_index <span style=color:#04a5e5;font-weight:700>=</span> evt.<span style=color:#1e66f5>getGamepad</span>().<span style=color:#1e66f5>getIndex</span>();
+</span></span><span style=display:flex><span>  String mapping <span style=color:#04a5e5;font-weight:700>=</span> evt.<span style=color:#1e66f5>getGamepad</span>().<span style=color:#1e66f5>getMapping</span>();
+</span></span><span style=display:flex><span>  <span style=color:#9ca0b0;font-style:italic>// Only allow one gamepad - keep the same gamepad if a new one is connected</span>
+</span></span><span style=display:flex><span>  <span style=color:#9ca0b0;font-style:italic>// Only allow gamepads using the standard button mapping</span>
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>if</span> (<span style=color:#8839ef>this</span>.<span style=color:#1e66f5>current_gamepad_index</span> <span style=color:#04a5e5;font-weight:700>==</span> NOT_CONNECTED <span style=color:#04a5e5;font-weight:700>&amp;&amp;</span> mapping <span style=color:#04a5e5;font-weight:700>==</span> STANDARD_MAPPING) {
+</span></span><span style=display:flex><span>    <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>current_gamepad_index</span> <span style=color:#04a5e5;font-weight:700>=</span> gamepad_index;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>onDisconnected</span>(GamepadEvent evt) {
+</span></span><span style=display:flex><span>  <span style=color:#d20f39>int</span> gamepad_index <span style=color:#04a5e5;font-weight:700>=</span> evt.<span style=color:#1e66f5>getGamepad</span>().<span style=color:#1e66f5>getIndex</span>();
+</span></span><span style=display:flex><span>  <span style=color:#9ca0b0;font-style:italic>// Only reset if the disconnected gamepad is the one we where using</span>
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>if</span> (gamepad_index <span style=color:#04a5e5;font-weight:700>==</span> <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>current_gamepad_index</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>current_gamepad_index</span> <span style=color:#04a5e5;font-weight:700>=</span> NOT_CONNECTED;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>The <code>GamepadEvent</code> has a <code>getIndex()</code> method that allows tracking a specific gamepad.
+This input is a <em>poll</em> based input, meaning there is no listener that is called when a button is pressed.
+Instead, the game will ask for the whole gamepads state <em>right now</em> as part of the gameloop.</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic>// Canonical Index on Standard Gamepad</span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>static</span> <span style=color:#d20f39>final</span> <span style=color:#d20f39>int</span> IDX_DIGI_L <span style=color:#04a5e5;font-weight:700>=</span> 14;
+</span></span><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>static</span> <span style=color:#d20f39>final</span> <span style=color:#d20f39>int</span> IDX_DIGI_R <span style=color:#04a5e5;font-weight:700>=</span> 15;
+</span></span><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>static</span> <span style=color:#d20f39>final</span> <span style=color:#d20f39>int</span> IDX_DIGI_U <span style=color:#04a5e5;font-weight:700>=</span> 12;
+</span></span><span style=display:flex><span><span style=color:#d20f39>private</span> <span style=color:#d20f39>static</span> <span style=color:#d20f39>final</span> <span style=color:#d20f39>int</span> IDX_DIGI_D <span style=color:#04a5e5;font-weight:700>=</span> 13;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#d20f39>public</span> JoystickState <span style=color:#1e66f5>getDirection</span>() {
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>if</span> (<span style=color:#8839ef>this</span>.<span style=color:#1e66f5>current_gamepad_index</span> <span style=color:#04a5e5;font-weight:700>!=</span> NOT_CONNECTED) {
+</span></span><span style=display:flex><span>    Gamepad pad <span style=color:#04a5e5;font-weight:700>=</span> Navigator.<span style=color:#1e66f5>getGamepads</span>()<span style=color:#04a5e5;font-weight:700>[</span><span style=color:#8839ef>this</span>.<span style=color:#1e66f5>current_gamepad_index</span><span style=color:#04a5e5;font-weight:700>]</span>;
+</span></span><span style=display:flex><span>    <span style=color:#8839ef>if</span> (pad.<span style=color:#1e66f5>isConnected</span>()) {
+</span></span><span style=display:flex><span>      <span style=color:#9ca0b0;font-style:italic>// Check all relevant buttons (shortened for the article)</span>
+</span></span><span style=display:flex><span>      GamepadButton<span style=color:#04a5e5;font-weight:700>[]</span> btns <span style=color:#04a5e5;font-weight:700>=</span> gamepad.<span style=color:#1e66f5>getButtons</span>();
+</span></span><span style=display:flex><span>      <span style=color:#8839ef>if</span> (btns<span style=color:#04a5e5;font-weight:700>[</span>IDX_DIGI_D<span style=color:#04a5e5;font-weight:700>]</span>.<span style=color:#1e66f5>isPressed</span>()) {
+</span></span><span style=display:flex><span>        <span style=color:#8839ef>return</span> JoystickState.<span style=color:#1e66f5>DOWN</span>;
+</span></span><span style=display:flex><span>      } <span style=color:#8839ef>else</span> <span style=color:#8839ef>if</span> (btns<span style=color:#04a5e5;font-weight:700>[</span>IDX_DIGI_U<span style=color:#04a5e5;font-weight:700>]</span>.<span style=color:#1e66f5>isPressed</span>()) {
+</span></span><span style=display:flex><span>        <span style=color:#8839ef>return</span> JoystickState.<span style=color:#1e66f5>UP</span>;
+</span></span><span style=display:flex><span>      } <span style=color:#8839ef>else</span> <span style=color:#8839ef>if</span> (btns<span style=color:#04a5e5;font-weight:700>[</span>IDX_DIGI_L<span style=color:#04a5e5;font-weight:700>]</span>.<span style=color:#1e66f5>isPressed</span>()) {
+</span></span><span style=display:flex><span>        <span style=color:#8839ef>return</span> JoystickState.<span style=color:#1e66f5>LEFT</span>;
+</span></span><span style=display:flex><span>      } <span style=color:#8839ef>else</span> <span style=color:#8839ef>if</span> (btns<span style=color:#04a5e5;font-weight:700>[</span>IDX_DIGI_R<span style=color:#04a5e5;font-weight:700>]</span>.<span style=color:#1e66f5>isPressed</span>()) {
+</span></span><span style=display:flex><span>        <span style=color:#8839ef>return</span> JoystickState.<span style=color:#1e66f5>RIGHT</span>;
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>return</span> JoystickState.<span style=color:#1e66f5>NEUTRAL</span>;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>The W3C standard describes a <a href=https://w3c.github.io/gamepad/#dfn-standard-gamepad rel=external>&ldquo;Standard Gamepad&rdquo;</a> that all <em>known</em> gamepads should be remapped to.
+I verify that the current gamepad has this mapping in our <code>onConnected</code> method above.
+This allows includes most commonly used gamepads like PlayStation and Xbox with one configuration.</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#d20f39>public</span> <span style=color:#d20f39>void</span> <span style=color:#1e66f5>onAnimationFrame</span>(<span style=color:#d20f39>double</span> timestamp) {
+</span></span><span style=display:flex><span>  <span style=color:#9ca0b0;font-style:italic>// ... other gameloop code</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>if</span> (<span style=color:#8839ef>this</span>.<span style=color:#1e66f5>last_input_state</span> <span style=color:#04a5e5;font-weight:700>==</span> JoystickState.<span style=color:#1e66f5>NEUTRAL</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#9ca0b0;font-style:italic>// Poll gamepad if we don&#39;t have a direction from other inputs yet...</span>
+</span></span><span style=display:flex><span>    <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>last_input_state</span> <span style=color:#04a5e5;font-weight:700>=</span> gamepad_input.<span style=color:#1e66f5>getDirection</span>();
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  GameLoop.<span style=color:#1e66f5>INSTANCE</span>.<span style=color:#1e66f5>step</span>(<span style=color:#8839ef>this</span>.<span style=color:#1e66f5>last_input_state</span>, web_canvas);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#9ca0b0;font-style:italic>// Clear for next frame</span>
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>this</span>.<span style=color:#1e66f5>last_input_state</span> <span style=color:#04a5e5;font-weight:700>=</span> JoystickState.<span style=color:#1e66f5>NEUTRAL</span>;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>With the gameloop updated, the game can now be controlled with a gamepad as well.</p><h2 id=finishing-up><a href=#finishing-up>Finishing Up</a></h2><p>Finally, we have an easily playable game.
+For now, I&rsquo;ve opted not to implement sound in the web version for simplicity’s sake.</p><p>I set up a CI to have it build and deploy everything to GitHub Pages.
+You can <a href=https://lukasknuth.github.io/pacman/ rel=external>play the game for yourself</a> if you&rsquo;re curious.
+The result is a single, minified JavaScript file at <strong>94 kB</strong> compressed.
+This file contains the code, and all the assets.
+It runs well on Safari, Firefox and Chrome - even the mobile versions.</p><p>Overall, this was a very fun project without any big technical hurdles.
+The little debugging I had to do was simply <code>System.out.println</code>, which shows up in the browsers developer console.
+Working with TeaVM was very easy, although I needed to read a good bit of example source code to understand how it works.
+The documentation is sparse, but the following resources helped me a lot:</p><ul><li><a href=https://teavm.org/jcl-report/recent/jcl.html rel=external>List of available classes</a></li><li><a href=https://javadoc.io/doc/org.teavm/ rel=external>JavaDocs for TeaVM</a></li><li><a href=https://github.com/konsoletyper/teavm/tree/master/samples rel=external>Samples from the TeaVM repo</a></li><li><a href=https://groups.google.com/g/teavm rel=external>Google Groups/Mailing list</a></li></ul><p>What helps it tremendously is that you can simply research something for JavaScript and the ideas and most of the code will translate almost 1:1 to TeaVM.
+Any prior experience with web APIs still applies.</p><p>I was impressed that the code I wrote as a beginner 13 years ago now runs (with little changes) on a different platform.
+It&rsquo;s a testament to the Java platforms backward compatibility and the diverse and mature tooling that exists around it.</p></div></article><div class="mt-8 mb-3 py-4 px-5 md:px-9" style="background-image:url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 304 304' width='304' height='304'%3E%3Cpath fill='%23c8c8c8' fill-opacity='0.5' d='M44.1 224a5 5 0 1 1 0 2H0v-2h44.1zm160 48a5 5 0 1 1 0 2H82v-2h122.1zm57.8-46a5 5 0 1 1 0-2H304v2h-42.1zm0 16a5 5 0 1 1 0-2H304v2h-42.1zm6.2-114a5 5 0 1 1 0 2h-86.2a5 5 0 1 1 0-2h86.2zm-256-48a5 5 0 1 1 0 2H0v-2h12.1zm185.8 34a5 5 0 1 1 0-2h86.2a5 5 0 1 1 0 2h-86.2zM258 12.1a5 5 0 1 1-2 0V0h2v12.1zm-64 208a5 5 0 1 1-2 0v-54.2a5 5 0 1 1 2 0v54.2zm48-198.2V80h62v2h-64V21.9a5 5 0 1 1 2 0zm16 16V64h46v2h-48V37.9a5 5 0 1 1 2 0zm-128 96V208h16v12.1a5 5 0 1 1-2 0V210h-16v-76.1a5 5 0 1 1 2 0zm-5.9-21.9a5 5 0 1 1 0 2H114v48H85.9a5 5 0 1 1 0-2H112v-48h12.1zm-6.2 130a5 5 0 1 1 0-2H176v-74.1a5 5 0 1 1 2 0V242h-60.1zm-16-64a5 5 0 1 1 0-2H114v48h10.1a5 5 0 1 1 0 2H112v-48h-10.1zM66 284.1a5 5 0 1 1-2 0V274H50v30h-2v-32h18v12.1zM236.1 176a5 5 0 1 1 0 2H226v94h48v32h-2v-30h-48v-98h12.1zm25.8-30a5 5 0 1 1 0-2H274v44.1a5 5 0 1 1-2 0V146h-10.1zm-64 96a5 5 0 1 1 0-2H208v-80h16v-14h-42.1a5 5 0 1 1 0-2H226v18h-16v80h-12.1zm86.2-210a5 5 0 1 1 0 2H272V0h2v32h10.1zM98 101.9V146H53.9a5 5 0 1 1 0-2H96v-42.1a5 5 0 1 1 2 0zM53.9 34a5 5 0 1 1 0-2H80V0h2v34H53.9zm60.1 3.9V66H82v64H69.9a5 5 0 1 1 0-2H80V64h32V37.9a5 5 0 1 1 2 0zM101.9 82a5 5 0 1 1 0-2H128V37.9a5 5 0 1 1 2 0V82h-28.1zm16-64a5 5 0 1 1 0-2H146v44.1a5 5 0 1 1-2 0V18h-26.1zm102.2 270a5 5 0 1 1 0 2H98v14h-2v-16h124.1zM242 149.9V160h16v34h-16v62h48v48h-2v-46h-48v-66h16v-30h-16v-12.1a5 5 0 1 1 2 0zM53.9 18a5 5 0 1 1 0-2H64V2H48V0h18v18H53.9zm112 32a5 5 0 1 1 0-2H192V0h50v2h-48v48h-28.1zm-48-48a5 5 0 0 1-9.8-2h2.07a3 3 0 1 0 5.66 0H178v34h-18V21.9a5 5 0 1 1 2 0V32h14V2h-58.1zm0 96a5 5 0 1 1 0-2H137l32-32h39V21.9a5 5 0 1 1 2 0V66h-40.17l-32 32H117.9zm28.1 90.1a5 5 0 1 1-2 0v-76.51L175.59 80H224V21.9a5 5 0 1 1 2 0V82h-49.59L146 112.41v75.69zm16 32a5 5 0 1 1-2 0v-99.51L184.59 96H300.1a5 5 0 0 1 3.9-3.9v2.07a3 3 0 0 0 0 5.66v2.07a5 5 0 0 1-3.9-3.9H185.41L162 121.41v98.69zm-144-64a5 5 0 1 1-2 0v-3.51l48-48V48h32V0h2v50H66v55.41l-48 48v2.69zM50 53.9v43.51l-48 48V208h26.1a5 5 0 1 1 0 2H0v-65.41l48-48V53.9a5 5 0 1 1 2 0zm-16 16V89.41l-34 34v-2.82l32-32V69.9a5 5 0 1 1 2 0zM12.1 32a5 5 0 1 1 0 2H9.41L0 43.41V40.6L8.59 32h3.51zm265.8 18a5 5 0 1 1 0-2h18.69l7.41-7.41v2.82L297.41 50H277.9zm-16 160a5 5 0 1 1 0-2H288v-71.41l16-16v2.82l-14 14V210h-28.1zm-208 32a5 5 0 1 1 0-2H64v-22.59L40.59 194H21.9a5 5 0 1 1 0-2H41.41L66 216.59V242H53.9zm150.2 14a5 5 0 1 1 0 2H96v-56.6L56.6 162H37.9a5 5 0 1 1 0-2h19.5L98 200.6V256h106.1zm-150.2 2a5 5 0 1 1 0-2H80v-46.59L48.59 178H21.9a5 5 0 1 1 0-2H49.41L82 208.59V258H53.9zM34 39.8v1.61L9.41 66H0v-2h8.59L32 40.59V0h2v39.8zM2 300.1a5 5 0 0 1 3.9 3.9H3.83A3 3 0 0 0 0 302.17V256h18v48h-2v-46H2v42.1zM34 241v63h-2v-62H0v-2h34v1zM17 18H0v-2h16V0h2v18h-1zm273-2h14v2h-16V0h2v16zm-32 273v15h-2v-14h-14v14h-2v-16h18v1zM0 92.1A5.02 5.02 0 0 1 6 97a5 5 0 0 1-6 4.9v-2.07a3 3 0 1 0 0-5.66V92.1zM80 272h2v32h-2v-32zm37.9 32h-2.07a3 3 0 0 0-5.66 0h-2.07a5 5 0 0 1 9.8 0zM5.9 0A5.02 5.02 0 0 1 0 5.9V3.83A3 3 0 0 0 3.83 0H5.9zm294.2 0h2.07A3 3 0 0 0 304 3.83V5.9a5 5 0 0 1-3.9-5.9zm3.9 300.1v2.07a3 3 0 0 0-1.83 1.83h-2.07a5 5 0 0 1 3.9-3.9zM97 100a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-48 32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32 48a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16-64a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 96a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-144a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-96 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm96 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16-64a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-32 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM49 36a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-32 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM33 68a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-48a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 240a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16-64a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm80-176a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32 48a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm112 176a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM17 180a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM17 84a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32 64a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6z'%3E%3C/path%3E%3C/svg%3E&#34;)">You read the whole thing.
+Back <a class=underline href=#very-top>to the top</a>?</div></main><footer><div class="h-spaced mb-5 mt-12 text-xs text-verysubtle">All content created by Lukas Knuth and licensed under the
+<a class="underline text-bold" href=https://creativecommons.org/licenses/by-sa/4.0/>Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+All source code is licensed <a class=underline href=https://opensource.org/license/mit>MIT</a>.
+Zu <a class="underline text-bold" href=/impressum>Impressum und Datenschutz</a>, vom deutschen Gesetz vorgeschrieben.</div></footer></body></html>
