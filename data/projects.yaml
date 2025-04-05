@@ -9,7 +9,7 @@ list:
   url: https://gitlab.com/p91paul/BackSlide
   desc: A Gnome Shell Extension to automatically switch wallpapers - initially written by me, now maintained by Paolo 💪
 - name: pacman
-  url: https://github.com/LukasKnuth/pacman
+  url: https://lukasknuth.github.io/pacman/
   desc: A faithful adaptation of the arcade classic using my own engine, written when I just learned programming.
 - name: dotfiles
   url: https://github.com/LukasKnuth/dotfiles
