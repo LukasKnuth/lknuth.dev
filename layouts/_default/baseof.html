@@ -23,26 +23,8 @@
     <meta name="robots" content="noindex">
     {{ end -}}
     <title>{{ if .IsPage }} {{ .Title }} | {{ end }}{{ .Site.Params.Author }}</title>
-    {{ with (templates.Defer (dict "key" "global")) }}
-      {{- $t := debug.Timer "tailwindcss" -}}
-      {{- with resources.Get "css/main.css" -}}
-        {{- $opts := dict
-          "inlineImports" true
-          "minify" (not hugo.IsDevelopment)
-        -}}
-        {{- with . | css.TailwindCSS $opts -}}
-          {{- if hugo.IsDevelopment -}}
-            {{ printf `<link rel="stylesheet" href=%q>` .RelPermalink | safeHTML }}
-          {{- else -}}
-            {{- with . | minify | fingerprint -}}
-            {{ printf `<link rel="stylesheet" href=%q integrity=%q crossorigin="anonymous">` .RelPermalink .Data.Integrity | safeHTML }}
-            {{- end -}}
-          {{- end -}}
-        {{- end -}}
-      {{- end -}}
-      {{- $t.Stop -}}
-    {{ end }}
     <link rel='canonical' href='{{ .Permalink }}'>
+    {{ partialCached "tailwind.html" . }}
     <!-- Created via https://realfavicongenerator.net/ -->
     <link rel="icon" type="image/png" href="{{ "images/favicon-96x96.png" | absURL }}" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="{{ "images/favicon.svg" | absURL }}" />
