@@ -167,6 +167,133 @@ This is all nice and good if it _works_, but how do I notice if it doesn't?
 
 ## Observability
 
-fluentd, the go implementation because its smaller/faster/simpler
+Again my goal was something simple that could run easily on my own infra.
+There are many great hosted observability services out there, but that just adds extra complexity.
+What if we just went much simpler?
 
-https://github.com/LukasKnuth/homeserver/lob/main/deploy/logs/main.tf
+I had a look around and decided to use Fluent Bit, the more lightweight and faster cousin of Fluentd.
+Fluent Bit can easily be configured to stream any container logs that Kubernetes collects, enrich them with meta information and filter everything.
+
+I'm primarily interested in knowing if anything is wrong with my Litestream replication.
+For example, if my local NAS goes offline or if the internet connection to Wasabi drops.
+Litestream will log these errors, and we can use that information to create alerts.
+
+```
+[INPUT]
+  Name tail
+  Alias kubernetes
+  Path /var/log/containers/*.log
+  Parser containerd
+  Tag kubernetes.*
+
+[FILTER]
+  Name kubernetes
+  Match kubernetes.*
+  Merge_Log On
+  # Many more specific settings...
+
+[FILTER]
+  Name grep
+  Alias litestream-replicate
+  Match kubernetes.*
+  Logical_Op and
+  Regex $kubernetes['container_name'] litestream-(sidecar|restore-snapshot)
+
+[FILTER]
+  Name rewrite_tag
+  Match kubernetes.*
+  Alias litestream-replication-problems
+  Rule $level ^(WARN|ERROR)$ problem.$TAG true
+
+[OUTPUT]
+  Name stdout
+  Alias stdout
+  Match problem.*
+  Format json_lines
+```
+
+The above is a _shortened_ version of my [full Fluent Bit config](https://github.com/LukasKnuth/homeserver/blob/143a99ea3a871e2baf6be2729e0dbcfe8842b3c5/deploy/logs/main.tf#L7).
+You can read it top-to-bottom, although that's not necessarily how its executed.
+Each group has a `Name` field which is the Fluent Bit plugin that is used.
+Every `Filter` has a `Match` that specifies which logs the filter should be applied to.
+The `Alias` they all set is just a more human-readable name for each step.
+
+It starts with a `INPUT` that reads all log files that Kubernetes writes on disk on each node.
+The path depends on your Kubernetes distribution, the above is for Talos Linux.
+There is usually one log-file per container and we're just ingesting them all.
+
+Next come the `FILTER` steps:
+
+1. `kubernetes` adds additional meta information, such as container names to each log.
+  - The `Merge_Log` checks if the log is JSON formatted and makes its structure available
+  - Litestream can be [configured to log JSON](https://litestream.io/reference/config/#logging)
+2. `grep` only retains logs made by containers named `litestream-sidecar` or `litestream-restore-snapshot`
+  - These are the names used earlier when we configured the Litstream sidecar and init containers to the deployment.
+3. `rewrite_tag` takes the filtered down logs and tags them with `problem.$TAG` if the log-level is either `WARN` or `ERROR`
+
+After this, the `OUTPUT` writes all logs tagged `problem.*` to stdout as JSON lines.
+
+### Alerting
+
+This gives me a _single_ stream of all Errors/Warnings that Litestream encounters.
+But I also want to be alerted if anything is going wrong so that I can investigate.
+The simplest way to just get a notification is to send it via Slack:
+
+```
+[FILTER]
+  Name throttle
+  Match problem.*
+  # Max burst 6msg/2h, 12h until recovered, 12msg/day
+  Rate 1
+  Interval 2h
+  Window 6
+
+[OUTPUT]
+  Name slack
+  Alias gotify
+  Match problem.*
+  Webhook https://my.slack.com/webhook/asdf1234
+```
+
+The `throttle` filter is there to reduce the number of events that could be sent.
+If Litestream encounters a replication error every second, we don't need a Slack message with the same cadence.
+The algorithm uses a [leaky bucket](https://docs.fluentbit.io/manual/pipeline/filters/throttle) which supports bursting.
+
+Next, the throttled log stream is sent to the `slack` output.
+My actual setup is a little more convoluted because I use my self-hosted Gotify instance with my [slack webhook plugin](https://github.com/LukasKnuth/gotify-slack-webhook) instead.
+The full config is linked above, if you're curious.
+
+Now when Litstream encounters an error while replicating _or_ restoring, I get notified about it.
+And all that with a few simple extra containers.
+
+## Chaos Engineering
+
+> If you don't test your backups, you don't have backups.
+
+The last piece of the puzzle is to regularly test if restoring from the replicated snapshots actually works.
+
+The simple/brutal solution here is to just randomly have a cronjob restart deployments, so that the init job will restore the database.
+I've done this manually in the past and it works.
+However, should the backup not restore properly, there is no recourse - the last, unreplicated database is lost to the ephemeral storage.
+
+My next idea was to just have a Cron job that simply runs the `restore` commands and verifies that it completed.
+Then, we can use `PRAGMA quick_check` to validate that the resulting SQLite file is [not corrupted](https://www.sqlite.org/faq.html#q21).
+Afterward, we can discard the file again, our replica is currently safe.
+
+
+## Closing thoughts
+
+There are certain shortcomings of my setup that you should consider:
+
+- Litestream does not support multiple replicas. This means two things:
+  - all workloads I host have `replicas = 1`
+  - all workloads have `strategy = "Recreate"`
+- This only works for SQLite databases, which reduces the number of workloads we can run
+- Litestream development is not very active
+  - that said, I have run this in "production" for about a year now without any problems
+- Against Litestream recommendation, I don't use a PVC. If there is a catastrophic failure, like a power outage, some data might be lost
+  - I live with this mainly because my applications don't generate data when I'm not actively using them
+  - The increased simplicity with ephemeral storage is just too nice
+
+All that said, SQLite is a rock solid piece of software and it performs incredibly well.
+For a local homeserver that receives traffic from a handful of devices, its simplicity is hard to beat.
