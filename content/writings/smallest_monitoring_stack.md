@@ -28,6 +28,7 @@ The next problem is backups.
 Ideally, we want to take backups of all types of data with the same process.
 In practice, this is hardly possible.
 Can you back up this storage while the application is _still running_?
+Is there a way to guarantee that all writes are flushed to disk for a consistent backup?
 Some applications offer backup commands that do just that.
 Usually this means you'll be writing a custom `CronJob` per application.
 
@@ -44,12 +45,13 @@ Ideally, this is also automated and happens regularly.
 Enter [Litestream](https://litestream.io/) for SQLite.
 A simple tool that does one thing and does it really well: replicate one or multiple SQLite files from disk to an S3 storage.
 
-The setup is very simple as well - no need to deploy any operator or CRDs.
+The setup is very simple - no need to deploy any operator or CRDs.
 It runs as a sidecar container to the actual application and just needs access to the SQLite database file on disk.
 We can achieve both easily by sharing an `emptyDir` between the two containers:
 
 ```terraform
-resource "kubernetes_deployment" "app" {
+# NOTE: Valid but shortened.
+resource "kubernetes_deployment" "some_app" {
   metadata {
     name = var.app_name
   }
@@ -65,27 +67,28 @@ resource "kubernetes_deployment" "app" {
 
         container {
           name = "litestream-sidecar"
-          image = ""
+          image = "litestream/litestream"
           args = ["replicate"]
 
           volume_mount {
             name = "application-state"
-            mount_path = dirname(var.sqlite_replicate.file_path)
+            mount_path = dirname(var.sqlite_file_path)
           }
         }
 
         container {
           name = "my-app"
-          image = ""
+          image = "lukasknuth/some-app"
 
           volume_mount {
             name = "application-state"
-            mount_path = dirname(var.sqlite_replicate.file_path)
+            mount_path = dirname(var.sqlite_file_path)
           }
         }
       }
     }
   }
+}
 ```
 
 Both the main application container and the Litestream sidecar access the same ephemeral storage volume.
@@ -96,18 +99,18 @@ Using ephemeral storage here also solves our data colocation problem: If the sto
 > That means every time the `Pod` starts, it starts with an empty storage folder. 
 
 The `mount_path` above is configured as a parameter to the Terraform module.
-We use the same parameter to create a `ConfigMap` that holds the configuration file for Litestream.
+I use the same parameter to create a `ConfigMap` that holds the configuration file for Litestream.
 
 ```terraform
 resource "kubernetes_config_map_v1" "litestream_config" {
   metadata {
-    name      = "${var.app_name}-litestream-config"
+    name = "${var.app_name}-litestream-config"
   }
 
   data = {
     "litestream.yml" = yamlencode({
       dbs = [{
-        path = var.sqlite_replicate.file_path,
+        path = var.sqlite_file_path,
         replicas = [{
           type        = "s3"
           endpoint    = "my.local.minio"
@@ -120,33 +123,33 @@ resource "kubernetes_config_map_v1" "litestream_config" {
 }
 ```
 
-Even though the configuration must be YAML, we don't have to write it ourselves!
+Even though the configuration format is YAML, we don't have to write it ourselves!
 Instead, we can use the normal object notation of HCL and let `yamlencode` do the dirty work.
 The configuration is then mounted into the Litestream sidecar.
 
 At this point we have continuous replication of data set up.
-But now if the App restarts, we're starting with an empty database again.
+But now if the App restarts, we're starting with an empty database.
 Litestream can help again, with its `restore` command:
 
 ```terraform
-# In the original `kubernetes_deployment`...
-resource "kubernetes_deployment" "app" {
+# In the original `kubernetes_deployment` from above...
+resource "kubernetes_deployment" "some_app" {
   spec {
     template {
       spec {
         init_container {
           name = "litestream-restore-snapshot"
-          image = ""
+          image = "litestream/litestream"
           args = [
               "restore",
               "-if-db-not-exists",
               "-if-replica-exists",
-              var.sqlite_replicate.file_path
+              var.sqlite_file_path
           ]
 
           volume_mount {
             name = "application-state"
-            mount_path = dirname(var.sqlite_replicate.file_path)
+            mount_path = dirname(var.sqlite_file_path)
           }
         }
       }
@@ -155,22 +158,24 @@ resource "kubernetes_deployment" "app" {
 }
 ```
 
-Now, when the `Pod` starts/restarts, the init container will first restore the current database from the latest backup.
-If there is no database file, an empty one is created.
-If the backup can not be restored, the init container fails and the application does not start.
-This makes the error state very obvious: The workload does not start at all.
+Now, when the `Pod` starts/restarts, the init container will first restore the current database from the latest replica.
+If there is no replica, an empty database is created (relevant on first launch).
+If the replica can not be restored, the init container fails and the application does not start.
+This makes the error state very obvious: The application isn't available and can't generate new data that might be lost as well.
 
 Some details in the above configuration are omitted for brevity.
 If you're interested, the full configuration is available [in my homeserver repo](https://github.com/LukasKnuth/homeserver/blob/main/deploy/modules/web_app/main.tf).
 
 > [!note]
-> For redundancy, I'm sending the backups both to my local NAS running MinIO and off-site to Wasabi S3 bucket.
+> For redundancy, you can send the replicas to multiple S3 targets.
+> I currently just use my local NAS running MinIO.
+> The storage on the NAS is then further backed up off-site to Wasabi.
 
 This is all nice and good if it _works_, but how do I notice if it doesn't?
 
 ## Observability
 
-Again, we're going for simplicity.
+Again, I'm going for simplicity.
 There are many great hosted observability services out there, but that just adds extra complexity.
 What if we just went much simpler?
 
@@ -178,8 +183,8 @@ I had a look around and decided to use Fluent Bit, the more lightweight cousin o
 Fluent Bit can easily be configured to stream any container logs that Kubernetes collects, enrich them with metadata and filter everything.
 
 I'm primarily interested in knowing if anything is wrong with my Litestream replication.
-For example, if my local NAS goes offline or if the internet connection to Wasabi drops.
-Litestream will log these errors, and we can use that information to create alerts.
+For example, if my NAS goes offline or if the local network connection drops.
+Litestream will log these errors, and we can turn them into alerts.
 
 ```
 [INPUT]
@@ -214,27 +219,30 @@ Litestream will log these errors, and we can use that information to create aler
 The above is a _shortened_ version of my [full Fluent Bit config](https://github.com/LukasKnuth/homeserver/blob/143a99ea3a871e2baf6be2729e0dbcfe8842b3c5/deploy/logs/main.tf#L7).
 You can read it top-to-bottom, although that's not necessarily how its executed.
 Each group has a `Name` field which is the Fluent Bit plugin that is used.
-Every `Filter` has a `Match` that specifies which logs the filter should be applied to.
+Every `Filter` has a `Match` that specifies which logs (identified by `Tag`s) the filter should be applied to.
 
-It starts with a `INPUT` that reads all log files that Kubernetes writes on disk on each node.
+It starts with a `INPUT` that reads all log files that Kubernetes writes to disk on each node.
 The path depends on your Kubernetes distribution, the above is for Talos Linux.
 There is usually one log-file per container, and we're just ingesting them all.
 
 Next come the `FILTER` steps:
 
-1. `kubernetes` adds additional metadata, such as container names to each log.
-  - The `Merge_Log` checks if the log is JSON formatted and makes its structure available
-  - Litestream can be [configured to log JSON](https://litestream.io/reference/config/#logging)
+1. `kubernetes` adds additional metadata, such as the container name, to each log.
+    - The `Merge_Log` checks if the log is JSON formatted and makes its structure available
+    - Litestream can be [configured to log JSON](https://litestream.io/reference/config/#logging)
 2. `grep` only retains logs made by containers named `litestream-sidecar` or `litestream-restore-snapshot`
-  - These are the names used earlier when we configured the Litstream sidecar and init containers to the deployment.
+    - These are the names used earlier when we configured the Litstream sidecar and init containers to the deployment.
 3. `rewrite_tag` takes the filtered down logs and tags them with `problem.$TAG` if the log-level is either `WARN` or `ERROR`
+    - The `$level` is available because it was parsed out of the JSON log earlier.
 
 After this, the `OUTPUT` writes all logs tagged `problem.*` to stdout as JSON lines.
+This gives me a _single_ stream of all Errors/Warnings that Litestream encounters.
+Easy to verify if we catch everything, halfway there.
 
 ### Alerting
 
-This gives me a _single_ stream of all Errors/Warnings that Litestream encounters.
-But I also want to be alerted if anything is going wrong so that I can investigate.
+I want to be alerted if anything is going wrong so that I can investigate in a timely maner.
+After all, data could be lost if the problem isn't resolved.
 The simplest way to just get a notification is to send it via Slack:
 
 ```
@@ -252,8 +260,8 @@ The simplest way to just get a notification is to send it via Slack:
   Webhook https://my.slack.com/webhook/asdf1234
 ```
 
-The `throttle` filter is there to reduce the number of events that could be sent.
-If Litestream encounters a replication error every second, we don't need a Slack message with the same cadence.
+The `throttle` filter puts an upper bound on the number of notifications that are sent.
+If Litestream encounters a replication error and retires every second, we don't need Slack messages with the same cadence.
 The algorithm uses a [leaky bucket](https://docs.fluentbit.io/manual/pipeline/filters/throttle) which supports bursting.
 
 Next, the throttled log stream is sent to the `slack` output.
@@ -262,16 +270,16 @@ The full config is linked above, if you're curious.
 
 Now when Litstream encounters an error while replicating _or_ restoring, I get notified about it.
 
-## Chaos Engineering
+## Trust but verify
 
 > If you don't test your backups, you don't have backups.
 
-The simple/brutal solution here would be to just randomly have a cronjob restart deployments, so that the init job will restore the database.
+A simple/brutal solution would be to just randomly have a cronjob restart deployments, so that the init container will restore the database.
 I've done this manually in the past and it works.
 However, should the backup not restore properly, there is no recourse - the latest, unreplicated changes are lost to the ephemeral storage.
 
 Instead, let's have the Cronjob run the `litestream restore` command and verify that it completed successfully.
-Then, we can use `PRAGMA quick_check` to validate that the resulting SQLite file is [not corrupted](https://www.sqlite.org/faq.html#q21).
+Then, we can use `PRAGMA integrity_check` to validate that the resulting SQLite file is [not corrupted](https://www.sqlite.org/faq.html#q21).
 
 ```fish
 # - `APP_DB_PATH` set to the full path of the apps database
@@ -280,7 +288,10 @@ set -l local_db "/app/db.sqlite"
 
 # First, restore database from newest replica generation
 # If successfull, verify the integrity of the restored database
-set -l log (litestream restore -o $local_db $APP_DB_PATH 2>&1; and sqlite3 $local_db "PRAGMA integrity_check" 2>&1)
+set -l log (
+  litestream restore -o $local_db $APP_DB_PATH 2>&1;
+  and sqlite3 $local_db "PRAGMA integrity_check" 2>&1
+)
 
 # Report status and post captured log to healthcheck.io
 set -l url "$HEALTHCHECKS_IO_URL/$status"
@@ -289,18 +300,20 @@ curl -m 20 --retry 5 --data-raw "$(string split0 $log)" $url
 
 The above [Fish script](https://fishshell.com/docs/current/language.html) does just that.
 It uses [healthchecks.io](https://healthchecks.io/) which knows the cron schedule and will email me if the job doesn't ping it.
-It also captures `stdout` and `stderr` from both commands and sends the exit code.
-Both are helpful for debugging any issues.
+It also captures `stdout` and `stderr` from both commands and sends the exit code in the ping.
+If something is amiss, I have all the information in one place.
 
 I have currently scheduled these jobs to run once a week in the early hours of Saturday.
 They're all spread out so that only one runs at a time.
 
 ## Closing thoughts
 
-I have run this setup in production for a year now.
-In this time I had one failure that I was quickly alerted to (and able to fix).
-The Litestream replication is rock solid and I trust the monitoring.
-However, there are certain shortcomings of my setup that you should consider:
+I have run this setup in production for a year now (minus the verification - I like to live dangerously).
+In this time I had one failure that I was quickly alerted to and able to fix.
+
+SQLite is a battle tested piece of software and performs incredibly well.
+Litestream replication is rock solid and I trust the monitoring.
+But the simplicity comes with tradeoffs that you should consider before adopting.
 
 This specific setup only works for SQLite.
 That means I can only run apps that use/allow SQLite as their storage backend.
@@ -314,5 +327,4 @@ Against Litestream recommendation, I don't use a PVC.
 If there is a catastrophic failure, like a power outage, some data might not have been replicated yet and is lost.
 I accept this mainly because applications I host don't generate data when I'm not interacting with them.
 
-All that said, SQLite is a rock solid piece of software and performs incredibly well.
-And the simplicity is hard to beat.
+If you can live with these caveats, you get a beautifully simple setup.
