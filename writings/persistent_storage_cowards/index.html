@@ -1,0 +1,214 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=author content="Lukas Knuth"><meta name=description content="About a year ago, I rebuild my home server. It still runs on Kubernetes, but I moved away from traditional tooling associated with it. The goal was simplicity; and I made some opinionated choices to achieve it. For example, I deploy everything using Terraform with the Kubernetes provider - no more YAML!
+For hardware, I just have a single Raspberry Pi 4. There is no external storage attached to it, so everything is on an SD Card that could be corrupted at any point. I would like very much for my application data to not be lost when that happens though."><meta property="og:description" value="About a year ago, I rebuild my home server. It still runs on Kubernetes, but I moved away from traditional tooling associated with it. The goal was simplicity; and I made some opinionated choices to achieve it. For example, I deploy everything using Terraform with the Kubernetes provider - no more YAML!
+For hardware, I just have a single Raspberry Pi 4. There is no external storage attached to it, so everything is on an SD Card that could be corrupted at any point. I would like very much for my application data to not be lost when that happens though."><meta property="og:title" value="Persistent storage is for cowards"><meta property="og:url" value=https://lknuth.dev/writings/persistent_storage_cowards/><meta property="og:type" value=article><meta property="og:article:author" value="Lukas Knuth"><meta property="og:article:published_time" value=2025-05-30T16:20:00+0200><meta name=robots content="all,follow"><meta name=googlebot content="index,follow,snippet,archive"><title>Persistent storage is for cowards | Lukas Knuth</title>
+<link rel=canonical href=https://lknuth.dev/writings/persistent_storage_cowards/><link rel="stylesheet" href="/css/main.dc6b5960ef6330bab82a32397352a25e1929cbee4eeb38bda23309440921532a.css" integrity="sha256-3GtZYO9jMLq4KjI5c1KiXhkpy&#43;5O6zi9ojMJRAkhUyo=" crossorigin="anonymous">
+<link rel=icon type=image/png href=https://lknuth.dev/images/favicon-96x96.png sizes=96x96><link rel=icon type=image/svg+xml href=https://lknuth.dev/images/favicon.svg><link rel="shortcut icon" href=https://lknuth.dev/images/favicon.ico><link rel=alternate type=application/rss+xml href=https://lknuth.dev/writings/index.xml title=Writings></head><body id=very-top class="flex flex-col h-screen max-w-6xl container mx-auto bg-pane break-words text-base text-writing md:text-lg antialiased hyphens-auto leading-relaxed font-sans"><header><div class="h-spaced mt-4 md:mt-6 mb-3"><a href=https://lknuth.dev/><div class="w-16 h-16 mr-3 md:mr-5 float-left bg-no-repeat bg-center bg-contain rounded-md" style=background-image:url(https://lknuth.dev/images/favicon.svg)></div><div class="hidden md:!block text-3xl font-bold"><span>Lukas Knuth</span><span class="pl-1 pr-3 tracking-[-0.3em]">//</span><span>Software Engineer</span></div><div class="md:hidden text-xl font-bold truncate text-clip"><span>Lukas Knuth</span><span class="pl-1 pr-2 tracking-[-0.3em]">//</span><span>SWE</span></div></a><nav><ol class="flex text-primary pt-1"><li class="md:text-base inline-block leading-4 mt-1 pr-2 mr-2 md:pr-3 md:mr-3 align-middle border-dotted border-r-2 last:border-none"><a href=/writings>Writings</a></li><li class="md:text-base inline-block leading-4 mt-1 pr-2 mr-2 md:pr-3 md:mr-3 align-middle border-dotted border-r-2 last:border-none"><a href=/about>About</a></li><li class="md:text-base inline-block leading-4 mt-1 pr-2 mr-2 md:pr-3 md:mr-3 align-middle border-dotted border-r-2 last:border-none"><a href=/cv>CV</a></li><li class="md:text-base inline-block leading-4 mt-1 pr-2 mr-2 md:pr-3 md:mr-3 align-middle border-dotted border-r-2 last:border-none"><a href=/now>Now</a></li></ol></nav></div></header><main class=grow><article class="h-spaced mt-4 md:mt-6" itemscope itemtype=http://schema.org/BlogPosting><h1 class="text-3xl font-light text-subtle" itemprop="name headline">Persistent storage is for cowards</h1><div class="my-2 text-sm text-subtle grid grid-cols-1 sm:block"><span class=inline-block>Posted: <time datetime="2025-05-30 16:20:00 +0200 +0200" itemprop=datePublished>2025-05-30</time></span>
+<span class="inline-block sm:pl-5">Updated: <time datetime="2025-06-04 11:22:51 +0200 +0200" itemprop=dateModified>2025-06-04</time></span></div><div class=prose itemprop=articleBody><p>About a year ago, I rebuild my home server.
+It still runs on Kubernetes, but I moved away from traditional tooling associated with it.
+The goal was simplicity; and I made some opinionated choices to achieve it.
+For example, I deploy everything using Terraform with the Kubernetes provider - no more YAML!</p><p>For hardware, I just have a single Raspberry Pi 4.
+There is no external storage attached to it, so everything is on an SD Card that could be corrupted at any point.
+I would like very much for my application data to not be lost when that happens though.</p><h2 id=storage-deceptively-complex><a href=#storage-deceptively-complex>Storage: deceptively complex</a></h2><p>Kubernetes has support for persistent volumes out of the box.
+They come in the form of <code>PersistentVolume</code> and <code>PersistentVolumeClaim</code>.</p><p>If a <code>Pod</code> has a <code>PersistentVolumeClaim</code>, the actual storage is provided on the nodes hard drive.
+This means that if you have multiple nodes in your cluster, that specific <code>Pod</code> is now <em>colocated</em> with the node.
+Kubernetes does not have out-of-the-box options to move or replicate the <code>PersistentVolumeClaim</code> across its nodes.
+It is possible to achieve this with a multitude of tools, none of which are <em>simple</em>.</p><p>The next problem is backups.
+Ideally, we want to take backups of all types of data with the same process.
+In practice, this is hardly possible.
+Can you back up this storage while the application is <em>still running</em>?
+Is there a way to guarantee that all writes are flushed to disk for a consistent backup?
+Some applications offer backup commands that do just that.
+Usually this means you&rsquo;ll be writing a custom <code>CronJob</code> per application.</p><p>Once you have that custom Job setup, the next question is: &ldquo;how often do I run this?&rdquo;.
+You can rephrase this to &ldquo;how much data am I willing to lose?&rdquo;.
+If you need to stop the application to ensure consistent backups, you need to balance availability with durability.</p><p>The last step is to regularly verify the backups you&rsquo;re taking.
+&ldquo;If you don&rsquo;t know that your backup works, you don&rsquo;t have a backup&rdquo; as the common wisdom goes.
+Ideally, this is also automated and happens regularly.</p><h2 id=continuous-replication><a href=#continuous-replication>Continuous Replication</a></h2><p>Enter <a href=https://litestream.io/ rel=external>Litestream</a> for SQLite.
+A simple tool that does one thing and does it really well: replicate one or multiple SQLite files from disk to an S3 storage.</p><p>The setup is very simple - no need to deploy any operator or CRDs.
+It runs as a sidecar container to the actual application and just needs access to the SQLite database file on disk.
+We can achieve both easily by sharing an <code>emptyDir</code> between the two containers:</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-terraform data-lang=terraform><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic># NOTE: Valid but shortened.
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic></span><span style=color:#8839ef>resource</span> <span style=color:#40a02b>&#34;kubernetes_deployment&#34;</span> <span style=color:#40a02b>&#34;some_app&#34;</span> {
+</span></span><span style=display:flex><span>  metadata {
+</span></span><span style=display:flex><span>    <span style=color:#1e66f5>name</span> = <span style=color:#04a5e5>var</span>.app_name
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  spec {
+</span></span><span style=display:flex><span>    template {
+</span></span><span style=display:flex><span>      metadata {}
+</span></span><span style=display:flex><span>      spec {
+</span></span><span style=display:flex><span>        volume {
+</span></span><span style=display:flex><span>          <span style=color:#1e66f5>name</span> = <span style=color:#40a02b>&#34;application-state&#34;</span>
+</span></span><span style=display:flex><span>          emptyDir {}
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        container {
+</span></span><span style=display:flex><span>          <span style=color:#1e66f5>name</span> = <span style=color:#40a02b>&#34;litestream-sidecar&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#1e66f5>image</span> = <span style=color:#40a02b>&#34;litestream/litestream&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#1e66f5>args</span> = [<span style=color:#40a02b>&#34;replicate&#34;</span>]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>          volume_mount {
+</span></span><span style=display:flex><span>            <span style=color:#1e66f5>name</span> = <span style=color:#40a02b>&#34;application-state&#34;</span>
+</span></span><span style=display:flex><span>            <span style=color:#1e66f5>mount_path</span> = <span style=color:#04a5e5>dirname</span>(<span style=color:#04a5e5>var</span>.sqlite_file_path)
+</span></span><span style=display:flex><span>          }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        container {
+</span></span><span style=display:flex><span>          <span style=color:#1e66f5>name</span> = <span style=color:#40a02b>&#34;my-app&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#1e66f5>image</span> = <span style=color:#40a02b>&#34;lukasknuth/some-app&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>          volume_mount {
+</span></span><span style=display:flex><span>            <span style=color:#1e66f5>name</span> = <span style=color:#40a02b>&#34;application-state&#34;</span>
+</span></span><span style=display:flex><span>            <span style=color:#1e66f5>mount_path</span> = <span style=color:#04a5e5>dirname</span>(<span style=color:#04a5e5>var</span>.sqlite_file_path)
+</span></span><span style=display:flex><span>          }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Both the main application container and the Litestream sidecar access the same ephemeral storage volume.
+Using ephemeral storage here also solves our data colocation problem: If the storage does not need to be retained across application starts, the <code>Pod</code> can be started on any node in the cluster.</p><blockquote class=callout><div>💡</div><div><p>The <strong>ephemeral storage</strong> means that the storage is permanently deleted after the <code>Pod</code> is stopped.
+That means every time the <code>Pod</code> starts, it starts with an empty storage folder.</p></div></blockquote><p>The <code>mount_path</code> above is configured as a parameter to the Terraform module.
+I use the same parameter to create a <code>ConfigMap</code> that holds the configuration file for Litestream.</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-terraform data-lang=terraform><span style=display:flex><span><span style=color:#8839ef>resource</span> <span style=color:#40a02b>&#34;kubernetes_config_map_v1&#34;</span> <span style=color:#40a02b>&#34;litestream_config&#34;</span> {
+</span></span><span style=display:flex><span>  metadata {
+</span></span><span style=display:flex><span>    <span style=color:#1e66f5>name</span> = <span style=color:#40a02b>&#34;</span><span style=color:#40a02b>${</span><span style=color:#04a5e5>var</span>.app_name<span style=color:#40a02b>}</span><span style=color:#40a02b>-litestream-config&#34;</span>
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span><span style=color:#8839ef>
+</span></span></span><span style=display:flex><span><span style=color:#8839ef>  data</span> <span style=color:#04a5e5;font-weight:700>=</span> {
+</span></span><span style=display:flex><span>    <span style=color:#40a02b>&#34;litestream.yml&#34;</span> <span style=color:#04a5e5;font-weight:700>=</span><span style=color:#04a5e5> yamlencode</span>({
+</span></span><span style=display:flex><span>      <span style=color:#1e66f5>dbs</span> = [{
+</span></span><span style=display:flex><span>        <span style=color:#1e66f5>path</span> = <span style=color:#04a5e5>var</span>.sqlite_file_path,
+</span></span><span style=display:flex><span>        <span style=color:#1e66f5>replicas</span> = [{
+</span></span><span style=display:flex><span>          <span style=color:#1e66f5>type</span>        = <span style=color:#40a02b>&#34;s3&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#1e66f5>endpoint</span>    = <span style=color:#40a02b>&#34;my.local.minio&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#1e66f5>bucket</span>      = <span style=color:#40a02b>&#34;homeserver&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#1e66f5>path</span>        = <span style=color:#04a5e5>var</span>.app_name
+</span></span><span style=display:flex><span>        }]
+</span></span><span style=display:flex><span>      }]
+</span></span><span style=display:flex><span>    })
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Even though the configuration format is YAML, we don&rsquo;t have to write it ourselves!
+Instead, we can use the normal object notation of HCL and let <code>yamlencode</code> do the dirty work.
+The configuration is then mounted into the Litestream sidecar.</p><p>At this point we have continuous replication of data set up.
+But now if the App restarts, we&rsquo;re starting with an empty database.
+Litestream can help again, with its <code>restore</code> command:</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-terraform data-lang=terraform><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic># In the original `kubernetes_deployment` from above...
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic></span><span style=color:#8839ef>resource</span> <span style=color:#40a02b>&#34;kubernetes_deployment&#34;</span> <span style=color:#40a02b>&#34;some_app&#34;</span> {
+</span></span><span style=display:flex><span>  spec {
+</span></span><span style=display:flex><span>    template {
+</span></span><span style=display:flex><span>      spec {
+</span></span><span style=display:flex><span>        init_container {
+</span></span><span style=display:flex><span>          <span style=color:#1e66f5>name</span> = <span style=color:#40a02b>&#34;litestream-restore-snapshot&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#1e66f5>image</span> = <span style=color:#40a02b>&#34;litestream/litestream&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#1e66f5>args</span> = [
+</span></span><span style=display:flex><span>              <span style=color:#40a02b>&#34;restore&#34;</span>,
+</span></span><span style=display:flex><span>              <span style=color:#40a02b>&#34;-if-db-not-exists&#34;</span>,
+</span></span><span style=display:flex><span>              <span style=color:#40a02b>&#34;-if-replica-exists&#34;</span>,
+</span></span><span style=display:flex><span>              <span style=color:#04a5e5>var</span>.sqlite_file_path
+</span></span><span style=display:flex><span>          ]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>          volume_mount {
+</span></span><span style=display:flex><span>            <span style=color:#1e66f5>name</span> = <span style=color:#40a02b>&#34;application-state&#34;</span>
+</span></span><span style=display:flex><span>            <span style=color:#1e66f5>mount_path</span> = <span style=color:#04a5e5>dirname</span>(<span style=color:#04a5e5>var</span>.sqlite_file_path)
+</span></span><span style=display:flex><span>          }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Now, when the <code>Pod</code> starts/restarts, the init container will first restore the current database from the latest replica.
+If there is no replica, an empty database is created (relevant on first launch).
+If the replica can not be restored, the init container fails and the application does not start.
+This makes the error state very obvious: The application isn&rsquo;t available and can&rsquo;t generate new data that might be lost as well.</p><p>Some details in the above configuration are omitted for brevity.
+If you&rsquo;re interested, the full configuration is available <a href=https://github.com/LukasKnuth/homeserver/blob/main/deploy/modules/web_app/main.tf rel=external>in my homeserver repo</a>.</p><blockquote class=callout><div>📖</div><div><p>For redundancy, you can send the replicas to multiple S3 targets.
+I currently just use my local NAS running MinIO.
+The storage on the NAS is then further backed up off-site to Wasabi.</p></div></blockquote><p>This is all nice and good if it <em>works</em>, but how do I notice if it doesn&rsquo;t?</p><h2 id=observability><a href=#observability>Observability</a></h2><p>Again, I&rsquo;m going for simplicity.
+There are many great hosted observability services out there, but that just adds extra complexity.
+What if we just went much simpler?</p><p>I had a look around and decided to use Fluent Bit, the more lightweight cousin of Fluentd.
+Fluent Bit can easily be configured to stream any container logs that Kubernetes collects, enrich them with metadata and filter everything.</p><p>I&rsquo;m primarily interested in knowing if anything is wrong with my Litestream replication.
+For example, if my NAS goes offline or if the local network connection drops.
+Litestream will log these errors, and we can turn them into alerts.</p><pre tabindex=0><code>[INPUT]
+  Name tail
+  Path /var/log/containers/*.log
+  Parser containerd
+  Tag kubernetes.*
+
+[FILTER]
+  Name kubernetes
+  Match kubernetes.*
+  Merge_Log On
+  # Many more specific settings...
+
+[FILTER]
+  Name grep
+  Match kubernetes.*
+  Logical_Op and
+  Regex $kubernetes[&#39;container_name&#39;] litestream-(sidecar|restore-snapshot)
+
+[FILTER]
+  Name rewrite_tag
+  Match kubernetes.*
+  Rule $level ^(WARN|ERROR)$ problem.$TAG true
+
+[OUTPUT]
+  Name stdout
+  Match problem.*
+  Format json_lines
+</code></pre><p>The above is a <em>shortened</em> version of my <a href=https://github.com/LukasKnuth/homeserver/blob/143a99ea3a871e2baf6be2729e0dbcfe8842b3c5/deploy/logs/main.tf#L7 rel=external>full Fluent Bit config</a>.
+You can read it top-to-bottom, although that&rsquo;s not necessarily how its executed.
+Each group has a <code>Name</code> field which is the Fluent Bit plugin that is used.
+Every <code>Filter</code> has a <code>Match</code> that specifies which logs (identified by <code>Tag</code>s) the filter should be applied to.</p><p>It starts with a <code>INPUT</code> that reads all log files that Kubernetes writes to disk on each node.
+The path depends on your Kubernetes distribution, the above is for Talos Linux.
+There is usually one log-file per container, and we&rsquo;re just ingesting them all.</p><p>Next come the <code>FILTER</code> steps:</p><ol><li><code>kubernetes</code> adds additional metadata, such as the container name, to each log.<ul><li>The <code>Merge_Log</code> checks if the log is JSON formatted and makes its structure available</li><li>Litestream can be <a href=https://litestream.io/reference/config/#logging rel=external>configured to log JSON</a></li></ul></li><li><code>grep</code> only retains logs made by containers named <code>litestream-sidecar</code> or <code>litestream-restore-snapshot</code><ul><li>These are the names used earlier when we configured the Litstream sidecar and init containers to the deployment.</li></ul></li><li><code>rewrite_tag</code> takes the filtered down logs and tags them with <code>problem.$TAG</code> if the log-level is either <code>WARN</code> or <code>ERROR</code><ul><li>The <code>$level</code> is available because it was parsed out of the JSON log earlier.</li></ul></li></ol><p>After this, the <code>OUTPUT</code> writes all logs tagged <code>problem.*</code> to stdout as JSON lines.
+This gives me a <em>single</em> stream of all Errors/Warnings that Litestream encounters.
+Easy to verify if we catch everything, halfway there.</p><h3 id=alerting><a href=#alerting>Alerting</a></h3><p>I want to be alerted if anything is going wrong so that I can investigate in a timely maner.
+After all, data could be lost if the problem isn&rsquo;t resolved.
+The simplest way to just get a notification is to send it via Slack:</p><pre tabindex=0><code>[FILTER]
+  Name throttle
+  Match problem.*
+  # Max burst 6msg/2h, 12h until recovered, 12msg/day
+  Rate 1
+  Interval 2h
+  Window 6
+
+[OUTPUT]
+  Name slack
+  Match problem.*
+  Webhook https://my.slack.com/webhook/asdf1234
+</code></pre><p>The <code>throttle</code> filter puts an upper bound on the number of notifications that are sent.
+If Litestream encounters a replication error and retires every second, we don&rsquo;t need Slack messages with the same cadence.
+The algorithm uses a <a href=https://docs.fluentbit.io/manual/pipeline/filters/throttle rel=external>leaky bucket</a> which supports bursting.</p><p>Next, the throttled log stream is sent to the <code>slack</code> output.
+My actual setup is a little more convoluted because I use my self-hosted Gotify instance with my <a href=https://github.com/LukasKnuth/gotify-slack-webhook rel=external>slack webhook plugin</a> instead.
+The full config is linked above, if you&rsquo;re curious.</p><p>Now when Litstream encounters an error while replicating <em>or</em> restoring, I get notified about it.</p><h2 id=trust-but-verify><a href=#trust-but-verify>Trust but verify</a></h2><blockquote><p>If you don&rsquo;t test your backups, you don&rsquo;t have backups.</p></blockquote><p>A simple/brutal solution would be to just randomly have a cronjob restart deployments, so that the init container will restore the database.
+I&rsquo;ve done this manually in the past and it works.
+However, should the backup not restore properly, there is no recourse - the latest, unreplicated changes are lost to the ephemeral storage.</p><p>Instead, let&rsquo;s have the Cronjob run the <code>litestream restore</code> command and verify that it completed successfully.
+Then, we can use <code>PRAGMA integrity_check</code> to validate that the resulting SQLite file is <a href=https://www.sqlite.org/faq.html#q21 rel=external>not corrupted</a>.</p><div class=highlight><pre tabindex=0 style=color:#4c4f69;background-color:#eff1f5;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-fish data-lang=fish><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic># - `APP_DB_PATH` set to the full path of the apps database
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic># - `HEALTHCHECKS_IO_URL` the `hc-ping.com` URL with a UUID
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic></span><span style=color:#8839ef>set</span> <span style=color:#1e66f5>-l</span> <span style=color:#dc8a78>local_db</span> <span style=color:#40a02b>&#34;/app/db.sqlite&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic># First, restore database from newest replica generation
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic># If successfull, verify the integrity of the restored database
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic></span><span style=color:#8839ef>set</span> <span style=color:#1e66f5>-l</span> <span style=color:#dc8a78>log</span> <span style=color:#04a5e5;font-weight:700>(</span>
+</span></span><span style=display:flex><span>  <span style=color:#1e66f5>litestream</span> restore <span style=color:#1e66f5>-o</span> <span style=color:#dc8a78>$local_db</span> <span style=color:#dc8a78>$APP_DB_PATH</span> <span style=color:#fe640b>2</span><span style=color:#04a5e5;font-weight:700>&gt;&amp;</span><span style=color:#fe640b>1</span>;
+</span></span><span style=display:flex><span>  <span style=color:#8839ef>and</span> <span style=color:#1e66f5>sqlite3</span> <span style=color:#dc8a78>$local_db</span> <span style=color:#40a02b>&#34;PRAGMA integrity_check&#34;</span> <span style=color:#fe640b>2</span><span style=color:#04a5e5;font-weight:700>&gt;&amp;</span><span style=color:#fe640b>1</span>
+</span></span><span style=display:flex><span><span style=color:#04a5e5;font-weight:700>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic># Report status and post captured log to healthcheck.io
+</span></span></span><span style=display:flex><span><span style=color:#9ca0b0;font-style:italic></span><span style=color:#8839ef>set</span> <span style=color:#1e66f5>-l</span> <span style=color:#dc8a78>url</span> <span style=color:#40a02b>&#34;</span><span style=color:#dc8a78>$HEALTHCHECKS_IO_URL</span><span style=color:#40a02b>/</span><span style=color:#dc8a78>$status</span><span style=color:#40a02b>&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#1e66f5>curl</span> <span style=color:#1e66f5>-m</span> <span style=color:#fe640b>20</span> <span style=color:#1e66f5>--retry</span> <span style=color:#fe640b>5</span> <span style=color:#1e66f5>--data-raw</span> <span style=color:#40a02b>&#34;</span><span style=color:#dc8a78>$(</span><span style=color:#40a02b>string split0 </span><span style=color:#dc8a78>$log</span><span style=color:#40a02b>)&#34;</span> <span style=color:#dc8a78>$url</span>
+</span></span></code></pre></div><p>The above <a href=https://fishshell.com/docs/current/language.html rel=external>Fish script</a> does just that.
+It uses <a href=https://healthchecks.io/ rel=external>healthchecks.io</a> which knows the cron schedule and will email me if the job doesn&rsquo;t ping it.
+It also captures <code>stdout</code> and <code>stderr</code> from both commands and sends the exit code in the ping.
+If something is amiss, I have all the information in one place.</p><p>I have currently scheduled these jobs to run once a week in the early hours of Saturday.
+They&rsquo;re all spread out so that only one runs at a time.</p><h2 id=closing-thoughts><a href=#closing-thoughts>Closing thoughts</a></h2><p>I have run this setup in production for a year now (minus the verification - I like to live dangerously).
+In this time I had one failure that I was quickly alerted to and able to fix.</p><p>SQLite is a battle tested piece of software and performs incredibly well.
+Litestream replication is rock solid and I trust the monitoring.
+But the simplicity comes with tradeoffs that you should consider before adopting.</p><p>This specific setup only works for SQLite.
+That means I can only run apps that use/allow SQLite as their storage backend.
+This sometimes means I can&rsquo;t run an application I&rsquo;d like, but I&rsquo;ve always found alternatives.</p><p>Litestream does not support multiple replicas - although <a href=https://fly.io/blog/litestream-revamped/ rel=external>this is changing</a>.
+Currently, all <code>Deployments</code> have <code>replicas = 1</code> and <code>strategy = "Recreate"</code> to ensure there are never two instances of the same application running.
+The result is a short downtime on restart and no option to scale horizontally - both of which I can live with.</p><p>Against Litestream recommendation, I don&rsquo;t use a PVC.
+If there is a catastrophic failure, like a power outage, some data might not have been replicated yet and is lost.
+I accept this mainly because applications I host don&rsquo;t generate data when I&rsquo;m not interacting with them.</p><p>If you can live with these caveats, you get a beautifully simple setup.</p></div></article><div class="mt-8 mb-3 py-4 px-5 md:px-9" style="background-image:url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 304 304' width='304' height='304'%3E%3Cpath fill='%23c8c8c8' fill-opacity='0.5' d='M44.1 224a5 5 0 1 1 0 2H0v-2h44.1zm160 48a5 5 0 1 1 0 2H82v-2h122.1zm57.8-46a5 5 0 1 1 0-2H304v2h-42.1zm0 16a5 5 0 1 1 0-2H304v2h-42.1zm6.2-114a5 5 0 1 1 0 2h-86.2a5 5 0 1 1 0-2h86.2zm-256-48a5 5 0 1 1 0 2H0v-2h12.1zm185.8 34a5 5 0 1 1 0-2h86.2a5 5 0 1 1 0 2h-86.2zM258 12.1a5 5 0 1 1-2 0V0h2v12.1zm-64 208a5 5 0 1 1-2 0v-54.2a5 5 0 1 1 2 0v54.2zm48-198.2V80h62v2h-64V21.9a5 5 0 1 1 2 0zm16 16V64h46v2h-48V37.9a5 5 0 1 1 2 0zm-128 96V208h16v12.1a5 5 0 1 1-2 0V210h-16v-76.1a5 5 0 1 1 2 0zm-5.9-21.9a5 5 0 1 1 0 2H114v48H85.9a5 5 0 1 1 0-2H112v-48h12.1zm-6.2 130a5 5 0 1 1 0-2H176v-74.1a5 5 0 1 1 2 0V242h-60.1zm-16-64a5 5 0 1 1 0-2H114v48h10.1a5 5 0 1 1 0 2H112v-48h-10.1zM66 284.1a5 5 0 1 1-2 0V274H50v30h-2v-32h18v12.1zM236.1 176a5 5 0 1 1 0 2H226v94h48v32h-2v-30h-48v-98h12.1zm25.8-30a5 5 0 1 1 0-2H274v44.1a5 5 0 1 1-2 0V146h-10.1zm-64 96a5 5 0 1 1 0-2H208v-80h16v-14h-42.1a5 5 0 1 1 0-2H226v18h-16v80h-12.1zm86.2-210a5 5 0 1 1 0 2H272V0h2v32h10.1zM98 101.9V146H53.9a5 5 0 1 1 0-2H96v-42.1a5 5 0 1 1 2 0zM53.9 34a5 5 0 1 1 0-2H80V0h2v34H53.9zm60.1 3.9V66H82v64H69.9a5 5 0 1 1 0-2H80V64h32V37.9a5 5 0 1 1 2 0zM101.9 82a5 5 0 1 1 0-2H128V37.9a5 5 0 1 1 2 0V82h-28.1zm16-64a5 5 0 1 1 0-2H146v44.1a5 5 0 1 1-2 0V18h-26.1zm102.2 270a5 5 0 1 1 0 2H98v14h-2v-16h124.1zM242 149.9V160h16v34h-16v62h48v48h-2v-46h-48v-66h16v-30h-16v-12.1a5 5 0 1 1 2 0zM53.9 18a5 5 0 1 1 0-2H64V2H48V0h18v18H53.9zm112 32a5 5 0 1 1 0-2H192V0h50v2h-48v48h-28.1zm-48-48a5 5 0 0 1-9.8-2h2.07a3 3 0 1 0 5.66 0H178v34h-18V21.9a5 5 0 1 1 2 0V32h14V2h-58.1zm0 96a5 5 0 1 1 0-2H137l32-32h39V21.9a5 5 0 1 1 2 0V66h-40.17l-32 32H117.9zm28.1 90.1a5 5 0 1 1-2 0v-76.51L175.59 80H224V21.9a5 5 0 1 1 2 0V82h-49.59L146 112.41v75.69zm16 32a5 5 0 1 1-2 0v-99.51L184.59 96H300.1a5 5 0 0 1 3.9-3.9v2.07a3 3 0 0 0 0 5.66v2.07a5 5 0 0 1-3.9-3.9H185.41L162 121.41v98.69zm-144-64a5 5 0 1 1-2 0v-3.51l48-48V48h32V0h2v50H66v55.41l-48 48v2.69zM50 53.9v43.51l-48 48V208h26.1a5 5 0 1 1 0 2H0v-65.41l48-48V53.9a5 5 0 1 1 2 0zm-16 16V89.41l-34 34v-2.82l32-32V69.9a5 5 0 1 1 2 0zM12.1 32a5 5 0 1 1 0 2H9.41L0 43.41V40.6L8.59 32h3.51zm265.8 18a5 5 0 1 1 0-2h18.69l7.41-7.41v2.82L297.41 50H277.9zm-16 160a5 5 0 1 1 0-2H288v-71.41l16-16v2.82l-14 14V210h-28.1zm-208 32a5 5 0 1 1 0-2H64v-22.59L40.59 194H21.9a5 5 0 1 1 0-2H41.41L66 216.59V242H53.9zm150.2 14a5 5 0 1 1 0 2H96v-56.6L56.6 162H37.9a5 5 0 1 1 0-2h19.5L98 200.6V256h106.1zm-150.2 2a5 5 0 1 1 0-2H80v-46.59L48.59 178H21.9a5 5 0 1 1 0-2H49.41L82 208.59V258H53.9zM34 39.8v1.61L9.41 66H0v-2h8.59L32 40.59V0h2v39.8zM2 300.1a5 5 0 0 1 3.9 3.9H3.83A3 3 0 0 0 0 302.17V256h18v48h-2v-46H2v42.1zM34 241v63h-2v-62H0v-2h34v1zM17 18H0v-2h16V0h2v18h-1zm273-2h14v2h-16V0h2v16zm-32 273v15h-2v-14h-14v14h-2v-16h18v1zM0 92.1A5.02 5.02 0 0 1 6 97a5 5 0 0 1-6 4.9v-2.07a3 3 0 1 0 0-5.66V92.1zM80 272h2v32h-2v-32zm37.9 32h-2.07a3 3 0 0 0-5.66 0h-2.07a5 5 0 0 1 9.8 0zM5.9 0A5.02 5.02 0 0 1 0 5.9V3.83A3 3 0 0 0 3.83 0H5.9zm294.2 0h2.07A3 3 0 0 0 304 3.83V5.9a5 5 0 0 1-3.9-5.9zm3.9 300.1v2.07a3 3 0 0 0-1.83 1.83h-2.07a5 5 0 0 1 3.9-3.9zM97 100a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-48 32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32 48a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16-64a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 96a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-144a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-96 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm96 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16-64a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-32 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM49 36a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-32 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM33 68a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-48a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 240a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16-64a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm80-176a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32 48a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm112 176a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM17 180a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM17 84a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32 64a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6z'%3E%3C/path%3E%3C/svg%3E&#34;)">You read the whole thing.
+Back <a class=underline href=#very-top>to the top</a>?</div></main><footer><div class="h-spaced mb-5 mt-12 text-xs text-verysubtle">All content created by Lukas Knuth and licensed under the
+<a class="underline text-bold" href=https://creativecommons.org/licenses/by-sa/4.0/>Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+All source code is licensed <a class=underline href=https://opensource.org/license/mit>MIT</a>.
+Zu <a class="underline text-bold" href=/impressum>Impressum und Datenschutz</a>, vom deutschen Gesetz vorgeschrieben.</div></footer></body></html>
