@@ -47,7 +47,7 @@ A simple tool that does one thing and does it really well: replicate one or mult
 
 The setup is very simple - no need to deploy any operator or CRDs.
 It runs as a sidecar container to the actual application and just needs access to the SQLite database file on disk.
-We can achieve both easily by sharing an `emptyDir` between the two containers:
+Both can easily be achieved by sharing an `emptyDir` between the two containers:
 
 ```terraform
 # NOTE: Valid but shortened.
@@ -123,12 +123,12 @@ resource "kubernetes_config_map_v1" "litestream_config" {
 }
 ```
 
-Even though the configuration format is YAML, we don't have to write it ourselves!
-Instead, we can use the normal object notation of HCL and let `yamlencode` do the dirty work.
+Even though the configuration format is YAML, I don't have to write it myself!
+Instead, I use the normal object notation of HCL and let `yamlencode` do the dirty work.
 The configuration is then mounted into the Litestream sidecar.
 
-At this point we have continuous replication of data set up.
-But now if the App restarts, we're starting with an empty database.
+At this point the continuous replication of data is set up.
+But now if the App restarts, it's starting with an empty database.
 Litestream can help again, with its `restore` command:
 
 ```terraform
@@ -175,16 +175,15 @@ This is all nice and good if it _works_, but how do I notice if it doesn't?
 
 ## Observability
 
-Again, I'm going for simplicity.
 There are many great hosted observability services out there, but that just adds extra complexity.
-What if we just went much simpler?
+Again, I'm going for simplicity.
 
 I had a look around and decided to use Fluent Bit, the more lightweight cousin of Fluentd.
 Fluent Bit can easily be configured to stream any container logs that Kubernetes collects, enrich them with metadata and filter everything.
 
 I'm primarily interested in knowing if anything is wrong with my Litestream replication.
 For example, if my NAS goes offline or if the local network connection drops.
-Litestream will log these errors, and we can turn them into alerts.
+Litestream will log these errors, and Fluent Bit can turn them into alerts.
 
 ```
 [INPUT]
@@ -223,7 +222,7 @@ Every `Filter` has a `Match` that specifies which logs (identified by `Tag`s) th
 
 It starts with a `INPUT` that reads all log files that Kubernetes writes to disk on each node.
 The path depends on your Kubernetes distribution, the above is for Talos Linux.
-There is usually one log-file per container, and we're just ingesting them all.
+There is usually one log-file per container, and its just ingesting them all.
 
 Next come the `FILTER` steps:
 
@@ -231,13 +230,14 @@ Next come the `FILTER` steps:
     - The `Merge_Log` checks if the log is JSON formatted and makes its structure available
     - Litestream can be [configured to log JSON](https://litestream.io/reference/config/#logging)
 2. `grep` only retains logs made by containers named `litestream-sidecar` or `litestream-restore-snapshot`
-    - These are the names used earlier when we configured the Litstream sidecar and init containers to the deployment.
+    - These are the names used earlier in the Litstream sidecar and init containers of the deployment.
 3. `rewrite_tag` takes the filtered down logs and tags them with `problem.$TAG` if the log-level is either `WARN` or `ERROR`
     - The `$level` is available because it was parsed out of the JSON log earlier.
 
 After this, the `OUTPUT` writes all logs tagged `problem.*` to stdout as JSON lines.
 This gives me a _single_ stream of all Errors/Warnings that Litestream encounters.
-Easy to verify if we catch everything, halfway there.
+This is a good setup for manual testing to verify expected scenarios will be caught by the filters.
+Halfway there.
 
 ### Alerting
 
@@ -261,7 +261,7 @@ The simplest way to just get a notification is to send it via Slack:
 ```
 
 The `throttle` filter puts an upper bound on the number of notifications that are sent.
-If Litestream encounters a replication error and retires every second, we don't need Slack messages with the same cadence.
+If Litestream encounters a replication error and retires every second, I don't need Slack messages with the same cadence.
 The algorithm uses a [leaky bucket](https://docs.fluentbit.io/manual/pipeline/filters/throttle) which supports bursting.
 
 Next, the throttled log stream is sent to the `slack` output.
@@ -279,7 +279,7 @@ I've done this manually in the past and it works.
 However, should the backup not restore properly, there is no recourse - the latest, unreplicated changes are lost to the ephemeral storage.
 
 Instead, let's have the Cronjob run the `litestream restore` command and verify that it completed successfully.
-Then, we can use `PRAGMA integrity_check` to validate that the resulting SQLite file is [not corrupted](https://www.sqlite.org/faq.html#q21).
+Then, use `PRAGMA integrity_check` to validate that the resulting SQLite file is [not corrupted](https://www.sqlite.org/faq.html#q21).
 
 ```fish
 # - `APP_DB_PATH` set to the full path of the apps database
