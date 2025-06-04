@@ -1,26 +1,20 @@
 ---
-title: "TBD"
+title: "Persistent storage is for cowards"
 date: 2025-05-30T16:20:00+02:00
 ---
-
-<!--toc:start-->
-- [The problem with storage data](#the-problem-with-storage-data)
-- [Continuous Replication](#continuous-replication)
-- [Observability](#observability)
-  - [Alerting](#alerting)
-- [Chaos Engineering](#chaos-engineering)
-- [Closing thoughts](#closing-thoughts)
-<!--toc:end-->
 
 About a year ago, I rebuild my home server.
 It still runs on Kubernetes, but I moved away from traditional tooling associated with it.
 The goal was simplicity; and I made some opinionated choices to achieve it.
 For example, I deploy everything using Terraform with the Kubernetes provider - no more YAML!
 
-I wanted my data to be safe from failures.
-After all, I'm running the server off of an SD Card that could be corrupted at any point.
+For hardware, I just have a single Raspberry Pi 4.
+There is no external storage attached to it, so everything is on an SD Card that could be corrupted at any point.
+I would like very much for my application data to not be lost when that happens though.
 
-## The problem with storage data
+<!--more-->
+
+## Storage: deceptively complex
 
 Kubernetes has support for persistent volumes out of the box.
 They come in the form of `PersistentVolume` and `PersistentVolumeClaim`.
@@ -97,7 +91,7 @@ resource "kubernetes_deployment" "app" {
 Both the main application container and the Litestream sidecar access the same ephemeral storage volume.
 Using ephemeral storage here also solves our data colocation problem: If the storage does not need to be retained across application starts, the `Pod` can be started on any node in the cluster.
 
-> ![tip]
+> [!tip]
 > The **ephemeral storage** means that the storage is permanently deleted after the `Pod` is stopped.
 > That means every time the `Pod` starts, it starts with an empty storage folder. 
 
@@ -169,7 +163,7 @@ This makes the error state very obvious: The workload does not start at all.
 Some details in the above configuration are omitted for brevity.
 If you're interested, the full configuration is available [in my homeserver repo](https://github.com/LukasKnuth/homeserver/blob/main/deploy/modules/web_app/main.tf).
 
-> ![note]
+> [!note]
 > For redundancy, I'm sending the backups both to my local NAS running MinIO and off-site to Wasabi S3 bucket.
 
 This is all nice and good if it _works_, but how do I notice if it doesn't?
@@ -272,14 +266,34 @@ Now when Litstream encounters an error while replicating _or_ restoring, I get n
 
 > If you don't test your backups, you don't have backups.
 
-The simple/brutal solution here is to just randomly have a cronjob restart deployments, so that the init job will restore the database.
+The simple/brutal solution here would be to just randomly have a cronjob restart deployments, so that the init job will restore the database.
 I've done this manually in the past and it works.
 However, should the backup not restore properly, there is no recourse - the latest, unreplicated changes are lost to the ephemeral storage.
 
-Instead, let's have the Cron job that simply run the `restore` commands and verify that it completed successfully.
+Instead, let's have the Cronjob run the `litestream restore` command and verify that it completed successfully.
 Then, we can use `PRAGMA quick_check` to validate that the resulting SQLite file is [not corrupted](https://www.sqlite.org/faq.html#q21).
-Afterward, we can discard the file again, our replica is currently safe.
 
+```fish
+# - `APP_DB_PATH` set to the full path of the apps database
+# - `HEALTHCHECKS_IO_URL` the `hc-ping.com` URL with a UUID
+set -l local_db "/app/db.sqlite"
+
+# First, restore database from newest replica generation
+# If successfull, verify the integrity of the restored database
+set -l log (litestream restore -o $local_db $APP_DB_PATH 2>&1; and sqlite3 $local_db "PRAGMA integrity_check" 2>&1)
+
+# Report status and post captured log to healthcheck.io
+set -l url "$HEALTHCHECKS_IO_URL/$status"
+curl -m 20 --retry 5 --data-raw "$(string split0 $log)" $url
+```
+
+The above [Fish script](https://fishshell.com/docs/current/language.html) does just that.
+It uses [healthchecks.io](https://healthchecks.io/) which knows the cron schedule and will email me if the job doesn't ping it.
+It also captures `stdout` and `stderr` from both commands and sends the exit code.
+Both are helpful for debugging any issues.
+
+I have currently scheduled these jobs to run once a week in the early hours of Saturday.
+They're all spread out so that only one runs at a time.
 
 ## Closing thoughts
 
@@ -288,9 +302,9 @@ In this time I had one failure that I was quickly alerted to (and able to fix).
 The Litestream replication is rock solid and I trust the monitoring.
 However, there are certain shortcomings of my setup that you should consider:
 
-The specific setup with Litestream only works for SQLite.
+This specific setup only works for SQLite.
 That means I can only run apps that use/allow SQLite as their storage backend.
-This is sometimes annoying but hasn't been a problem.
+This sometimes means I can't run an application I'd like, but I've always found alternatives.
 
 Litestream does not support multiple replicas - although [this is changing](https://fly.io/blog/litestream-revamped/).
 Currently, all `Deployments` have `replicas = 1` and `strategy = "Recreate"` to ensure there are never two instances of the same application running.
