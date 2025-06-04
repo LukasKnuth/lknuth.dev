@@ -72,6 +72,10 @@
     @apply ps-1;
   }
 
+  li ul, li ol {
+    @apply my-2;
+  }
+
   .table-scroll {
     @apply content-scrollable;
   }
