@@ -4,6 +4,7 @@ title: Now
 ---
 
 What's happening with me _now_?
+Last updated on _{{< last_updated >}}_
 
 <!--more-->
 

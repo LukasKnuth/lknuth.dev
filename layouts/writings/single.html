@@ -1,8 +1,9 @@
 {{ define "main" }}
 <article class="h-spaced mt-4 md:mt-6" itemscope itemtype="http://schema.org/BlogPosting">
   <h1 class="text-3xl font-light text-subtle" itemprop="name headline">{{ .Title }}</h1>
-  <div class="my-2 text-sm text-subtle">
-    <time datetime="{{ .Date }}" itemprop="datePublished">{{ .Date.Format .Site.Params.dateFormat }}</time>
+  <div class="my-2 text-sm text-subtle grid grid-cols-1 sm:block">
+    <span class="inline-block">Posted: <time datetime="{{ .Date }}" itemprop="datePublished">{{ .Date.Format .Site.Params.dateFormat }}</time></span>
+    <span class="inline-block sm:pl-5">Updated: <time datetime="{{ .Lastmod }}" itemprop="dateModified">{{ .Lastmod.Format .Site.Params.dateFormat }}</time></span>
   </div>
   <div class="prose" itemprop="articleBody">{{ .Content }}</div>
 </article>

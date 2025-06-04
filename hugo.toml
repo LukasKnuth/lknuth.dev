@@ -4,6 +4,7 @@ title = "Software Engineer"
 
 disableKinds = ["taxonomy"]
 enableInlineShortcodes = true
+enableGitInfo = true
 
 [[menu.main]]
 name = "Writings"
