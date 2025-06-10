@@ -40,4 +40,4 @@ E-Mail: me @ the domain of this blog
 * Built with [Hugo](https://gohugo.io/), styled with [Tailwind CSS](https://tailwindcss.com/)
 * Theme inspired by [cactus by monkeyWzr](https://github.com/monkeyWzr/hugo-theme-cactus)
 * Circuit Board pattern from [Hero Patterns](https://heropatterns.com/)
-* Hosted on [GitHub](https://pages.github.com/), behind [Cloudflare](https://cloudflare.com/)
+* Hosted on [GitHub](https://pages.github.com/)

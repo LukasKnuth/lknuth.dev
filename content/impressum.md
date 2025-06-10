@@ -26,9 +26,5 @@ Github ist ein amerikanisches Unternehmen.
 Ich habe keine Einsicht in Logs, die beim Zugriff auf diese Website generiert werden.
 Es wird kein serverseitiger Code ausgeführt, alle Dokumente sind statisch generiert.
 
-Des Weiteren wird die Website von [Cloudflare](https://cloudflare.com) kostenlos gesichert.
-Cloudflare ist ebenfalls ein amerikanisches Unternehmen.
-Ich habe Einsicht auf anonyme aggregierte Statistiken von Besuchern: Land und Anzahl.
-
 Darüber hinaus werden keinerlei Cookies gesetzt oder sonstiges Tracking betrieben.
 
