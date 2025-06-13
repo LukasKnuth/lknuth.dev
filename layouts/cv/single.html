@@ -4,9 +4,9 @@
 <section class="h-spaced mt-4 pl-5 border-l border-l-subtle">
 	{{ range $.Site.Data.my_cv.list }}
 		{{ if isset . "school" }}
-			{{ partial "partials/cv/education.html" (dict "edu" . "Page" $.Page) }}
+			{{ partial "cv/education.html" (dict "edu" . "Page" $.Page) }}
 		{{ else if isset . "company" }}
-			{{ partial "partials/cv/job.html" (dict "job" . "Page" $.Page) }}
+			{{ partial "cv/job.html" (dict "job" . "Page" $.Page) }}
 		{{ end }}
 	{{ end }}
 </section>
