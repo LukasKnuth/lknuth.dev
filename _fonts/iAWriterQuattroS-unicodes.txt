@@ -14,7 +14,11 @@ U+00D6
 U+00DC
 # Greek letter used in my headlines
 U+039E
+# Dashes
+U+2010-2015
 # Extra quotation
 U+2018-201F
-# Extra points
+# Dots and ellipses
 U+2022-2026
+# &nbsp; HTML sequence
+U+A0

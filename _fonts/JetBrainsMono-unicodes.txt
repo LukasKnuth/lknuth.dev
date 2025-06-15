@@ -5,3 +5,5 @@
 U+0020-007F
 # Box drawing
 U+2500-257F
+# Dot for UL listings
+U+2022
