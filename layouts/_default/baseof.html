@@ -2,6 +2,9 @@
 <html lang="{{ .Site.LanguageCode }}">
   <head>
     <meta charset="utf-8" />
+    {{ partialCached "tailwind.html" . }}
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/iAWriterQuattroS-Regular.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/JetBrainsMono-Regular.woff2" crossorigin>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="{{ .Site.Params.Author }}">
@@ -24,7 +27,6 @@
     {{ end -}}
     <title>{{ if .IsPage }} {{ .Title }} | {{ end }}{{ .Site.Params.Author }}</title>
     <link rel='canonical' href='{{ .Permalink }}'>
-    {{ partialCached "tailwind.html" . }}
     <!-- Created via https://realfavicongenerator.net/ -->
     <link rel="icon" type="image/png" href="{{ "images/favicon-96x96.png" | absURL }}" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="{{ "images/favicon.svg" | absURL }}" />
