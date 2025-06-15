@@ -1,18 +1,18 @@
-set shell := ["zsh", "-uc"]
+subset-text-style style:
+  fonttools subset _fonts/iAWriterQuattroS-{{style}}.ttf --flavor=woff2 --output-file="static/fonts/iAWriterQuattroS-{{style}}.woff2" --unicodes-file="_fonts/iAWriterQuattroS-unicodes.txt" --layout-features='zero'
+subset-text: (subset-text-style "Regular") (subset-text-style "Italic") (subset-text-style "Bold") (subset-text-style "BoldItalic")
+
+subset-code-style style:
+  fonttools subset _fonts/JetBrainsMono-{{style}}.ttf --flavor=woff2 --output-file="static/fonts/JetBrainsMono-{{style}}.woff2" --unicodes-file="_fonts/JetBrainsMono-unicodes.txt" --layout-features='calt','zero'
+subset-code: (subset-code-style "Regular") (subset-code-style "Italic") (subset-code-style "Bold") (subset-code-style "BoldItalic")
+
+subset: subset-code subset-text
 
 dev:
   hugo --minify server --disableFastRender --logLevel info
 
-build:
+build: subset
   hugo --minify
-
-subset-font-text type:
-  fonttools subset _fonts/iAWriterQuattroS-{{type}}.ttf --flavor=woff2 --output-file="static/fonts/iAWriterQuattroS-{{type}}.woff2" --unicodes-file="_fonts/iAWriterQuattroS-unicodes.txt" --layout-features='zero'
-font-text: (subset-font-text "Regular") (subset-font-text "Italic") (subset-font-text "Bold") (subset-font-text "BoldItalic")
-
-subset-font-code type:
-  fonttools subset _fonts/JetBrainsMono-{{type}}.ttf --flavor=woff2 --output-file="static/fonts/JetBrainsMono-{{type}}.woff2" --unicodes-file="_fonts/JetBrainsMono-unicodes.txt" --layout-features='calt','zero'
-font-code: (subset-font-code "Regular") (subset-font-code "Italic") (subset-font-code "Bold") (subset-font-code "BoldItalic")
 
 check: build
   node_modules/.bin/subfont public/index.html --dry-run --recursive --canonicalroot https://lknuth.dev

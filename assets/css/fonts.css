@@ -50,7 +50,7 @@
     local("JetBrainsMonoNerdFontComplete-Bold-Italic"),
     local("JetBrainsMonoNerdFontCompleteM-Bold-Italic"),
     local("JetBrainsMonoNerdFo-Bold-Italic"),
-    url("/fonts/JetBrainsMono-Bold-Italic.woff2") format("woff2");
+    url("/fonts/JetBrainsMono-BoldItalic.woff2") format("woff2");
 }
 
 /* ------- iA Writer Quattro (sans-serif) -------- */
