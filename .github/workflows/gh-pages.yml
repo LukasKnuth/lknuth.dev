@@ -16,7 +16,7 @@ jobs:
       - uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff # v3.0.0
         name: Install just
       - name: Install fonttools
-        run: pip install fonttools
+        run: pip install fonttools brotli
       - uses: peaceiris/actions-hugo@75d2e84710de30f6ff7268e08f310b60ef14033f # v3.0.0
         name: Install Hugo
         with:
