@@ -15,7 +15,10 @@
 
   --font-*: initial; /* remove all default Tailwind fonts */
   --font-sans: "iA Writer Quattro", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* Use slashed zero font-feature */
+  --font-sans--font-feature-settings: "zero";
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-mono--font-feature-settings: "zero";
 
   /* Remove Tailwind unused variables. These aren't (currently) removed by Tailwind CLI minify.
     The CSS variable definitions currently make up 50% of the final CSS file - so we remove them.
