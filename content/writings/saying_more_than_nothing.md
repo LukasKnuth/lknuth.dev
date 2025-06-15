@@ -57,7 +57,7 @@ This code will (given that the reading part is actually implemented) read the co
 
 This pattern is problematic, as it has to be explicitly documented under which circumstances the method returns `null`. Otherwise, it's unclear what the returned `null` actually means. Does it mean the file is empty? Does the file not exist? Was the content not parseable?
 
-Additionally, it might be possible to recover from certain failure cases, but you can't differentiate between them when they all just return `null` (which only tells you that *something* went wrong). Last but not least, returning `null` does not force any handling of the error-condition. All those drawbacks can be overcome by [throwing an exception](/2012/catching-practice/#throwing-the-ball) instead.
+Additionally, it might be possible to recover from certain failure cases, but you can't differentiate between them when they all just return `null` (which only tells you that *something* went wrong). Last but not least, returning `null` does not force any handling of the error-condition. All those drawbacks can be overcome by [throwing an exception]({{< relref "catching_practice.md#throwing-the-ball" >}}) instead.
 
 ### Yoda Conditions
 
@@ -108,7 +108,7 @@ public List<Unicorns> getUnicorns(){
 
 This enables the caller of the method to simply iterate over the returned list, without needing to fear a `NullPointerException`.
 
-You don't even need to instantiate a new collection, as the `Collections`-class provides the methods `emptySet()`, `emptyList()` and `emptyMap()` to return an empty, [immutable](/2012/rules-of-immutability/) collection for the given type of collection.
+You don't even need to instantiate a new collection, as the `Collections`-class provides the methods `emptySet()`, `emptyList()` and `emptyMap()` to return an empty, [immutable]({{< relref "rules_of_immutability" >}}) collection for the given type of collection.
 
 ## Conclusion
 
