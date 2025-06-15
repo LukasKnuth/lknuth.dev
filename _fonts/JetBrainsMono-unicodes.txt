@@ -1,0 +1,7 @@
+# Ranges from https://jrgraphix.net/r/Unicode/
+# Test with https://wakamaifondue.com/
+
+# Basic Latin characters
+U+0020-007F
+# Box drawing
+U+2500-257F

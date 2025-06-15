@@ -1,0 +1,20 @@
+# Ranges from https://jrgraphix.net/r/Unicode/
+# Test with https://wakamaifondue.com/
+
+# Basic Latin characters
+U+0020-007F
+# German ß
+U+00DF
+# German Umlauts
+U+00E4
+U+00F6
+U+00FC
+U+00C4
+U+00D6
+U+00DC
+# Greek letter used in my headlines
+U+039E
+# Extra quotation
+U+2018-201F
+# Extra points
+U+2022-2026
