@@ -4,6 +4,9 @@
 /assets/jsconfig.json
 hugo_stats.json
 
+# Generated fonts by subsetting
+/static/fonts/*.woff2
+
 # Executable may be added to repository
 hugo.exe
 hugo.darwin
