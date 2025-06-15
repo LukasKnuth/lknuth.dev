@@ -14,5 +14,8 @@ subset-font-code type:
   fonttools subset _fonts/JetBrainsMono-{{type}}.ttf --flavor=woff2 --output-file="static/fonts/JetBrainsMono-{{type}}.woff2" --unicodes-file="_fonts/JetBrainsMono-unicodes.txt" --layout-features='calt','zero'
 font-code: (subset-font-code "Regular") (subset-font-code "Italic") (subset-font-code "Bold") (subset-font-code "BoldItalic")
 
+check: build
+  node_modules/.bin/subfont public/index.html --dry-run --recursive --canonicalroot https://lknuth.dev
+
 new_article filename:
   hugo new writings/{{filename}}.md
