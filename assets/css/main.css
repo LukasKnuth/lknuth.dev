@@ -34,7 +34,7 @@
 @utility underline-fancy {
   text-decoration: none;
   border-image: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%) 1;
-  border-bottom: 2px solid var(--color-primary);
+  border-bottom: 3px solid var(--color-primary);
 }
 
 @utility h-spaced {
