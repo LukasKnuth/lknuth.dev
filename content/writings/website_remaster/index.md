@@ -92,6 +92,11 @@ I can live with having optimized this just for me.
 
 ### Optimization: Fonts
 
+> [!caution]
+> This setup is **not what I use anymore**.
+> I made further optimizations and have gotten rid of the `local()` directions for consistency.
+> The reasons are outlined in [this follow-up post]({{< relref "webfont_performance.md" >}}).
+
 The fonts remain the largest assets fetched for an uncached request.
 As mentioned above, I removed all fonts except [iA Writer Quattro](https://github.com/iaolo/iA-Fonts/) for text and [JetBrains Mono](https://www.jetbrains.com/lp/mono/) for code.
 But we can do more.

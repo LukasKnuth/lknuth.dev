@@ -32,8 +32,8 @@ E-Mail: me @ the domain of this blog
 
 ## Fonts
 
-* [iA Writer Quattro](https://github.com/iaolo/iA-Fonts/) for text
-* [JetBrains Mono](https://www.jetbrains.com/lp/mono/) for code
+* A subset of [iA Writer Quattro](https://github.com/iaolo/iA-Fonts/) for text
+* A subset of [JetBrains Mono](https://www.jetbrains.com/lp/mono/) for code
 
 ## Tools
 
