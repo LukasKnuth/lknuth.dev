@@ -18,4 +18,8 @@ check: build
   node_modules/.bin/subfont public/index.html --dry-run --recursive --canonicalroot https://lknuth.dev
 
 new_article filename:
-  hugo new writings/{{filename}}.md
+  hugo new content writings/{{filename}}.md
+
+new_pick type filename:
+  # NOTE: must set `--kind` explicitly, archetypes does not support sub-folder matching!
+  hugo new content --kind picks_{{type}} picks/{{type}}/{{filename}}/index.md
