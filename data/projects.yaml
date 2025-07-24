@@ -1,4 +1,7 @@
 list:
+- name: pacman
+  url: https://lukasknuth.github.io/pacman/
+  desc: A faithful adaptation of the arcade classic using my own engine, written when I just learned programming.
 - name: homeserver
   url: https://github.com/LukasKnuth/homeserver
   desc: Full configuration of my Raspberry Pi server with Kubernetes via Talos Linux.
@@ -8,9 +11,6 @@ list:
 - name: BackSlide
   url: https://gitlab.com/p91paul/BackSlide
   desc: A Gnome Shell Extension to automatically switch wallpapers - initially written by me, now maintained by Paolo 💪
-- name: pacman
-  url: https://lukasknuth.github.io/pacman/
-  desc: A faithful adaptation of the arcade classic using my own engine, written when I just learned programming.
 - name: dotfiles
   url: https://github.com/LukasKnuth/dotfiles
   desc: Every developer has to have a dotfiles repository, right?
