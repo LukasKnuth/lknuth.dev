@@ -62,6 +62,13 @@
     @apply border-t-1 border-t-accent/50;
     @apply border-l-1 border-l-accent/50;
   }
+  .filter {
+    @apply py-px px-3;
+    @apply border-2 border-crust rounded-md;
+  }
+  .filter.active {
+    @apply border-accent;
+  }
 }
 
 @import "markdown.css";

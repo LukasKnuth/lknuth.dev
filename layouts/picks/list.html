@@ -1,16 +1,39 @@
 {{ define "main"}}
+<section id="pick-filters" class="h-spaced mb-4">
+  <ul>
+    <li class="mr-2 mb-2 inline-block"><span class="font-bold">Filter:</span></li>
+    {{/*
+      `$` refers to the page being rendered, `.` is the section we're looking at.
+      If they are the same, we're on the specific section page now - activate the filter.
+    */}}
+    {{- with .GetPage "picks" }}
+      <li class="filter {{ if eq $ . }}active{{ end }} mr-2 mb-2 inline-block">
+        <a href="{{ .RelPermalink }}">All</a>
+      </li>
+      {{- range .Sections }}
+      	<li class="filter {{ if eq $ .}}active{{ end }} mr-2 mb-2 inline-block">
+          <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+        </li>
+      {{- end }}
+    {{- end }}
+  </ul>
+</section>
+
 <section id="picks" class="h-spaced mb-4">
   <div class="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
-  {{ range (sort .Pages "Date" "desc") }}
-    {{ $cover := .Resources.GetMatch "cover.*" }}
-    {{ $cover := $cover.Fill "600x800 webp" }}
+  {{/* This should probably paginate after a certain number... */}}
+  {{- range sort .RegularPagesRecursive "Date" "desc" }}
     <a class="inline-block" href="{{ .Permalink }}">
       <figure>
-        <img src="{{ $cover.RelPermalink }}" width="{{ $cover.Width }}" height="{{ $cover.Height }}"/>
+        {{- with .Resources.GetMatch "cover.*" }}
+          {{- with .Fill "600x800 webp" }}
+          <img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}"/>
+          {{- end }}
+        {{- end }}
         <figcaption>{{ .Title }}</figcaption>
       </figure>
     </a>
-  {{ end }}
+  {{- end }}
   </div>
 </section>
 {{ end }}
