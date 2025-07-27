@@ -4,7 +4,7 @@ date: {{ .Date }}
 title: "{{ replace .Name "_" " " | title }}"
 params:
   year: 0000
-  length: min
+  runtime: min
   genres: []
   imdb: url
 ---
