@@ -11,6 +11,10 @@ name = "Writings"
 url = "/writings"
 weight = 1
 [[menu.main]]
+name = "Picks"
+url = "/picks"
+weight = 2
+[[menu.main]]
 name = "About"
 url = "/about"
 weight = 10
