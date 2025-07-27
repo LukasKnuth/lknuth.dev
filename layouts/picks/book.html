@@ -1,0 +1,28 @@
+{{ define "main" }}
+<article class="h-spaced mt-4 md:mt-6" itemscope>
+  <figure class="sm:float-right pl-7 pb-7">
+  {{- with .Resources.GetMatch "cover.*" }}
+    {{- with .Resize "480x webp 100" }}
+    <img src="{{ .RelPermalink }}" width="{{ div .Width 2 }}" height="{{ div .Height 2 }}"/>
+    {{- end }}
+  {{- end }}
+  </figure>
+  
+  <h1 class="text-3xl font-light text-subtle">{{ .Title }}</h1>
+  <div class="my-2 text-sm text-subtle">
+    Added: <time datetime="{{ .Date }}" itemprop="datePublished">{{ .Date.Format .Site.Params.dateFormat }}</time>
+  </div>
+
+  <dl>
+    <dt class="w-34 float-left font-bold">Publisher:</dt>
+    <dd>{{ .Params.publisher }}</dd>
+    <dt class="w-34 float-left font-bold">Year:</dt>
+    <dd>{{ .Params.year }}</dd>
+    <dt class="w-34 float-left font-bold">ISBN:</dt>
+    <dd>{{ .Params.ISBN }}</dd>
+  </dl>
+
+  <div class="prose">{{ .Content }}</div>
+</article>
+{{ end }}
+

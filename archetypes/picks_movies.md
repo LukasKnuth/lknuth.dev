@@ -1,9 +1,12 @@
 ---
-type: movie
+layout: movie
 date: {{ .Date }}
 title: "{{ replace .Name "_" " " | title }}"
-year: 0000
-imdb: url
+params:
+  year: 0000
+  length: min
+  genres: []
+  imdb: url
 ---
 
 About the movie

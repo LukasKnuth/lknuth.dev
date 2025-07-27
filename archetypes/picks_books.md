@@ -1,8 +1,11 @@
 ---
-type: book
+layout: book
 date: {{ .Date }}
 title: "{{ replace .Name "_" " " | title }}"
-isbn: add
+params:
+  publisher: pub
+  year: yr
+  ISBN: "nr"
 ---
 
 About the book
