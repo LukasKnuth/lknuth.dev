@@ -1,5 +1,4 @@
 ---
-layout: game
 date: {{ .Date }}
 title: "{{ replace .Name "_" " " | title }}"
 params:

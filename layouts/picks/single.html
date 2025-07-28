@@ -1,0 +1,46 @@
+{{ define "main" }}
+<article class="h-spaced mt-4 md:mt-6" itemscope>
+  <figure class="sm:float-right pl-7 pb-7">
+  {{- with .Resources.GetMatch "cover.*" }}
+    {{- with .Resize "480x webp 100" }}
+    <img src="{{ .RelPermalink }}" width="{{ div .Width 2 }}" height="{{ div .Height 2 }}"/>
+    {{- end }}
+  {{- end }}
+  </figure>
+  
+  <h1 class="text-3xl font-light text-subtle">{{ .Title }}</h1>
+  <div class="my-2 text-sm text-subtle">
+    Added: <time datetime="{{ .Date }}" itemprop="datePublished">{{ .Date.Format .Site.Params.dateFormat }}</time>
+  </div>
+
+  <dl>
+  {{/* NOTE: We create this as a slice of dicts so that the order is maintained on iteration. */}}
+  {{- $metadata := slice
+    (dict "id" "publisher" "label" "Publisher")
+    (dict "id" "imdb" "label" "Information" "fmt" "<a class='underline-fancy' href='%v'>IMDb</a>")
+    (dict "id" "year" "label" "Released")
+    (dict "id" "ISBN" "label" "ISBN-13")
+    (dict "id" "platforms" "label" "Platforms")
+    (dict "id" "runtime" "label" "Runtime" "fmt" "%vmin")
+    (dict "id" "to_beat" "label" "To beat" "fmt" "%v hours")
+    (dict "id" "genres" "label" "Genres")
+  }}
+  {{- range $metadata }}
+    {{- $label := .label }}
+    {{- $fmt := default "%v" .fmt }}
+    {{- with index $.Params .id }}
+      <dt class="w-34 float-left font-bold">{{ $label }}:</dt>
+      {{- if reflect.IsSlice . }}
+        <dd>{{- range . }}<span class="tag mr-2 inline-block">{{ printf $fmt . | lower }}</span>{{- end }}</dd>
+      {{- else }}
+        <dd>{{ printf $fmt . | safeHTML }}</dd>
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  </dl>
+
+  <div class="prose">{{ .Content }}</div>
+</article>
+{{ end }}
+
+

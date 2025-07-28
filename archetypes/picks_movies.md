@@ -1,5 +1,4 @@
 ---
-layout: movie
 date: {{ .Date }}
 title: "{{ replace .Name "_" " " | title }}"
 params:

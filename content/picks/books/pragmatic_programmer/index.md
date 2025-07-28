@@ -1,5 +1,4 @@
 ---
-layout: book
 title: "Pragmatic Programmer"
 date: 2025-07-24T18:40:09+02:00
 draft: true

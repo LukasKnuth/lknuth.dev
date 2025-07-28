@@ -1,5 +1,4 @@
 ---
-layout: book
 date: 2025-07-24T22:12:26+02:00
 title: "Kubernetes in Action"
 params:

@@ -1,5 +1,4 @@
 ---
-layout: movie
 title: The Player
 date: 2025-07-24T19:40:09+02:00
 params:

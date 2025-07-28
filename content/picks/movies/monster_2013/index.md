@@ -1,5 +1,4 @@
 ---
-layout: movie
 title: Monster
 date: 2025-07-24T22:12:01+02:00
 params:

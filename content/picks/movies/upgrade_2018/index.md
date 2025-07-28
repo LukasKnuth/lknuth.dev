@@ -1,5 +1,4 @@
 ---
-layout: movie
 date: 2025-07-26T21:04:54+02:00
 title: "Upgrade"
 params:

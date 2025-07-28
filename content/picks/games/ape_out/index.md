@@ -1,5 +1,4 @@
 ---
-layout: game
 date: 2025-07-27T13:52:41+02:00
 title: "Ape Out"
 params:
