@@ -2,9 +2,9 @@
 date: {{ .Date }}
 title: "{{ replace .Name "_" " " | title }}"
 params:
-  publisher: pub
-  year: yr
-  ISBN: "nr"
+  publisher: ""
+  year: 0000
+  ISBN: ""
 ---
 
 About the book
