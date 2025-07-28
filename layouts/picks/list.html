@@ -14,7 +14,7 @@
       <li class="filter {{ if eq $ . }}active{{ end }} mr-2 mb-2 inline-block">
         <a href="{{ .RelPermalink }}">All</a>
       </li>
-      {{- range .Sections }}
+      {{- range .Sections.ByTitle }}
       	<li class="filter {{ if eq $ .}}active{{ end }} mr-2 mb-2 inline-block">
           <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
         </li>
