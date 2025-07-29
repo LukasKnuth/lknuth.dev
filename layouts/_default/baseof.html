@@ -31,7 +31,18 @@
     <link rel="icon" type="image/png" href="{{ "images/favicon-96x96.png" | absURL }}" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="{{ "images/favicon.svg" | absURL }}" />
     <link rel="shortcut icon" href="{{ "images/favicon.ico" | absURL }}" />
-    <link rel="alternate" type="application/rss+xml" href="{{ "writings/index.xml" | absURL }}" title="Writings" />
+    {{- $candidates := slice }}
+    {{- if .Page.IsHome }}
+    {{- $candidates = slice (.GetPage "writings") (.GetPage "picks") }}
+    {{- else }}
+    {{- $candidates = union (slice .Page) .Ancestors }}
+    {{- end }}
+    {{- range $candidates }}
+      {{- $title := or .Params.rss_title .Title }}
+      {{- with .OutputFormats.Get "rss" }}
+        {{ printf `<link rel=%q type=%q href=%q title=%q>` .Rel .MediaType.Type .Permalink $title | safeHTML }}
+      {{- end }}
+    {{- end }}
   </head>
   <body id="very-top" class="flex flex-col h-screen max-w-6xl container mx-auto bg-pane break-words text-base text-writing md:text-lg antialiased hyphens-auto leading-relaxed font-sans">
     <header>{{ partial "header.html" . }}</header>
