@@ -1,0 +1,41 @@
+{{- $pages := sort .RegularPagesRecursive "Date" "desc" }}
+{{- $limit := .Site.Config.Services.RSS.Limit }}
+{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    {{- if eq .Title "Picks" }}
+    <title>Picks: All</title>
+    {{- else }}
+    <title>Picks: {{ .Title }}</title>
+    <category>{{ .Title }}</category>
+    {{- end }}
+    <link>{{ .Permalink }}</link>
+    <generator>Hugo</generator>
+    <language>{{ site.Language.LanguageCode }}</language>
+    <managingEditor>{{ site.Params.Author }}</managingEditor>
+    <copyright>Content licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. All source code is licensed MIT</copyright>
+    {{ if not .Date.IsZero }}
+    <lastBuildDate>{{ (index $pages.ByLastmod.Reverse 0).Lastmod.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</lastBuildDate>
+    {{ end }}
+    {{- with .OutputFormats.Get "RSS" }}
+    {{ printf "<atom:link href=%q rel=\"self\" type=%q />" .Permalink .MediaType | safeHTML }}
+    {{- end }}
+    {{- range $pages }}
+    <item>
+      <title>{{ .Title }}</title>
+      <link>{{ .Permalink }}</link>
+      {{- with index .Ancestors 0 }}
+      <category href="{{ .Permalink }}">{{ .LinkTitle }}</category>
+      {{- end }}
+      {{- with .Resources.GetMatch "cover.*" }}
+      {{- with .Resize "fill 526x700 webp q100" }}
+      <enclosure url="{{ .Permalink }}" length="{{ len .Content }}" type="{{ .MediaType }}" />
+      {{- end }}
+      {{- end }}
+      <pubDate>{{ .PublishDate.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
+      <author>{{ .Site.Params.Author }}</author>
+      <guid>{{ .Permalink }}</guid>
+    </item>
+    {{- end }}
+  </channel>
+</rss>
