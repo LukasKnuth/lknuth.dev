@@ -9,7 +9,7 @@ subset-code: (subset-code-style "Regular") (subset-code-style "Italic") (subset-
 subset: subset-code subset-text
 
 dev:
-  hugo --minify server --disableFastRender --logLevel info
+  hugo server --minify server --disableFastRender --logLevel info
 
 build: subset
   hugo --minify
