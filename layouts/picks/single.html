@@ -1,11 +1,15 @@
 {{ define "main" }}
 <article class="h-spaced mt-4 md:mt-6" itemscope>
   <figure class="sm:float-right pl-7 pb-7">
-  {{- with .Resources.GetMatch "cover.*" }}
-    {{- with .Resize "480x webp 100" }}
-    <img src="{{ .RelPermalink }}" width="{{ div .Width 2 }}" height="{{ div .Height 2 }}"/>
+    {{- with .Resources.GetMatch "cover.*" }}
+    {{- $onex := .Resize "240x webp q100" }}
+    {{- $twox := .Resize "480x webp q100" }}
+    <img class="rounded-md"
+        width="{{ $onex.Width }}" height="{{ $onex.Height }}"
+        src="{{ $onex.Permalink }}"
+        srcset="{{ $twox.RelPermalink }} 2x"
+    />
     {{- end }}
-  {{- end }}
   </figure>
   
   <h1 class="text-3xl font-light text-subtle">{{ .Title }}</h1>

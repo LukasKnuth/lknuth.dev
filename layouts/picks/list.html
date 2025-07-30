@@ -46,9 +46,13 @@
     <a class="block" href="{{ .Permalink }}">
       <figure class="relative">
         {{- with .Resources.GetMatch "cover.*" }}
-          {{- with .Resize "fill 526x700 webp q100" }}
-          <img src="{{ .RelPermalink }}" class="rounded-md" width="{{ div .Width 2 }}" height="{{ div .Height 2 }}"/>
-          {{- end }}
+        {{- $onex := .Resize "fill 263x400 webp q100" }}
+        {{- $twox := .Resize "fill 526x800 webp q100" }}
+        <img class="rounded-md"
+            width="{{ $onex.Width }}" height="{{ $onex.Height }}"
+            src="{{ $onex.Permalink }}"
+            srcset="{{ $twox.RelPermalink }} 2x"
+        />
         {{- end }}
         <figcaption class="py-0.5 px-1 absolute bottom-0 left-0 right-0 bg-surface/80 text-center line-clamp-1">{{ .Title }}</figcaption>
       </figure>
