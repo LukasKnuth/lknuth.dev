@@ -42,9 +42,7 @@
 </section>
 
 <section id="writings" class="h-spaced mt-8 md:mt-12 mb-4">
-  <span class="text-3xl font-bold">
-    <a href="{{ .Site.Params.mainSection | absURL }}">{{ .Site.Params.mainSectionTitle }}</a>
-  </span>
+  <a class="text-3xl font-bold" href="{{ .Site.Params.mainSection | absURL }}">{{ .Site.Params.mainSectionTitle }}</a>
   {{ $mainPosts := (sort ( where site.RegularPages "Type" "in" site.Params.mainSections ) "Date" "desc") }}
   <ul>
     {{ range (first .Site.Params.postsOnHomePage $mainPosts) }}
@@ -72,6 +70,24 @@
     </li>
     {{ end }}
   </ul>
+</section>
+
+<section id="picks" class="h-spaced mt-8 md:mt-12 mb-4">
+  <a class="text-3xl font-bold" href="picks/">Selected Picks</a>
+  <div class="my-3 grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
+    {{- $picks := slice
+      (.GetPage "picks/movies/the_player_1992")
+      (.GetPage "picks/games/ape_out")
+      (.GetPage "picks/books/kubernetes_in_action")
+      (.GetPage "picks/shows/midnight_mass")
+    }}
+    {{- range sort $picks "Date" "desc" }}
+    {{ partial "picks/cover.html" . }}
+    {{- end }}
+  </div>
+  <div class="underline">
+    <a href="picks/">more picks</a>
+  </div>
 </section>
 
 {{ end }}
