@@ -17,7 +17,7 @@
     Added: <time datetime="{{ .Date }}" itemprop="datePublished">{{ .Date.Format .Site.Params.dateFormat }}</time>
   </div>
 
-  <dl>
+  <dl class="table">
   {{/* NOTE: We create this as a slice of dicts so that the order is maintained on iteration. */}}
   {{- $metadata := slice
     (dict "id" "publisher" "label" "Publisher")
@@ -30,16 +30,20 @@
     (dict "id" "genres" "label" "Genres")
   }}
   {{- range $metadata }}
+  <div class="table-row">
     {{- $label := .label }}
     {{- $fmt := default "%v" .fmt }}
     {{- with index $.Params .id }}
-      <dt class="w-34 float-left font-bold">{{ $label }}:</dt>
+      <dt class="table-cell font-bold">{{ $label }}:</dt>
+      <dd class="table-cell pl-3">
       {{- if reflect.IsSlice . }}
-        <dd>{{- range . }}<span class="tag mr-2">{{ printf $fmt . | lower }}</span>{{- end }}</dd>
+        {{- range . }}<span class="tag mr-2">{{ printf $fmt . | lower }}</span>{{- end }}
       {{- else }}
-        <dd>{{ printf $fmt . | safeHTML }}</dd>
+        {{ printf $fmt . | safeHTML }}
       {{- end }}
+      </dd>
     {{- end }}
+  </div>
   {{- end }}
   </dl>
 
