@@ -61,6 +61,8 @@
     @apply border-r-2 border-r-accent;
     @apply border-t-1 border-t-accent/50;
     @apply border-l-1 border-l-accent/50;
+    /* Prevent line-breaks in a tag */
+    @apply inline-block;
   }
   .filter {
     @apply py-px px-3;

@@ -35,7 +35,7 @@
     {{- with index $.Params .id }}
       <dt class="w-34 float-left font-bold">{{ $label }}:</dt>
       {{- if reflect.IsSlice . }}
-        <dd>{{- range . }}<span class="tag mr-2 inline-block">{{ printf $fmt . | lower }}</span>{{- end }}</dd>
+        <dd>{{- range . }}<span class="tag mr-2">{{ printf $fmt . | lower }}</span>{{- end }}</dd>
       {{- else }}
         <dd>{{ printf $fmt . | safeHTML }}</dd>
       {{- end }}
