@@ -1,21 +1,25 @@
-<div class="h-spaced mt-4 md:mt-6 mb-3">
-  <a href="{{ .Site.BaseURL }}">
-    <div class="w-16 h-16 mr-3 md:mr-5 float-left bg-no-repeat bg-center bg-contain rounded-md" style="background-image: url({{ "images/favicon.svg" | absURL }})"></div>
-    <div class="hidden md:!block text-3xl font-bold">
-      <span>{{ .Site.Params.Author }}</span><span class="pl-1 pr-3 tracking-[-0.3em]">//</span><span>{{ .Site.Title }}</span>
-    </div>
-    <div class="md:hidden text-xl font-bold truncate text-clip">
-      <span>{{ .Site.Params.Author }}</span><span class="pl-1 pr-2 tracking-[-0.3em]">//</span><span>{{ .Site.Params.ShortTitle }}</span>
-    </div>
+<div class="flex items-center h-spaced mt-4 md:mt-6 mb-3">
+  <a class="block" href="{{ .Site.BaseURL }}">
+    <div class="w-16 h-16 bg-no-repeat bg-center bg-contain rounded-md" style="background-image: url({{ "images/favicon.svg" | absURL }})"></div>
   </a>
-  <nav>
-    <ol class="flex text-primary pt-1">
-      {{ range .Site.Menus.main }}
-      <li class="md:text-base inline-block leading-4 mt-1 pr-2 mr-2 md:pr-3 md:mr-3 align-middle border-dotted border-r-2 last:border-none">
-        <a href="{{ .URL }}">{{ .Name }}</a>
-      </li>
-      {{ end }}
-    </ol>
-  </nav>
+  <div class="flex-row">
+    <a class="block ml-4" href="{{ .Site.BaseURL }}">
+      <div class="hidden sm:!block text-3xl font-bold">
+        <span>{{ .Site.Params.Author }}</span><span class="pl-1 pr-3 tracking-[-0.3em]">//</span><span>{{ .Site.Title }}</span>
+      </div>
+      <div class="sm:hidden text-xl font-bold truncate text-clip">
+        <span>{{ .Site.Params.Author }}</span><span class="pl-1 pr-2 tracking-[-0.3em]">//</span><span>{{ .Site.Params.ShortTitle }}</span>
+      </div>
+    </a>
+    <nav class="ml-2 md:ml-1 mt-1">
+      <ol class="text-primary text-sm sm:text-base md:text-lg">
+        {{ range .Site.Menus.main }}
+        <li class="inline-block leading-4 border-dotted border-r-2 last:border-none">
+          <a class="px-2 md:px-3 py-1" href="{{ .URL }}">{{ .Name }}</a>
+        </li>
+        {{ end }}
+      </ol>
+    </nav>
+  </div>
 </div>
 
