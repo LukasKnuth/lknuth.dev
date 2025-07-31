@@ -3,7 +3,7 @@ title: Monster
 date: 2025-07-24T22:12:01+02:00
 params:
   year: 2013
-  runtime: 127
+  runtime: 127min
   genres: [drama]
   imdb: https://www.imdb.com/title/tt23736044/
 ---

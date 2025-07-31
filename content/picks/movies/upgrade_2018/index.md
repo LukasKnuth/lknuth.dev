@@ -3,7 +3,7 @@ date: 2025-07-26T21:04:54+02:00
 title: "Upgrade"
 params:
   year: 2018
-  runtime: 100
+  runtime: 100min
   imdb: https://www.imdb.com/title/tt6499752/
   genres: [cyberpunk, action]
 ---

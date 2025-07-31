@@ -3,7 +3,7 @@ title: The Player
 date: 2025-07-24T19:40:09+02:00
 params:
   year: 1992
-  runtime: 124
+  runtime: 124min
   genres: [dark, comedy]
   imdb: https://www.imdb.com/title/tt0105151/
 ---

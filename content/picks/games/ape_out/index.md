@@ -3,7 +3,7 @@ date: 2025-07-27T13:52:41+02:00
 title: "Ape Out"
 params:
   year: 2019
-  to_beat: 4
+  to_beat: 4 hours
   platforms: PC, Switch
   genres: [action, indie]
 ---
