@@ -76,12 +76,12 @@
   <a class="text-3xl font-bold" href="picks/">Selected Picks</a>
   <div class="my-3 grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
     {{- $picks := slice
-      (.GetPage "picks/movies/the_player_1992")
+      (.GetPage "picks/movies/the_player")
       (.GetPage "picks/games/ape_out")
-      (.GetPage "picks/books/kubernetes_in_action")
+      (.GetPage "picks/movies/upgrade")
       (.GetPage "picks/shows/midnight_mass")
     }}
-    {{- range sort $picks "Date" "desc" }}
+    {{- range $picks }}
     {{ partial "picks/cover.html" . }}
     {{- end }}
   </div>
