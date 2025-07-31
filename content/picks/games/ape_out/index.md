@@ -9,7 +9,7 @@ params:
 ---
 
 In Ape Out you play as the titular ape, trying to break out.
-The thing you're breaking out of is many varieties of cages.
+The thing you're breaking out of are many varieties of cages.
 In the literal sense.
 Ape Out is not interested in the philosophical questions of being an unwilling participant in experiments or being kidnapped from your home.
 
@@ -20,8 +20,7 @@ The improvised jazz drums that react to your actions.
 The long shadows cast from overhead through the level.
 The violent pastel color palette on all surfaces.
 
-This game is hard.
-Fighting for your freedom often is.
+This game is hard, as befits a fight for freedom.
 You die very quickly, but restarts are fast so you go again.
 And then you get into the rhythm.
 You smash through the levels.

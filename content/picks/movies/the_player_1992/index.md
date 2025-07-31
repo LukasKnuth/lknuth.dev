@@ -12,13 +12,13 @@ When people ask me about my "favorite movie" I tell them about this one.
 Not because I have seen it countless times or because I have an emotional connection with it.
 It just ticks all the right boxes for me.
 
-The protagonist is a Hollywood executive who picks the few scripts his studio makes.
-He has been getting threatening postcards from a disgruntled writer whose project wasn't picked up.
+The protagonist is a Hollywood executive who picks the few scripts his studio makes per year.
+He has been getting threatening postcards from a disgruntled writer for a while.
 When he seeks the writer out to stop the postcards, he kills him accidentally.
 
 The movie grounds itself in our reality by having many known Hollywood stars show up as extras, all playing themselves.
 This allows the movie to use the meta aspect of its cast for comedic commentary.
-It also makes the subversive aspects of the story land even better.
+It also makes the subversive aspects of the story land even harder.
 Tim Robins (The Shawshank Redemption) is great as the executive, a man with a very limited set of skills bumbling through a situation he is not at all equipped for.
 
 I love movies about the production of movies - especially when the process isn't portrayed as glorious.

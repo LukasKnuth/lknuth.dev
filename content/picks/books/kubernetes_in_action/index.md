@@ -8,7 +8,7 @@ params:
 ---
 
 This was the single best resource to dive into Kubernetes, back when I didn't know anything about it.
-The book requires almost on up-front knowledge.
+The book is aimed at beginners and intermediates and so requires basically no up-front knowledge.
 It introduces concepts in an order that makes sense and ensures you have a full picture of a topic before moving on.
 Each chapter ramps up the complexity piece by piece.
 I read part 2 of the book cover-to-cover and was confident enough to muck about on the production cluster afterward.
@@ -20,5 +20,6 @@ Even now that my hardcopy is becoming more and more outdated, I still use it to 
 
 Many of the internals are discussed in part 3, which I skipped initially.
 I have since come back to it piece by piece, as new concepts where required or just because I was interested.
+
 That said, I don't think experienced Kubernetes users will get much out of this book.
 

@@ -17,13 +17,13 @@ I have never seen a visual representation of having your body "remote controlled
 Logan Marshall-Green (The Invitation) gives an incredible physical performance that is further enhanced by the camera work and editing.
 There is top-notch craftsmanship on display in almost every scene of this movie, it is beautiful to behold.
 
-The near-future esthetic of the movie portraits a world that isn't too far removed from ours.
+The near-future esthetic portraits a world that isn't too far removed from ours.
 Because of this, the cyberpunk tropes are not as extreme as they are presented in other genre material.
 While there are others humans with upgrades, the technology is still novel and not widely available.
 It keeps the movie grounded enough that it stays accessible.
 
-Topics like neural implants and autonomous cars are reality already, which makes the movies themes feel more imminent than far-away science fiction.
-While the film is critical of these topics (as is the definition of cyberpunk media), it isn't interested in going too far down the philosophical rabid hole.
+Topics like neural implants and autonomous cars are a reality already, which makes the movies themes feel more imminent than far-away science fiction.
+While it is critical of these topics (as is the definition of the cyberpunk genre), it isn't interested in going too far down the philosophical rabid hole.
 
 Another thing the movie gets right is its runtime - it never looses any steam.
 The story moves along quickly but takes its time to deliver some impactful moments as well.
