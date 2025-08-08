@@ -2,6 +2,7 @@
 title: Picks
 params:
   rss_title: All Picks
+summary: "All recommendations; no reviews - just pitches; no spoilers."
 ---
 
 > [!note]

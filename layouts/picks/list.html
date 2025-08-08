@@ -8,7 +8,7 @@
 </svg>
 
 <section class="h-spaced mb-2 lg:flex justify-between">
-  <span class="lg:block">All recommendations; no reviews - just pitches; no spoilers.</span>
+  <span class="lg:block">{{ .Summary }}</span>
   {{- with .OutputFormats.Get "rss" }}
   <a href="{{ .RelPermalink }}" class="lg:block items-center fill-writing hover:fill-primary" title="via RSS">
     <span class="underline">Subscribe</span>
