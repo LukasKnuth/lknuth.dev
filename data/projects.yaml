@@ -1,13 +1,13 @@
 list:
+- name: briefly
+  url: https://github.com/LukasKnuth/briefly
+  desc: A calm, minimal RSS/Atom reader that just shows you whats new.
 - name: pacman
   url: https://lukasknuth.github.io/pacman/
   desc: A faithful adaptation of the arcade classic using my own engine, written when I just learned programming.
 - name: homeserver
   url: https://github.com/LukasKnuth/homeserver
   desc: Full configuration of my Raspberry Pi server with Kubernetes via Talos Linux.
-- name: HackerSchool
-  url: https://github.com/LukasKnuth/HackerSchool
-  desc: An interactive learning tool for my HackerSchool "Think like a Programmer" course.
 - name: BackSlide
   url: https://gitlab.com/p91paul/BackSlide
   desc: A Gnome Shell Extension to automatically switch wallpapers - initially written by me, now maintained by Paolo 💪
