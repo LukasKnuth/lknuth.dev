@@ -18,7 +18,7 @@ I enjoy games, both on the board and on the screen.
 I prefer games with strong moment-to-moment gameplay - like platformers, shooters and competitive games.
 These days I'm looking for short games that can fit into a busy schedule.
 
-If your interest is piqued, read about my [recent personal pursuits](/now) or find my [professional career path](/cv) on their dedicated pages.
+If your interest is piqued, read about my [recent personal pursuits](/now).
 
 ## In this Blog
 
